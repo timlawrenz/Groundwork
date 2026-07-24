@@ -22,7 +22,7 @@
 - [x] Implement sim loop skeleton — tick dispatch, system ordering, bootstrap (2026-07-23)
 - [x] Implement first production chain: logs → firewood (2026-07-23)
 - [x] Implement citizen needs system (2026-07-23)
-- [ ] Implement pathfinding stub (A* on grid)
+- [x] Implement pathfinding (A* on grid) + citizen movement (2026-07-23)
 - [ ] Headless test harness: tick 100 years, verify population stability (30-50 citizens)
 - [ ] Success criterion met: stable population for 100 game-years
 

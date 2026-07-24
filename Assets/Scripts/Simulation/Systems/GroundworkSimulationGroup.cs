@@ -4,14 +4,11 @@ namespace Groundwork.Simulation
 {
     /// <summary>
     /// Custom system group for Groundwork simulation systems.
-    /// Ensures correct execution order: Tick → Calendar → Age → Needs → Production → Death.
+    /// Ensures correct execution order: Tick → Calendar → Age → Needs → Pathfinding → Movement → Production → Death.
     /// </summary>
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     public partial class GroundworkSimulationGroup : ComponentSystemGroup
     {
-        // Unity automatically discovers systems with [UpdateInGroup(typeof(GroundworkSimulationGroup))]
-        // and orders them based on [UpdateBefore] / [UpdateAfter] attributes.
-        // Fallback: systems are sorted by type name.
     }
 
     // === System Ordering Attributes ===
@@ -38,6 +35,14 @@ namespace Groundwork.Simulation
 
     [UpdateInGroup(typeof(GroundworkSimulationGroup))]
     [UpdateAfter(typeof(CitizenNeedSystem))]
+    public partial struct PathfindingSystem { }
+
+    [UpdateInGroup(typeof(GroundworkSimulationGroup))]
+    [UpdateAfter(typeof(PathfindingSystem))]
+    public partial struct CitizenMovementSystem { }
+
+    [UpdateInGroup(typeof(GroundworkSimulationGroup))]
+    [UpdateAfter(typeof(CitizenMovementSystem))]
     public partial struct BuildingProductionSystem { }
 
     [UpdateInGroup(typeof(GroundworkSimulationGroup))]
