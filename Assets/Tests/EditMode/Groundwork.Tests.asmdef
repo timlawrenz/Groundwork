@@ -5,7 +5,8 @@
         "Groundwork.Simulation",
         "Groundwork.TestHelpers",
         "Unity.Entities",
-        "Unity.Collections"
+        "Unity.Collections",
+        "Unity.Mathematics"
     ],
     "includePlatforms": [
         "Editor"
