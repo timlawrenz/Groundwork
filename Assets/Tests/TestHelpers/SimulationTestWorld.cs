@@ -200,19 +200,16 @@ namespace Groundwork.TestHelpers
         /// <summary>Advance the simulation by N ticks.</summary>
         public void AdvanceTicks(int count)
         {
-            var tickSystem = World.CreateSystem<TickDispatchSystem>();
-            ref var tickState = ref World.Unmanaged.GetUnsafeSystemRef<TickDispatchSystem>(tickSystem);
-
+            var tickHandle = World.CreateSystem<TickDispatchSystem>();
             for (int i = 0; i < count; i++)
-                tickState.Update(World.Unmanaged);
+                World.Unmanaged.ResolveSystemStateRef(tickHandle).Update(World.Unmanaged);
         }
 
         /// <summary>Run a specific ISystem once against this world.</summary>
         public void UpdateSystem<T>() where T : unmanaged, ISystem
         {
             var handle = World.CreateSystem<T>();
-            ref var state = ref World.Unmanaged.GetUnsafeSystemRef<T>(handle);
-            state.Update(World.Unmanaged);
+            World.Unmanaged.ResolveSystemStateRef(handle).Update(World.Unmanaged);
         }
 
         /// <summary>Advance the tick counter, then run all simulation systems in order.</summary>
@@ -235,8 +232,7 @@ namespace Groundwork.TestHelpers
         public void RunBootstrap()
         {
             var handle = World.CreateSystem<SimulationBootstrap>();
-            ref var state = ref World.Unmanaged.GetUnsafeSystemRef<SimulationBootstrap>(handle);
-            state.Update(World.Unmanaged);
+            World.Unmanaged.ResolveSystemStateRef(handle).Update(World.Unmanaged);
         }
 
         public void Dispose()
