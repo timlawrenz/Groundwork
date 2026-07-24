@@ -13,8 +13,9 @@
 - [x] Unity feature catalog in `docs/unity-features.md` (2026-07-23)
 - [x] Scaffold Unity project with ECS packages (2026-07-23)
 - [x] Minimum ECS components — Citizen, Building, Item, Map, Calendar (2026-07-23)
+- [x] Push to GitHub — [timlawrenz/Groundwork](https://github.com/timlawrenz/Groundwork) (2026-07-24)
 - [ ] Verify Unity project opens and builds to all 4 targets
-- [ ] Push to GitHub (make repo public)
+- [ ] Make repo public
 
 ## Phase 1 — Simulation Core (MVP)
 
@@ -23,9 +24,11 @@
 - [x] Implement first production chain: logs → firewood (2026-07-23)
 - [x] Implement citizen needs system (2026-07-23)
 - [x] Implement pathfinding (A* on grid) + citizen movement (2026-07-23)
-- [x] Test infrastructure + TDD ADR + tests for all 7 existing systems (2026-07-23)
+- [x] Implement citizen aging & death (2026-07-24)
+- [x] Test infrastructure + TDD ADR + 46 tests for all 10 systems (2026-07-24)
 - [ ] Headless test harness: tick 100 years, verify population stability (30-50 citizens)
 - [ ] Success criterion met: stable population for 100 game-years
+- [ ] Commit and push stability test results
 
 ## Phase 2 — Content & Modding
 
