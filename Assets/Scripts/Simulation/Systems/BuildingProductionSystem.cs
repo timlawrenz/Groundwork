@@ -21,13 +21,12 @@ namespace Groundwork.Simulation
                 if (!building.ValueRO.IsOperational)
                     continue;
 
-                // Check that the entity has the required buffers
                 if (!SystemAPI.HasBuffer<InventorySlot>(entity) ||
                     !SystemAPI.HasBuffer<ProductionOrder>(entity))
                     continue;
 
-                var inventory = SystemAPI.GetBuffer<InventorySlot>(entity);
-                var productionQueue = SystemAPI.GetBuffer<ProductionOrder>(entity);
+                var inventory = state.EntityManager.GetBuffer<InventorySlot>(entity);
+                var productionQueue = state.EntityManager.GetBuffer<ProductionOrder>(entity);
 
                 for (int i = 0; i < productionQueue.Length; i++)
                 {
