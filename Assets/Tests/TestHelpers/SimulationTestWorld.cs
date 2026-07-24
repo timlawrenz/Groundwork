@@ -184,12 +184,14 @@ namespace Groundwork.TestHelpers
 
         private void DestroyExistingSingletons()
         {
-            // Destroy any singleton entities created by CreateSingletons()
-            var query = EntityManager.CreateEntityQuery(
-                typeof(SimulationConfig),
-                typeof(CalendarSingleton),
-                typeof(MapGridData));
-            EntityManager.DestroyEntity(query);
+            // Destroy singleton entities individually (they're on separate entities)
+            var configQuery = EntityManager.CreateEntityQuery(typeof(SimulationConfig));
+            var calQuery = EntityManager.CreateEntityQuery(typeof(CalendarSingleton));
+            var mapQuery = EntityManager.CreateEntityQuery(typeof(MapGridData));
+
+            EntityManager.DestroyEntity(configQuery);
+            EntityManager.DestroyEntity(calQuery);
+            EntityManager.DestroyEntity(mapQuery);
 
             if (_mapGridBlob.IsCreated)
             {

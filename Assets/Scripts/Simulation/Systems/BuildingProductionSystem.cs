@@ -9,10 +9,8 @@ namespace Groundwork.Simulation
     /// advances recipe progress, and outputs products when complete.
     /// MVP: logs → firewood at woodcutter; food at gatherer's hut (no inputs needed).
     /// </summary>
-    [BurstCompile]
     public partial struct BuildingProductionSystem : ISystem
     {
-        [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
             foreach (var (building, entity) in
