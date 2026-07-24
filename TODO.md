@@ -11,7 +11,8 @@
 - [x] Architecture doc in `docs/architecture.md` (2026-07-23)
 - [x] ADR template in `docs/decisions.md` (2026-07-23)
 - [x] Unity feature catalog in `docs/unity-features.md` (2026-07-23)
-- [ ] Scaffold Unity project with ECS packages
+- [x] Scaffold Unity project with ECS packages (2026-07-23)
+- [x] Minimum ECS components — Citizen, Building, Item, Map, Calendar (2026-07-23)
 - [ ] Verify Unity project opens and builds to all 4 targets
 - [ ] Push to GitHub (make repo public)
 

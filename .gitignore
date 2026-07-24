@@ -17,9 +17,7 @@
 *.unitypackage
 *.app
 
-# Asset meta files (Unity generates these — keep them tracked once project exists)
-# For now they don't exist
-# *.meta — uncomment when Unity project is scaffolded
+# Asset meta files — tracked in git: Unity uses them for asset GUIDs
 
 # IDE
 .idea/
