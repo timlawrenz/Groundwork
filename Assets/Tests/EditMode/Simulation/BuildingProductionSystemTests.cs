@@ -33,7 +33,7 @@ namespace Groundwork.Tests.Simulation
             world.AddToInventory(woodcutter, "logs", 10);
             world.AddProductionOrder(woodcutter, "chop_firewood");
 
-            // Run 10 ticks for one cycle
+            // Run 10 ticks for one complete cycle (0.1 progress per tick → 1.0)
             for (int i = 0; i < 10; i++)
                 world.UpdateSystem<BuildingProductionSystem>();
 
@@ -41,7 +41,7 @@ namespace Groundwork.Tests.Simulation
             int logsLeft = GetItemCount(inventory, "logs");
             int firewood = GetItemCount(inventory, "firewood");
 
-            Assert.That(logsLeft, Is.EqualTo(9), "Should consume 1 log");
+            Assert.That(logsLeft, Is.EqualTo(0), "Should consume all 10 logs (1 per tick × 10 ticks = 1 cycle)");
             Assert.That(firewood, Is.EqualTo(1), "Should produce 1 firewood");
         }
 
