@@ -121,16 +121,24 @@ namespace Groundwork.Tests.Simulation
             world.RunBootstrap();
 
             int woodcuttersWithLogs = 0;
-            foreach (var (building, inventory) in
-                     SystemAPI.Query<RefRO<Building>, DynamicBuffer<InventorySlot>>())
+            var query = world.EntityManager.CreateEntityQuery(
+                typeof(Building), typeof(InventorySlot));
+            var buildings = query.ToComponentDataArray<Building>(Allocator.Temp);
+            var entities = query.ToEntityArray(Allocator.Temp);
+
+            for (int i = 0; i < entities.Length; i++)
             {
-                if (building.ValueRO.BuildingType == "woodcutter")
+                if (buildings[i].BuildingType == "woodcutter")
                 {
-                    for (int i = 0; i < inventory.Length; i++)
-                        if (inventory[i].ItemId == "logs" && inventory[i].Quantity > 0)
+                    var inventory = world.EntityManager.GetBuffer<InventorySlot>(entities[i]);
+                    for (int j = 0; j < inventory.Length; j++)
+                        if (inventory[j].ItemId == "logs" && inventory[j].Quantity > 0)
                             woodcuttersWithLogs++;
                 }
             }
+
+            buildings.Dispose();
+            entities.Dispose();
 
             Assert.That(woodcuttersWithLogs, Is.EqualTo(2),
                 "Both woodcutters should start with logs");

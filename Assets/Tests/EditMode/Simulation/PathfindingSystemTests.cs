@@ -16,7 +16,7 @@ namespace Groundwork.Tests.Simulation
             using var world = new SimulationTestWorld();
             var citizen = world.CreateCitizen(age: 30f, position: new int2(5, 5));
 
-            world.EntityManager.AddComponent<PathRequest>(citizen, new PathRequest
+            world.EntityManager.AddComponentData(citizen, new PathRequest
             {
                 Destination = new int2(10, 5) // 5 tiles east
             });
@@ -42,7 +42,7 @@ namespace Groundwork.Tests.Simulation
             using var world = new SimulationTestWorld();
             var citizen = world.CreateCitizen(age: 30f, position: new int2(5, 5));
 
-            world.EntityManager.AddComponent<PathRequest>(citizen, new PathRequest
+            world.EntityManager.AddComponentData(citizen, new PathRequest
             {
                 Destination = new int2(10, 10) // diagonal
             });
@@ -63,7 +63,7 @@ namespace Groundwork.Tests.Simulation
             using var world = new SimulationTestWorld();
             var citizen = world.CreateCitizen(age: 30f, position: new int2(5, 5));
 
-            world.EntityManager.AddComponent<PathRequest>(citizen, new PathRequest
+            world.EntityManager.AddComponentData(citizen, new PathRequest
             {
                 Destination = new int2(5, 5) // same tile
             });
@@ -85,9 +85,9 @@ namespace Groundwork.Tests.Simulation
             var c2 = world.CreateCitizen(age: 30f, position: new int2(5, 5));
             var c3 = world.CreateCitizen(age: 30f, position: new int2(10, 10));
 
-            world.EntityManager.AddComponent<PathRequest>(c1, new PathRequest { Destination = new(15, 0) });
-            world.EntityManager.AddComponent<PathRequest>(c2, new PathRequest { Destination = new(0, 10) });
-            world.EntityManager.AddComponent<PathRequest>(c3, new PathRequest { Destination = new(15, 15) });
+            world.EntityManager.AddComponentData(c1, new PathRequest { Destination = new(15, 0) });
+            world.EntityManager.AddComponentData(c2, new PathRequest { Destination = new(0, 10) });
+            world.EntityManager.AddComponentData(c3, new PathRequest { Destination = new(15, 15) });
 
             world.UpdateSystem<PathfindingSystem>();
 
