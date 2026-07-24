@@ -18,11 +18,14 @@ namespace Groundwork.Simulation
             foreach (var (building, entity) in
                      SystemAPI.Query<RefRO<Building>>()
                          .WithNone<UnderConstruction>()
-                         .WithAll<InventorySlot>()
-                         .WithAll<ProductionOrder>()
                          .WithEntityAccess())
             {
                 if (!building.ValueRO.IsOperational)
+                    continue;
+
+                // Check that the entity has the required buffers
+                if (!SystemAPI.HasBuffer<InventorySlot>(entity) ||
+                    !SystemAPI.HasBuffer<ProductionOrder>(entity))
                     continue;
 
                 var inventory = SystemAPI.GetBuffer<InventorySlot>(entity);

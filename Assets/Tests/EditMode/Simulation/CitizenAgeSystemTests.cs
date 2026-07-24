@@ -78,10 +78,13 @@ namespace Groundwork.Tests.Simulation
         public void TagsDead_At90()
         {
             using var world = new SimulationTestWorld();
-            var ancient = world.CreateCitizen(age: 91f);
+            var ancient = world.CreateCitizen(age: 90f);
+            world.SetTick(24); // must be a day boundary
+
+            world.UpdateSystem<CitizenAgeSystem>();
 
             Assert.That(world.EntityManager.HasComponent<Dead>(ancient),
-                "Citizen over 90 should be tagged Dead");
+                "Citizen at or over 90 should be tagged Dead");
         }
 
         [Test]

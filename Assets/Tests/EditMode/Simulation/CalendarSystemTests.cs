@@ -12,7 +12,7 @@ namespace Groundwork.Tests.Simulation
         public void AdvancesDayOfSeason_WhenTickCrossesDayBoundary()
         {
             using var world = new SimulationTestWorld();
-            world.SetTick(24); // 1 day at 24 ticks/day
+            world.SetTick(24);
 
             world.UpdateSystem<CalendarSystem>();
 
@@ -25,13 +25,13 @@ namespace Groundwork.Tests.Simulation
         public void DoesNotAdvance_MidDay()
         {
             using var world = new SimulationTestWorld();
-            world.SetTick(12); // half a day
+            world.SetTick(12);
 
             world.UpdateSystem<CalendarSystem>();
 
             var cal = world.EntityManager.CreateEntityQuery(typeof(CalendarSingleton))
                 .GetSingleton<CalendarSingleton>();
-            Assert.That(cal.DayOfSeason, Is.EqualTo(0), "Should not advance mid-day");
+            Assert.That(cal.DayOfSeason, Is.EqualTo(0));
         }
 
         [Test]
@@ -39,22 +39,32 @@ namespace Groundwork.Tests.Simulation
         {
             using var world = new SimulationTestWorld();
 
-            // Advance to the last tick of the last day of spring (day 29)
-            long lastTickOfSpring = 24 * 30 - 1; // days 0-29, so tick 24*29 is start of day 29
-            world.SetTick(lastTickOfSpring);
-
-            var cal1 = world.EntityManager.CreateEntityQuery(typeof(CalendarSingleton))
+            // Start: DayOfSeason=0, Season=0 (spring)
+            var cal = world.EntityManager.CreateEntityQuery(typeof(CalendarSingleton))
                 .GetSingleton<CalendarSingleton>();
-            Assert.That(cal1.Season, Is.EqualTo(0), "Should still be spring");
+            Assert.That(cal.DayOfSeason, Is.EqualTo(0));
+            Assert.That(cal.Season, Is.EqualTo(0));
 
-            // Advance to first tick of day 30 (rollover)
-            world.SetTick(24 * 30);
+            // Step through 29 days — DayOfSeason goes 1→2→...→29
+            for (int day = 1; day <= 29; day++)
+            {
+                world.SetTick(day * 24);
+                world.UpdateSystem<CalendarSystem>();
+            }
+
+            cal = world.EntityManager.CreateEntityQuery(typeof(CalendarSingleton))
+                .GetSingleton<CalendarSingleton>();
+            Assert.That(cal.DayOfSeason, Is.EqualTo(29));
+            Assert.That(cal.Season, Is.EqualTo(0), "Season should still be spring at day 29");
+
+            // Day 30 → rolls over to summer
+            world.SetTick(30 * 24);
             world.UpdateSystem<CalendarSystem>();
 
-            var cal2 = world.EntityManager.CreateEntityQuery(typeof(CalendarSingleton))
+            cal = world.EntityManager.CreateEntityQuery(typeof(CalendarSingleton))
                 .GetSingleton<CalendarSingleton>();
-            Assert.That(cal2.Season, Is.EqualTo(1), "Should roll over to summer");
-            Assert.That(cal2.DayOfSeason, Is.EqualTo(0));
+            Assert.That(cal.DayOfSeason, Is.EqualTo(0));
+            Assert.That(cal.Season, Is.EqualTo(1), "Should roll over to summer");
         }
 
         [Test]
@@ -62,20 +72,23 @@ namespace Groundwork.Tests.Simulation
         {
             using var world = new SimulationTestWorld();
 
-            // Start of year 1, spring
+            // Start of year 1, spring, day 0
             var cal = world.EntityManager.CreateEntityQuery(typeof(CalendarSingleton))
                 .GetSingleton<CalendarSingleton>();
             Assert.That(cal.Year, Is.EqualTo(1));
-            Assert.That(cal.Season, Is.EqualTo(0));
 
-            // Advance to first day of year 2 (tick = 24 * 30 * 4 = 2880)
-            world.SetTick(24 * 30 * 4);
-            world.UpdateSystem<CalendarSystem>();
+            // Step through 120 days (4 seasons × 30 days)
+            for (int day = 1; day <= 120; day++)
+            {
+                world.SetTick(day * 24);
+                world.UpdateSystem<CalendarSystem>();
+            }
 
-            var cal2 = world.EntityManager.CreateEntityQuery(typeof(CalendarSingleton))
+            cal = world.EntityManager.CreateEntityQuery(typeof(CalendarSingleton))
                 .GetSingleton<CalendarSingleton>();
-            Assert.That(cal2.Year, Is.EqualTo(2));
-            Assert.That(cal2.Season, Is.EqualTo(0), "Should be spring of year 2");
+            Assert.That(cal.Year, Is.EqualTo(2));
+            Assert.That(cal.Season, Is.EqualTo(0));
+            Assert.That(cal.DayOfSeason, Is.EqualTo(0));
         }
 
         [Test]
@@ -90,19 +103,27 @@ namespace Groundwork.Tests.Simulation
                 .GetSingleton<CalendarSingleton>();
             Assert.That(cal.GrowingMultiplier, Is.EqualTo(0.5f).Within(0.01f));
 
-            // Summer
-            world.SetTick(24 * 30);
-            world.UpdateSystem<CalendarSystem>();
+            // Advance to summer start (day 30)
+            for (int day = 2; day <= 30; day++)
+            {
+                world.SetTick(day * 24);
+                world.UpdateSystem<CalendarSystem>();
+            }
             cal = world.EntityManager.CreateEntityQuery(typeof(CalendarSingleton))
                 .GetSingleton<CalendarSingleton>();
+            Assert.That(cal.Season, Is.EqualTo(1));
             Assert.That(cal.GrowingMultiplier, Is.EqualTo(1.0f).Within(0.01f));
             Assert.That(cal.Temperature, Is.EqualTo(25f).Within(0.01f));
 
-            // Winter
-            world.SetTick(24 * 30 * 3);
-            world.UpdateSystem<CalendarSystem>();
+            // Advance to winter start (day 90)
+            for (int day = 31; day <= 90; day++)
+            {
+                world.SetTick(day * 24);
+                world.UpdateSystem<CalendarSystem>();
+            }
             cal = world.EntityManager.CreateEntityQuery(typeof(CalendarSingleton))
                 .GetSingleton<CalendarSingleton>();
+            Assert.That(cal.Season, Is.EqualTo(3));
             Assert.That(cal.GrowingMultiplier, Is.EqualTo(0.0f).Within(0.01f));
             Assert.That(cal.Temperature, Is.EqualTo(-5f).Within(0.01f));
         }

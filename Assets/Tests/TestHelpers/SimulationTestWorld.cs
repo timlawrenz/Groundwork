@@ -173,10 +173,29 @@ namespace Groundwork.TestHelpers
         /// <summary>Run the bootstrap system to create a full MVP world.</summary>
         public void RunBootstrap()
         {
+            // Destroy existing singletons so the bootstrap can create fresh ones
+            DestroyExistingSingletons();
+
             var handle = World.CreateSystem<SimulationBootstrap>();
             _testGroup.AddSystemToUpdateList(handle);
             _testGroup.Update();
             _testGroup.RemoveSystemFromUpdateList(handle);
+        }
+
+        private void DestroyExistingSingletons()
+        {
+            // Destroy any singleton entities created by CreateSingletons()
+            var query = EntityManager.CreateEntityQuery(
+                typeof(SimulationConfig),
+                typeof(CalendarSingleton),
+                typeof(MapGridData));
+            EntityManager.DestroyEntity(query);
+
+            if (_mapGridBlob.IsCreated)
+            {
+                _mapGridBlob.Dispose();
+                _mapGridBlob = default;
+            }
         }
 
         public void Dispose()
