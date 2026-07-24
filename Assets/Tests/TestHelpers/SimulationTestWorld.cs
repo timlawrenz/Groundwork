@@ -151,6 +151,20 @@ namespace Groundwork.TestHelpers
             return query.GetSingleton<CalendarSingleton>();
         }
 
+        /// <summary>Get the entity that carries the CalendarSingleton.</summary>
+        public Entity GetCalendarSingletonEntity()
+        {
+            var query = EntityManager.CreateEntityQuery(typeof(CalendarSingleton));
+            return query.GetSingletonEntity();
+        }
+
+        /// <summary>Count entities having component T (excluding Dead).</summary>
+        public int CountEntities<T>() where T : unmanaged, IComponentData
+        {
+            var query = EntityManager.CreateEntityQuery(typeof(T));
+            return query.CalculateEntityCount();
+        }
+
         // ─── System execution ───
 
         public void AdvanceTicks(int count)
@@ -176,6 +190,7 @@ namespace Groundwork.TestHelpers
         {
             AdvanceTicks(1);
             UpdateSystem<CalendarSystem>();
+            UpdateSystem<BirthSystem>();
             UpdateSystem<CitizenAgeSystem>();
             UpdateSystem<CitizenNeedSystem>();
             UpdateSystem<PathfindingSystem>();
@@ -198,6 +213,7 @@ namespace Groundwork.TestHelpers
             {
                 World.CreateSystem<TickDispatchSystem>(),
                 World.CreateSystem<CalendarSystem>(),
+                World.CreateSystem<BirthSystem>(),
                 World.CreateSystem<CitizenAgeSystem>(),
                 World.CreateSystem<CitizenNeedSystem>(),
                 World.CreateSystem<PathfindingSystem>(),

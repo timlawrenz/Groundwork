@@ -29,7 +29,10 @@
 - [x] Simulation stats system — population, resources, seasonal logging (2026-07-24)
 - [x] Fix: production orders now cycle continuously (reset on completion) (2026-07-24)
 - [x] Fix: citizens consume food from inventory to reduce food need (2026-07-24)
-- [x] 56 tests all green (2026-07-24)
+- [x] Birth system — eligible females produce 1 child/year (2026-07-24)
+- [x] Firewood consumption — citizens burn firewood from home for warmth (2026-07-24)
+- [x] Abundance bootstrap — 8 houses, 8 gatherer huts, 1 woodcutter, generous supplies (2026-07-24)
+- [x] 66 tests all green (2026-07-24)
 - [ ] Headless test harness: tick 100 years, verify population stability (30-50 citizens)
 - [ ] Success criterion met: stable population for 100 game-years
 

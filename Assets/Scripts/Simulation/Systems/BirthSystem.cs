@@ -1,0 +1,75 @@
+using Unity.Entities;
+using Unity.Collections;
+using Unity.Mathematics;
+
+namespace Groundwork.Simulation
+{
+    /// <summary>
+    /// Creates new citizen entities (children) for eligible adult females.
+    /// Runs after CalendarSystem, before CitizenAgeSystem.
+    /// Eligibility: female, age 16-50, health &gt; 50, has home, hasn't given birth this year.
+    /// </summary>
+    public partial struct BirthSystem : ISystem
+    {
+        public void OnUpdate(ref SystemState state)
+        {
+            var config = SystemAPI.GetSingleton<SimulationConfig>();
+            if (config.CurrentTick % config.TicksPerDay != 0)
+                return;
+
+            var calendar = SystemAPI.GetSingleton<CalendarSingleton>();
+            var ecb = new EntityCommandBuffer(Allocator.Temp);
+
+            foreach (var (citizen, position, entity) in
+                     SystemAPI.Query<RefRW<Citizen>, RefRO<MapPosition>>()
+                         .WithNone<Dead, Child>()
+                         .WithEntityAccess())
+            {
+                var c = citizen.ValueRO;
+
+                // Eligibility checks
+                if (c.Sex != 1) continue;                    // must be female
+                if (c.Age < 16f || c.Age > 50f) continue;   // reproductive age
+                if (c.Health < 50f) continue;                // must be healthy
+                if (c.HomeBuilding == Entity.Null) continue; // must have a home
+                if (c.LastBirthYear >= calendar.Year) continue; // already had child this year
+
+                // Create child entity
+                var child = ecb.CreateEntity();
+                ecb.AddComponent(child, new Citizen
+                {
+                    Name = $"Child of {c.Name}",
+                    Age = 0f,
+                    Sex = (byte)(new Unity.Mathematics.Random((uint)(entity.Index + calendar.Year * 1000)).NextInt(0, 2)),
+                    Health = 100f,
+                    Happiness = 50f,
+                    EducationLevel = 0,
+                    HomeBuilding = c.HomeBuilding,
+                    WorkplaceBuilding = Entity.Null,
+                    LastBirthYear = 0,
+                });
+                ecb.AddComponent(child, new MapPosition
+                {
+                    TileCoordinate = position.ValueRO.TileCoordinate,
+                    Rotation = 0,
+                });
+                ecb.AddComponent(child, new CitizenTask
+                {
+                    TaskType = "idle",
+                    TargetEntity = Entity.Null,
+                    Progress = 0f,
+                });
+                ecb.AddComponent<Child>(child);
+                ecb.AddBuffer<CitizenNeed>(child);
+                ecb.AddBuffer<InventorySlot>(child);
+                ecb.AddBuffer<PathFollowing>(child);
+
+                // Update mother's LastBirthYear
+                citizen.ValueRW.LastBirthYear = calendar.Year;
+            }
+
+            ecb.Playback(state.EntityManager);
+            ecb.Dispose();
+        }
+    }
+}

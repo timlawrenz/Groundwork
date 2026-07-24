@@ -19,5 +19,8 @@ namespace Groundwork.Simulation
         // Relationships (Entity references)
         public Entity HomeBuilding;
         public Entity WorkplaceBuilding;
+
+        // Reproduction
+        public int LastBirthYear;    // game year of last childbirth (0 = never)
     }
 }

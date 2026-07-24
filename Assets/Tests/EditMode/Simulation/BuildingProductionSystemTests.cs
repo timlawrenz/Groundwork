@@ -13,7 +13,7 @@ namespace Groundwork.Tests.Simulation
         public void GatherFood_ProducesFood_WithoutInputs()
         {
             using var world = new SimulationTestWorld();
-            var hut = world.CreateBuilding("gatherer_hut", new(10, 10));
+            var hut = world.CreateBuilding("gatherer_hut", new(10, 10), maxWorkers: 0); // autonomous for test
             world.AddProductionOrder(hut, "gather_food");
 
             // Run production for 10 ticks to complete one cycle
@@ -29,7 +29,7 @@ namespace Groundwork.Tests.Simulation
         public void ChopFirewood_ConsumesLogs_ProducesFirewood()
         {
             using var world = new SimulationTestWorld();
-            var woodcutter = world.CreateBuilding("woodcutter", new(10, 10));
+            var woodcutter = world.CreateBuilding("woodcutter", new(10, 10), maxWorkers: 0);
             world.AddToInventory(woodcutter, "logs", 10);
             world.AddProductionOrder(woodcutter, "chop_firewood");
 
@@ -49,7 +49,7 @@ namespace Groundwork.Tests.Simulation
         public void ChopFirewood_Stalls_WhenNoLogs()
         {
             using var world = new SimulationTestWorld();
-            var woodcutter = world.CreateBuilding("woodcutter", new(10, 10));
+            var woodcutter = world.CreateBuilding("woodcutter", new(10, 10), maxWorkers: 0);
             // No logs in inventory
             world.AddProductionOrder(woodcutter, "chop_firewood");
 
@@ -66,7 +66,7 @@ namespace Groundwork.Tests.Simulation
         public void CompletedOrder_ResetsProgress_ForNextCycle()
         {
             using var world = new SimulationTestWorld();
-            var hut = world.CreateBuilding("gatherer_hut", new(10, 10));
+            var hut = world.CreateBuilding("gatherer_hut", new(10, 10), maxWorkers: 0);
             var queue = world.EntityManager.GetBuffer<ProductionOrder>(hut);
             queue.Add(new ProductionOrder { RecipeId = "gather_food", Progress = 1f });
 
@@ -83,7 +83,7 @@ namespace Groundwork.Tests.Simulation
         public void ChopFirewood_ProducesMultipleCycles_WhenEnoughLogs()
         {
             using var world = new SimulationTestWorld();
-            var woodcutter = world.CreateBuilding("woodcutter", new(10, 10));
+            var woodcutter = world.CreateBuilding("woodcutter", new(10, 10), maxWorkers: 0);
             world.AddToInventory(woodcutter, "logs", 20);  // enough for 2 cycles
             world.AddProductionOrder(woodcutter, "chop_firewood");
 
@@ -113,6 +113,65 @@ namespace Groundwork.Tests.Simulation
             var inventory = world.EntityManager.GetBuffer<InventorySlot>(hut);
             int foodCount = GetItemCount(inventory, "food");
             Assert.That(foodCount, Is.EqualTo(0), "Under construction should not produce");
+        }
+
+        // ─── Regression: worker requirement ───
+
+        [Test]
+        public void RequiresWorkers_WhenMaxWorkersGreaterThanZero()
+        {
+            using var world = new SimulationTestWorld();
+
+            // Building with MaxWorkers=3 but no citizens assigned
+            var hut = world.CreateBuilding("gatherer_hut", new(10, 10), maxWorkers: 3);
+            world.AddProductionOrder(hut, "gather_food");
+
+            // Run 10 ticks
+            for (int i = 0; i < 10; i++)
+                world.UpdateSystem<BuildingProductionSystem>();
+
+            var inventory = world.EntityManager.GetBuffer<InventorySlot>(hut);
+            int foodCount = GetItemCount(inventory, "food");
+            Assert.That(foodCount, Is.EqualTo(0),
+                "Should not produce without workers when MaxWorkers > 0");
+        }
+
+        [Test]
+        public void Produces_WhenWorkersAssigned()
+        {
+            using var world = new SimulationTestWorld();
+
+            var hut = world.CreateBuilding("gatherer_hut", new(10, 10), maxWorkers: 3);
+            world.AddProductionOrder(hut, "gather_food");
+
+            // Assign a citizen as worker
+            var citizen = world.CreateCitizen(age: 30f, workplace: hut);
+
+            for (int i = 0; i < 10; i++)
+                world.UpdateSystem<BuildingProductionSystem>();
+
+            var inventory = world.EntityManager.GetBuffer<InventorySlot>(hut);
+            int foodCount = GetItemCount(inventory, "food");
+            Assert.That(foodCount, Is.GreaterThan(0),
+                "Should produce when at least one worker is assigned");
+        }
+
+        [Test]
+        public void AutonomousBuilding_ProducesWithoutWorkers_WhenMaxWorkersZero()
+        {
+            using var world = new SimulationTestWorld();
+
+            // MaxWorkers=0 means autonomous (e.g. a well, windmill)
+            var well = world.CreateBuilding("well", new(10, 10), maxWorkers: 0);
+            world.AddProductionOrder(well, "gather_food"); // well produces water
+
+            for (int i = 0; i < 10; i++)
+                world.UpdateSystem<BuildingProductionSystem>();
+
+            var inventory = world.EntityManager.GetBuffer<InventorySlot>(well);
+            int foodCount = GetItemCount(inventory, "food");
+            Assert.That(foodCount, Is.GreaterThan(0),
+                "Autonomous buildings (MaxWorkers=0) should produce without workers");
         }
 
         private static int GetItemCount(DynamicBuffer<InventorySlot> inventory, FixedString32Bytes itemId)

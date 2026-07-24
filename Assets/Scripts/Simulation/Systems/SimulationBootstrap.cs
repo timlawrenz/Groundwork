@@ -5,9 +5,10 @@ using Unity.Mathematics;
 namespace Groundwork.Simulation
 {
     /// <summary>
-    /// Creates the initial MVP world state. Runs once at startup.
-    /// World: 100x100 flat temperate map, 50 citizens, 14 buildings, initial resources.
-    /// After bootstrap, citizens get PathRequest to commute to their workplaces.
+    /// Creates the initial world state in abundance mode — enough food, housing,
+    /// and production to sustain a growing population. Runs once at startup.
+    /// World: 100x100 flat temperate map, 50 citizens (25M/25F), 8 houses,
+    /// 8 gatherer huts, 1 woodcutter, generous starting resources.
     /// </summary>
     public partial struct SimulationBootstrap : ISystem
     {
@@ -39,12 +40,12 @@ namespace Groundwork.Simulation
                 GrowingMultiplier = 0.5f,
             });
 
-            for (int i = 0; i < 10; i++)
+            // Buildings: 8 houses, 8 gatherer huts, 1 woodcutter
+            for (int i = 0; i < 8; i++)
                 CreateBuilding(ecb, "house", new int2(10 + i, 15));
-            CreateBuilding(ecb, "woodcutter", new int2(20, 10));
-            CreateBuilding(ecb, "woodcutter", new int2(25, 10));
-            CreateBuilding(ecb, "gatherer_hut", new int2(30, 10));
-            CreateBuilding(ecb, "gatherer_hut", new int2(35, 10));
+            for (int i = 0; i < 8; i++)
+                CreateBuilding(ecb, "gatherer_hut", new int2(20 + i * 2, 10));
+            CreateBuilding(ecb, "woodcutter", new int2(40, 10));
 
             ecb.Playback(state.EntityManager);
             ecb.Dispose();
@@ -86,7 +87,7 @@ namespace Groundwork.Simulation
                 BuildingType = buildingType,
                 ConstructionProgress = 1f,
                 IsOperational = true,
-                MaxWorkers = buildingType == "house" ? 5 : 3,
+                MaxWorkers = buildingType == "house" ? 6 : 4,
             });
             ecb.AddComponent(entity, new MapPosition { TileCoordinate = position, Rotation = 0 });
             ecb.AddBuffer<InventorySlot>(entity);
@@ -94,44 +95,48 @@ namespace Groundwork.Simulation
         }
 
         private void AddInitialResources(ref SystemState state)
-        {
-            var query = state.GetEntityQuery(
-                typeof(Building),
-                typeof(InventorySlot),
-                typeof(ProductionOrder));
-
-            var buildings = query.ToComponentDataArray<Building>(Allocator.Temp);
-            var entities = query.ToEntityArray(Allocator.Temp);
-
-            for (int i = 0; i < entities.Length; i++)
-            {
-                var inventory = state.EntityManager.GetBuffer<InventorySlot>(entities[i]);
-                var productionQueue = state.EntityManager.GetBuffer<ProductionOrder>(entities[i]);
-
-                if (buildings[i].BuildingType == "woodcutter")
                 {
-                    inventory.Add(new InventorySlot { ItemId = "logs", Quantity = 50 });
-                    productionQueue.Add(new ProductionOrder { RecipeId = "chop_firewood", Progress = 0f });
-                }
-                else if (buildings[i].BuildingType == "gatherer_hut")
-                {
-                    inventory.Add(new InventorySlot { ItemId = "food", Quantity = 100 });
-                    productionQueue.Add(new ProductionOrder { RecipeId = "gather_food", Progress = 0f });
-                }
-            }
+                    var query = state.GetEntityQuery(
+                        typeof(Building),
+                        typeof(InventorySlot),
+                        typeof(ProductionOrder));
 
-            buildings.Dispose();
-            entities.Dispose();
-        }
+                    var buildings = query.ToComponentDataArray<Building>(Allocator.Temp);
+                    var entities = query.ToEntityArray(Allocator.Temp);
+
+                    for (int i = 0; i < entities.Length; i++)
+                    {
+                        var inventory = state.EntityManager.GetBuffer<InventorySlot>(entities[i]);
+                        var productionQueue = state.EntityManager.GetBuffer<ProductionOrder>(entities[i]);
+
+                        if (buildings[i].BuildingType == "woodcutter")
+                        {
+                            inventory.Add(new InventorySlot { ItemId = "logs", Quantity = 5000 });
+                            productionQueue.Add(new ProductionOrder { RecipeId = "chop_firewood", Progress = 0f });
+                        }
+                        else if (buildings[i].BuildingType == "gatherer_hut")
+                        {
+                            inventory.Add(new InventorySlot { ItemId = "food", Quantity = 2000 });
+                            productionQueue.Add(new ProductionOrder { RecipeId = "gather_food", Progress = 0f });
+                        }
+                        else if (buildings[i].BuildingType == "house")
+                        {
+                            inventory.Add(new InventorySlot { ItemId = "food", Quantity = 500 });
+                            inventory.Add(new InventorySlot { ItemId = "firewood", Quantity = 1000 });
+                        }
+                    }
+
+                    buildings.Dispose();
+                    entities.Dispose();
+                }
 
         private void CreateCitizens(ref SystemState state)
         {
             var ecb = new EntityCommandBuffer(Allocator.Temp);
 
-            // Collect building entities by type
             var houses = new NativeList<Entity>(Allocator.Temp);
-            var woodcutters = new NativeList<Entity>(Allocator.Temp);
             var gathererHuts = new NativeList<Entity>(Allocator.Temp);
+            var woodcutters = new NativeList<Entity>(Allocator.Temp);
 
             var buildingQuery = state.GetEntityQuery(typeof(Building));
             var buildingEntities = buildingQuery.ToEntityArray(Allocator.Temp);
@@ -141,29 +146,29 @@ namespace Groundwork.Simulation
             {
                 if (buildingData[i].BuildingType == "house")
                     houses.Add(buildingEntities[i]);
-                else if (buildingData[i].BuildingType == "woodcutter")
-                    woodcutters.Add(buildingEntities[i]);
                 else if (buildingData[i].BuildingType == "gatherer_hut")
                     gathererHuts.Add(buildingEntities[i]);
+                else if (buildingData[i].BuildingType == "woodcutter")
+                    woodcutters.Add(buildingEntities[i]);
             }
 
             var random = new Unity.Mathematics.Random(42);
+            const int citizenCount = 50;
 
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < citizenCount; i++)
             {
                 var entity = ecb.CreateEntity();
-                float age = random.NextFloat(16f, 60f);
-                byte sex = (byte)random.NextInt(0, 2);
+                float age = random.NextFloat(16f, 55f);
+                byte sex = (byte)(i % 2); // alternate male/female for even distribution
                 var homeEntity = houses[i % houses.Length];
+                // Most citizens are gatherers, a few are woodcutters
+                Entity workplace;
+                if (i < 4 && woodcutters.Length > 0)
+                    workplace = woodcutters[0]; // first 4 citizens → woodcutter
+                else
+                    workplace = gathererHuts[i % gathererHuts.Length]; // rest → gatherers
 
-                Entity workplace = Entity.Null;
-                float roll = random.NextFloat();
-                if (roll < 0.4f && woodcutters.Length > 0)
-                    workplace = woodcutters[i % woodcutters.Length];
-                else if (roll < 0.8f && gathererHuts.Length > 0)
-                    workplace = gathererHuts[i % gathererHuts.Length];
-
-                var homePos = new int2(10 + (i % 20), 16 + (i / 20));
+                var homePos = new int2(10 + (i % 16), 16 + (i / 16));
 
                 ecb.AddComponent(entity, new Citizen
                 {
@@ -171,13 +176,14 @@ namespace Groundwork.Simulation
                     Age = age,
                     Sex = sex,
                     Health = 100f,
-                    Happiness = 50f,
+                    Happiness = 60f,
                     EducationLevel = 0,
                     HomeBuilding = homeEntity,
                     WorkplaceBuilding = workplace,
+                    LastBirthYear = 0, // never gave birth — eligible from year 1
                 });
 
-                ecb.AddComponent(entity, new MapPosition { TileCoordinate = homePos });
+                ecb.AddComponent(entity, new MapPosition { TileCoordinate = homePos, Rotation = 0 });
                 ecb.AddComponent(entity, new CitizenTask
                 {
                     TaskType = "idle",
@@ -189,7 +195,7 @@ namespace Groundwork.Simulation
                 else if (age >= 60f) ecb.AddComponent<Elderly>(entity);
 
                 var needs = ecb.AddBuffer<CitizenNeed>(entity);
-                needs.Add(new CitizenNeed { NeedType = "food", Urgency = 0.3f });
+                needs.Add(new CitizenNeed { NeedType = "food", Urgency = 0.2f });
                 needs.Add(new CitizenNeed { NeedType = "warmth", Urgency = 0.1f });
                 needs.Add(new CitizenNeed { NeedType = "social", Urgency = 0.1f });
 
@@ -198,8 +204,8 @@ namespace Groundwork.Simulation
             }
 
             houses.Dispose();
-            woodcutters.Dispose();
             gathererHuts.Dispose();
+            woodcutters.Dispose();
             buildingEntities.Dispose();
             buildingData.Dispose();
 
@@ -220,7 +226,6 @@ namespace Groundwork.Simulation
             for (int i = 0; i < buildingEntities.Length; i++)
                 buildingPositions.Add(buildingEntities[i], positions[i].TileCoordinate);
 
-            // Query citizens excluding children (can't work)
             var citizenQuery = state.GetEntityQuery(
                 typeof(Citizen),
                 ComponentType.Exclude<Child>());

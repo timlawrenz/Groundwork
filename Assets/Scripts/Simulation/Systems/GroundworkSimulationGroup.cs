@@ -27,6 +27,10 @@ namespace Groundwork.Simulation
 
     [UpdateInGroup(typeof(GroundworkSimulationGroup))]
     [UpdateAfter(typeof(CalendarSystem))]
+    public partial struct BirthSystem { }
+
+    [UpdateInGroup(typeof(GroundworkSimulationGroup))]
+    [UpdateAfter(typeof(BirthSystem))]
     public partial struct CitizenAgeSystem { }
 
     [UpdateInGroup(typeof(GroundworkSimulationGroup))]
