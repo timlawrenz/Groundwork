@@ -15,44 +15,39 @@ namespace Groundwork.Simulation
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            var config = SystemAPI.GetSingleton<SimulationConfig>();
-
-            foreach (var (building, inventory, productionQueue) in
-                     SystemAPI.Query<RefRO<Building>, DynamicBuffer<InventorySlot>, DynamicBuffer<ProductionOrder>>()
-                         .WithNone<UnderConstruction>())
+            foreach (var (building, entity) in
+                     SystemAPI.Query<RefRO<Building>>()
+                         .WithNone<UnderConstruction>()
+                         .WithAll<InventorySlot>()
+                         .WithAll<ProductionOrder>()
+                         .WithEntityAccess())
             {
                 if (!building.ValueRO.IsOperational)
                     continue;
+
+                var inventory = SystemAPI.GetBuffer<InventorySlot>(entity);
+                var productionQueue = SystemAPI.GetBuffer<ProductionOrder>(entity);
 
                 for (int i = 0; i < productionQueue.Length; i++)
                 {
                     var order = productionQueue[i];
                     if (order.Progress >= 1f)
-                        continue; // already complete, waiting to be collected
-
-                    // MVP recipes are simple:
-                    // "gather_food" — no inputs, produces "food"
-                    // "chop_firewood" — consumes "logs", produces "firewood"
+                        continue;
 
                     if (order.RecipeId == "gather_food")
                     {
-                        order.Progress += 0.1f; // 10 ticks to complete
+                        order.Progress += 0.1f;
                         if (order.Progress >= 1f)
-                        {
                             AddToInventory(inventory, "food", 1);
-                        }
                     }
                     else if (order.RecipeId == "chop_firewood")
                     {
                         if (TryRemoveFromInventory(inventory, "logs", 1))
                         {
-                            order.Progress += 0.1f; // 10 ticks to complete
+                            order.Progress += 0.1f;
                             if (order.Progress >= 1f)
-                            {
                                 AddToInventory(inventory, "firewood", 1);
-                            }
                         }
-                        // else: no logs available, stalls
                     }
 
                     productionQueue[i] = order;

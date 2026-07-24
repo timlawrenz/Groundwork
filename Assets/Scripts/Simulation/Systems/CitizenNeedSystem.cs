@@ -1,6 +1,7 @@
 using Unity.Entities;
 using Unity.Burst;
 using Unity.Collections;
+using Unity.Mathematics;
 
 namespace Groundwork.Simulation
 {
@@ -26,18 +27,16 @@ namespace Groundwork.Simulation
                          .WithNone<Dead>()
                          .WithEntityAccess())
             {
-                // === Generate / escalate needs ===
-
                 // Food need — always present, grows daily
                 UpsertNeed(needsBuffer, "food", 0.15f);
 
-                // Warmth need — only in autumn/winter, or always at low level
-                if (calendar.Season >= 2) // autumn or winter
+                // Warmth need
+                if (calendar.Season >= 2)
                     UpsertNeed(needsBuffer, "warmth", 0.2f);
                 else
                     UpsertNeed(needsBuffer, "warmth", 0.02f);
 
-                // Shelter need — homeless citizens get this
+                // Shelter need — homeless citizens
                 if (citizen.ValueRO.HomeBuilding == Entity.Null)
                     UpsertNeed(needsBuffer, "shelter", 0.25f);
 
@@ -45,26 +44,23 @@ namespace Groundwork.Simulation
                 if (citizen.ValueRO.Health < 50f)
                     UpsertNeed(needsBuffer, "health", 0.1f);
 
-                // Social need — slow growth, satisfied by free time
+                // Social need
                 UpsertNeed(needsBuffer, "social", 0.05f);
 
-                // === Apply critical needs → health decay ===
+                // Apply critical needs → health decay
                 for (int i = 0; i < needsBuffer.Length; i++)
                 {
                     var need = needsBuffer[i];
                     if (need.Urgency > 0.8f)
                     {
-                        // Critical unmet need — health decays
-                        float decay = (need.Urgency - 0.8f) * 2f; // 0 to 0.4 per day
+                        float decay = (need.Urgency - 0.8f) * 2f;
                         citizen.ValueRW.Health -= decay;
-
-                        // Clamp health
                         if (citizen.ValueRW.Health < 0f)
                             citizen.ValueRW.Health = 0f;
                     }
                 }
 
-                // === Death by health ===
+                // Death by health
                 if (citizen.ValueRO.Health <= 0f && !SystemAPI.HasComponent<Dead>(entity))
                     ecb.AddComponent<Dead>(entity);
             }
@@ -73,9 +69,6 @@ namespace Groundwork.Simulation
             ecb.Dispose();
         }
 
-        /// <summary>
-        /// Find a need in the buffer by type and increase its urgency, or add a new one.
-        /// </summary>
         private static void UpsertNeed(DynamicBuffer<CitizenNeed> needs, FixedString32Bytes needType, float urgencyIncrease)
         {
             for (int i = 0; i < needs.Length; i++)
@@ -88,7 +81,6 @@ namespace Groundwork.Simulation
                     return;
                 }
             }
-            // Not found — add new need
             needs.Add(new CitizenNeed { NeedType = needType, Urgency = urgencyIncrease });
         }
     }

@@ -1,7 +1,6 @@
 using Unity.Entities;
 using Unity.Collections;
 using Unity.Mathematics;
-using System;
 
 namespace Groundwork.Simulation
 {
@@ -23,14 +22,11 @@ namespace Groundwork.Simulation
 
             var ecb = new EntityCommandBuffer(Allocator.Temp);
 
-            // === Map Grid (blob asset) ===
             CreateMapGrid(ref state, ecb);
 
-            // === Simulation Config singleton ===
             var configEntity = ecb.CreateEntity();
             ecb.AddComponent(configEntity, SimulationConfig.Default);
 
-            // === Calendar singleton ===
             var calendarEntity = ecb.CreateEntity();
             ecb.AddComponent(calendarEntity, new CalendarSingleton
             {
@@ -43,7 +39,6 @@ namespace Groundwork.Simulation
                 GrowingMultiplier = 0.5f,
             });
 
-            // === Buildings ===
             for (int i = 0; i < 10; i++)
                 CreateBuilding(ecb, "house", new int2(10 + i, 15));
             CreateBuilding(ecb, "woodcutter", new int2(20, 10));
@@ -54,7 +49,6 @@ namespace Groundwork.Simulation
             ecb.Playback(state.EntityManager);
             ecb.Dispose();
 
-            // Second pass: add initial resources, create citizens, assign paths
             AddInitialResources(ref state);
             CreateCitizens(ref state);
             AssignInitialPaths(ref state);
@@ -75,7 +69,7 @@ namespace Groundwork.Simulation
 
             var walkable = builder.Allocate(ref root.Walkable, root.Width * root.Height);
             for (int i = 0; i < walkable.Length; i++)
-                walkable[i] = 1; // all tiles walkable in MVP
+                walkable[i] = 1;
 
             _mapGridBlob = builder.CreateBlobAssetReference<MapGridBlob>(Allocator.Persistent);
             builder.Dispose();
@@ -99,45 +93,61 @@ namespace Groundwork.Simulation
             ecb.AddBuffer<ProductionOrder>(entity);
         }
 
-        private static void AddInitialResources(ref SystemState state)
+        private void AddInitialResources(ref SystemState state)
         {
-            var ecb = new EntityCommandBuffer(Allocator.Temp);
+            var query = state.GetEntityQuery(
+                typeof(Building),
+                typeof(InventorySlot),
+                typeof(ProductionOrder));
 
-            foreach (var (building, inventory, productionQueue) in
-                     SystemAPI.Query<RefRO<Building>, DynamicBuffer<InventorySlot>, DynamicBuffer<ProductionOrder>>())
+            var buildings = query.ToComponentDataArray<Building>(Allocator.Temp);
+            var entities = query.ToEntityArray(Allocator.Temp);
+
+            for (int i = 0; i < entities.Length; i++)
             {
-                if (building.ValueRO.BuildingType == "woodcutter")
+                var inventory = state.EntityManager.GetBuffer<InventorySlot>(entities[i]);
+                var productionQueue = state.EntityManager.GetBuffer<ProductionOrder>(entities[i]);
+
+                if (buildings[i].BuildingType == "woodcutter")
                 {
                     inventory.Add(new InventorySlot { ItemId = "logs", Quantity = 50 });
                     productionQueue.Add(new ProductionOrder { RecipeId = "chop_firewood", Progress = 0f });
                 }
-                else if (building.ValueRO.BuildingType == "gatherer_hut")
+                else if (buildings[i].BuildingType == "gatherer_hut")
                 {
                     inventory.Add(new InventorySlot { ItemId = "food", Quantity = 100 });
                     productionQueue.Add(new ProductionOrder { RecipeId = "gather_food", Progress = 0f });
                 }
             }
 
-            ecb.Playback(state.EntityManager);
-            ecb.Dispose();
+            buildings.Dispose();
+            entities.Dispose();
         }
 
-        private static void CreateCitizens(ref SystemState state)
+        private void CreateCitizens(ref SystemState state)
         {
             var ecb = new EntityCommandBuffer(Allocator.Temp);
 
+            // Collect building entities by type
             var houses = new NativeList<Entity>(Allocator.Temp);
             var woodcutters = new NativeList<Entity>(Allocator.Temp);
             var gathererHuts = new NativeList<Entity>(Allocator.Temp);
 
-            foreach (var (building, entity) in SystemAPI.Query<RefRO<Building>>().WithEntityAccess())
+            var buildingQuery = state.GetEntityQuery(typeof(Building));
+            var buildingEntities = buildingQuery.ToEntityArray(Allocator.Temp);
+            var buildingData = buildingQuery.ToComponentDataArray<Building>(Allocator.Temp);
+
+            for (int i = 0; i < buildingEntities.Length; i++)
             {
-                if (building.ValueRO.BuildingType == "house") houses.Add(entity);
-                else if (building.ValueRO.BuildingType == "woodcutter") woodcutters.Add(entity);
-                else if (building.ValueRO.BuildingType == "gatherer_hut") gathererHuts.Add(entity);
+                if (buildingData[i].BuildingType == "house")
+                    houses.Add(buildingEntities[i]);
+                else if (buildingData[i].BuildingType == "woodcutter")
+                    woodcutters.Add(buildingEntities[i]);
+                else if (buildingData[i].BuildingType == "gatherer_hut")
+                    gathererHuts.Add(buildingEntities[i]);
             }
 
-            var random = new Random(42);
+            var random = new Unity.Mathematics.Random(42);
 
             for (int i = 0; i < 50; i++)
             {
@@ -168,7 +178,6 @@ namespace Groundwork.Simulation
                 });
 
                 ecb.AddComponent(entity, new MapPosition { TileCoordinate = homePos });
-
                 ecb.AddComponent(entity, new CitizenTask
                 {
                     TaskType = "idle",
@@ -191,40 +200,49 @@ namespace Groundwork.Simulation
             houses.Dispose();
             woodcutters.Dispose();
             gathererHuts.Dispose();
+            buildingEntities.Dispose();
+            buildingData.Dispose();
 
             ecb.Playback(state.EntityManager);
             ecb.Dispose();
         }
 
-        /// <summary>
-        /// Give each employed citizen a PathRequest to their workplace.
-        /// PathfindingSystem picks these up on the next tick.
-        /// </summary>
-        private static void AssignInitialPaths(ref SystemState state)
+        private void AssignInitialPaths(ref SystemState state)
         {
             var ecb = new EntityCommandBuffer(Allocator.Temp);
 
-            // Build a lookup: building entity → MapPosition
             var buildingPositions = new NativeHashMap<Entity, int2>(20, Allocator.Temp);
-            foreach (var (pos, entity) in SystemAPI.Query<RefRO<MapPosition>>()
-                         .WithAll<Building>()
-                         .WithEntityAccess())
-            {
-                buildingPositions.Add(entity, pos.ValueRO.TileCoordinate);
-            }
 
-            foreach (var (citizen, entity) in SystemAPI.Query<RefRO<Citizen>>()
-                         .WithNone<Child>()
-                         .WithEntityAccess())
+            var buildingPosQuery = state.GetEntityQuery(typeof(Building), typeof(MapPosition));
+            var buildingEntities = buildingPosQuery.ToEntityArray(Allocator.Temp);
+            var positions = buildingPosQuery.ToComponentDataArray<MapPosition>(Allocator.Temp);
+
+            for (int i = 0; i < buildingEntities.Length; i++)
+                buildingPositions.Add(buildingEntities[i], positions[i].TileCoordinate);
+
+            // Query citizens excluding children (can't work)
+            var citizenQuery = state.GetEntityQuery(
+                typeof(Citizen),
+                ComponentType.Exclude<Child>());
+            var citizenEntities = citizenQuery.ToEntityArray(Allocator.Temp);
+            var citizens = citizenQuery.ToComponentDataArray<Citizen>(Allocator.Temp);
+
+            for (int i = 0; i < citizenEntities.Length; i++)
             {
-                if (citizen.ValueRO.WorkplaceBuilding != Entity.Null
-                    && buildingPositions.TryGetValue(citizen.ValueRO.WorkplaceBuilding, out var wpPos))
+                if (citizens[i].WorkplaceBuilding != Entity.Null
+                    && buildingPositions.TryGetValue(citizens[i].WorkplaceBuilding, out var wpPos))
                 {
-                    ecb.AddComponent<PathRequest>(entity, new PathRequest { Destination = wpPos });
+                    ecb.AddComponent<PathRequest>(citizenEntities[i],
+                        new PathRequest { Destination = wpPos });
                 }
             }
 
             buildingPositions.Dispose();
+            buildingEntities.Dispose();
+            positions.Dispose();
+            citizenEntities.Dispose();
+            citizens.Dispose();
+
             ecb.Playback(state.EntityManager);
             ecb.Dispose();
         }
