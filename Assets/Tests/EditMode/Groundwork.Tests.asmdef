@@ -1,0 +1,21 @@
+{
+    "name": "Groundwork.Tests",
+    "rootNamespace": "Groundwork.Tests",
+    "references": [
+        "Groundwork.Simulation",
+        "Groundwork.TestHelpers",
+        "Unity.Entities",
+        "Unity.Collections"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ]
+}

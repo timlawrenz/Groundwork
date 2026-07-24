@@ -12,6 +12,20 @@ Instructions for AI agents (Hermes, Claude, Codex, etc.) working on this project
 
 4. **Check [`docs/unity-features.md`](docs/unity-features.md)** — before building any system, verify Unity doesn't already ship it. The catalog tags every feature as USE, EXTEND, or BUILD.
 
+## TDD Mandate (mandatory)
+
+**All simulation code must be developed using Test-Driven Development.**
+
+1. Write a failing test first that defines the expected behavior
+2. Implement the system/component until the test passes
+3. Refactor with passing tests as your safety net
+
+See [`docs/decisions.md`](docs/decisions.md) for the full ADR.
+
+Tests live under `Assets/Tests/EditMode/Simulation/` — one test file per system. Use `SimulationTestWorld` from `Assets/Tests/TestHelpers/` to create isolated DOTS worlds.
+
+Run tests via Unity Test Runner → EditMode tab, or headless: `Unity -runTests -batchmode -nographics`
+
 ## Governance
 
 This project is in the **research and scaffolding** phase. Governance is lightweight:

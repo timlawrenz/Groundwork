@@ -1,0 +1,17 @@
+{
+    "name": "Groundwork.TestHelpers",
+    "rootNamespace": "Groundwork.TestHelpers",
+    "references": [
+        "Groundwork.Simulation",
+        "Unity.Entities",
+        "Unity.Collections"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "autoReferenced": true,
+    "defineConstraints": []
+}

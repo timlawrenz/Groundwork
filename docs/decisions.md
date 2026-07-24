@@ -188,3 +188,45 @@
 **Consequences:**
 - Easier: all 3 targets from one C# codebase, DOTS fits the architecture, Genshin validates the approach
 - Harder: Unity licensing uncertainty (mitigated by open-source nature and <$200K revenue threshold), larger WebGL builds than Godot, Unity dependency lock-in
+
+---
+
+### 2026-07-23 — Test-Driven Development (TDD) Mandate
+
+**Status:** accepted
+
+**Context:** Simulation engine is headless by design — testable without Unity's renderer. Unity Test Framework (Edit Mode) supports running DOTS systems in isolated worlds. Without TDD, simulation bugs compound silently and aren't discovered until the headless harness runs (potentially thousands of ticks later).
+
+**Decision:** **All simulation code must be developed using TDD.** Write failing test first, make it pass, then refactor. No simulation logic is committed without passing tests.
+
+**Rationale:**
+- Headless sim is the ideal TDD target — pure data in, pure data out, no rendering, no input
+- Unity Edit Mode tests run in milliseconds, not seconds — fast feedback loop
+- Isolated DOTS worlds mean each test controls its own state — no shared state leakage
+- Simulation bugs (citizens not aging, needs not escalating, production stalling) are subtle and compound over thousands of ticks. A 100-year simulation takes minutes to run; unit tests take milliseconds.
+- The test suite IS the specification. When a test says "citizens age each day," that's the contract.
+
+**Test structure:**
+```
+Assets/Tests/
+├── EditMode/
+│   └── Simulation/        ← one test file per system
+└── TestHelpers/
+    └── SimulationTestWorld.cs  ← creates isolated worlds with singletons
+```
+
+**Test conventions:**
+- Every ISystem gets a corresponding `*Tests.cs` file
+- Tests use `SimulationTestWorld` to create isolated worlds with required singletons
+- Tests assert on component data after running the system under test
+- Integration tests verify the bootstrap creates the correct world state
+- Run with Unity Test Runner → EditMode, or headless via command line
+
+**RED-GREEN-REFACTOR enforcement:**
+- New feature starts with a failing test that defines the expected behavior
+- Implementation is complete when the test passes
+- Refactoring happens only with passing tests
+
+**Consequences:**
+- Easier: confident refactoring, bisectable bugs, self-documenting system behavior
+- Harder: more upfront code (tests), must design for testability, boilerplate for world setup

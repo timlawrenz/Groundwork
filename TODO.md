@@ -23,6 +23,7 @@
 - [x] Implement first production chain: logs → firewood (2026-07-23)
 - [x] Implement citizen needs system (2026-07-23)
 - [x] Implement pathfinding (A* on grid) + citizen movement (2026-07-23)
+- [x] Test infrastructure + TDD ADR + tests for all 7 existing systems (2026-07-23)
 - [ ] Headless test harness: tick 100 years, verify population stability (30-50 citizens)
 - [ ] Success criterion met: stable population for 100 game-years
 
