@@ -12,6 +12,12 @@ Instructions for AI agents (Hermes, Claude, Codex, etc.) working on this project
 
 4. **Check [`docs/unity-features.md`](docs/unity-features.md)** — before building any system, verify Unity doesn't already ship it. The catalog tags every feature as USE, EXTEND, or BUILD.
 
+5. **Load Hermes skills** — three skills encode Groundwork's patterns and workflows:
+   - `groundwork-ecs-patterns` — DOTS component/system design, anti-patterns, Jobs/Burst, ECB, memory management
+   - `groundwork-testing` — TDD workflow, SimulationTestWorld API, test conventions, headless test execution
+   - `groundwork-architecture` — project structure, system pipeline ordering, namespace conventions, ADR workflow
+   Load the relevant skill(s) for your task. At minimum, `groundwork-ecs-patterns` when writing any ISystem.
+
 ## TDD Mandate (mandatory)
 
 **All simulation code must be developed using Test-Driven Development.**

@@ -18,7 +18,7 @@ namespace Groundwork.Simulation
             var ecb = new EntityCommandBuffer(Allocator.Temp);
 
             // Destroy dead citizens
-            foreach (var (entity) in SystemAPI.Query<RefRO<Dead>>()
+            foreach (var (_, entity) in SystemAPI.Query<RefRO<Dead>>()
                          .WithAll<Citizen>()
                          .WithEntityAccess())
             {
