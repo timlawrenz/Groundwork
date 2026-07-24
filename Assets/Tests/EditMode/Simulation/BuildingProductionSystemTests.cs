@@ -63,7 +63,7 @@ namespace Groundwork.Tests.Simulation
         }
 
         [Test]
-        public void ProductionStops_WhenAlreadyComplete()
+        public void CompletedOrder_ResetsProgress_ForNextCycle()
         {
             using var world = new SimulationTestWorld();
             var hut = world.CreateBuilding("gatherer_hut", new(10, 10));
@@ -72,9 +72,31 @@ namespace Groundwork.Tests.Simulation
 
             world.UpdateSystem<BuildingProductionSystem>();
 
-            // Progress should still be 1.0 (complete orders are skipped)
+            // Progress resets to 0 after completion so the recipe can cycle again
             var updated = world.EntityManager.GetBuffer<ProductionOrder>(hut);
-            Assert.That(updated[0].Progress, Is.GreaterThanOrEqualTo(1f));
+            Assert.That(updated[0].Progress, Is.EqualTo(0f));
+        }
+
+        // ─── Regression: continuous production ───
+
+        [Test]
+        public void ChopFirewood_ProducesMultipleCycles_WhenEnoughLogs()
+        {
+            using var world = new SimulationTestWorld();
+            var woodcutter = world.CreateBuilding("woodcutter", new(10, 10));
+            world.AddToInventory(woodcutter, "logs", 20);  // enough for 2 cycles
+            world.AddProductionOrder(woodcutter, "chop_firewood");
+
+            // Run 20 ticks (2 complete cycles: 10 ticks each)
+            for (int i = 0; i < 20; i++)
+                world.UpdateSystem<BuildingProductionSystem>();
+
+            var inventory = world.EntityManager.GetBuffer<InventorySlot>(woodcutter);
+            int logsLeft = GetItemCount(inventory, "logs");
+            int firewood = GetItemCount(inventory, "firewood");
+
+            Assert.That(logsLeft, Is.EqualTo(0), "Should consume all 20 logs");
+            Assert.That(firewood, Is.EqualTo(2), "Should produce 2 firewood over 2 cycles");
         }
 
         [Test]

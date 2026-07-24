@@ -1,5 +1,4 @@
 using Unity.Entities;
-using Unity.Burst;
 using Unity.Collections;
 using Unity.Mathematics;
 
@@ -7,13 +6,11 @@ namespace Groundwork.Simulation
 {
     /// <summary>
     /// Updates citizen needs each game-day. Decays health when critical needs go unmet.
-    /// Needs are satisfied by production systems (e.g., eating food removes "food" need).
+    /// Needs are satisfied by consuming resources from inventory (e.g. eating food).
     /// Runs after CalendarSystem, before DeathSystem.
     /// </summary>
-    [BurstCompile]
     public partial struct CitizenNeedSystem : ISystem
     {
-        [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
             var config = SystemAPI.GetSingleton<SimulationConfig>();
@@ -23,34 +20,66 @@ namespace Groundwork.Simulation
             var calendar = SystemAPI.GetSingleton<CalendarSingleton>();
             var ecb = new EntityCommandBuffer(Allocator.Temp);
 
-            foreach (var (citizen, needsBuffer, entity) in SystemAPI.Query<RefRW<Citizen>, DynamicBuffer<CitizenNeed>>()
+            foreach (var (citizen, entity) in
+                     SystemAPI.Query<RefRW<Citizen>>()
                          .WithNone<Dead>()
                          .WithEntityAccess())
             {
+                var needs = state.EntityManager.GetBuffer<CitizenNeed>(entity);
+                var inventory = state.EntityManager.GetBuffer<InventorySlot>(entity);
+
+                // ─── Consume food from inventory to reduce food need ───
+                for (int i = 0; i < needs.Length; i++)
+                {
+                    if (needs[i].NeedType != "food")
+                        continue;
+                    if (needs[i].Urgency < 0.3f)
+                        break; // not hungry enough to eat
+
+                    // Find food in inventory
+                    for (int j = 0; j < inventory.Length; j++)
+                    {
+                        if (inventory[j].ItemId != "food" || inventory[j].Quantity <= 0)
+                            continue;
+
+                        var slot = inventory[j];
+                        slot.Quantity -= 1;
+                        inventory[j] = slot;
+
+                        var need = needs[i];
+                        need.Urgency = math.max(0f, need.Urgency - 0.5f);
+                        needs[i] = need;
+                        break;
+                    }
+                    break; // only process food need once per citizen per day
+                }
+
+                // ─── Need growth ───
+
                 // Food need — always present, grows daily
-                UpsertNeed(needsBuffer, "food", 0.15f);
+                UpsertNeed(needs, "food", 0.15f);
 
                 // Warmth need
                 if (calendar.Season >= 2)
-                    UpsertNeed(needsBuffer, "warmth", 0.2f);
+                    UpsertNeed(needs, "warmth", 0.2f);
                 else
-                    UpsertNeed(needsBuffer, "warmth", 0.02f);
+                    UpsertNeed(needs, "warmth", 0.02f);
 
                 // Shelter need — homeless citizens
                 if (citizen.ValueRO.HomeBuilding == Entity.Null)
-                    UpsertNeed(needsBuffer, "shelter", 0.25f);
+                    UpsertNeed(needs, "shelter", 0.25f);
 
                 // Health need — escalates when health is low
                 if (citizen.ValueRO.Health < 50f)
-                    UpsertNeed(needsBuffer, "health", 0.1f);
+                    UpsertNeed(needs, "health", 0.1f);
 
                 // Social need
-                UpsertNeed(needsBuffer, "social", 0.05f);
+                UpsertNeed(needs, "social", 0.05f);
 
                 // Apply critical needs → health decay
-                for (int i = 0; i < needsBuffer.Length; i++)
+                for (int i = 0; i < needs.Length; i++)
                 {
-                    var need = needsBuffer[i];
+                    var need = needs[i];
                     if (need.Urgency > 0.8f)
                     {
                         float decay = (need.Urgency - 0.8f) * 2f;

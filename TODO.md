@@ -27,7 +27,9 @@
 - [x] Implement citizen aging & death (2026-07-24)
 - [x] Test infrastructure + TDD ADR + 46 tests for all 10 systems (2026-07-24)
 - [x] Simulation stats system — population, resources, seasonal logging (2026-07-24)
-- [x] 52 tests all green (2026-07-24)
+- [x] Fix: production orders now cycle continuously (reset on completion) (2026-07-24)
+- [x] Fix: citizens consume food from inventory to reduce food need (2026-07-24)
+- [x] 56 tests all green (2026-07-24)
 - [ ] Headless test harness: tick 100 years, verify population stability (30-50 citizens)
 - [ ] Success criterion met: stable population for 100 game-years
 

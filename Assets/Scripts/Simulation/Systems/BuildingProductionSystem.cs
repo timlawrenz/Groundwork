@@ -37,14 +37,15 @@ namespace Groundwork.Simulation
                 for (int j = 0; j < productionQueue.Length; j++)
                 {
                     var order = productionQueue[j];
-                    if (order.Progress >= 1f)
-                        continue;
 
                     if (order.RecipeId == "gather_food")
                     {
                         order.Progress += 0.1f;
                         if (order.Progress >= 1f)
+                        {
                             AddToInventory(inventory, "food", 1);
+                            order.Progress = 0f;  // reset for next cycle
+                        }
                     }
                     else if (order.RecipeId == "chop_firewood")
                     {
@@ -64,7 +65,10 @@ namespace Groundwork.Simulation
                         {
                             order.Progress += 0.1f;
                             if (order.Progress >= 1f)
+                            {
                                 AddToInventory(inventory, "firewood", 1);
+                                order.Progress = 0f;  // reset for next cycle
+                            }
                         }
                     }
 
