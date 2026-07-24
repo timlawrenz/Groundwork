@@ -137,6 +137,13 @@ namespace Groundwork.TestHelpers
             });
         }
 
+        /// <summary>Read the SimulationStats singleton. Must exist in the world.</summary>
+        public SimulationStats GetStats()
+        {
+            var query = EntityManager.CreateEntityQuery(typeof(SimulationStats));
+            return query.GetSingleton<SimulationStats>();
+        }
+
         // ─── System execution ───
 
         public void AdvanceTicks(int count)
@@ -168,6 +175,7 @@ namespace Groundwork.TestHelpers
             UpdateSystem<CitizenMovementSystem>();
             UpdateSystem<BuildingProductionSystem>();
             UpdateSystem<DeathSystem>();
+            UpdateSystem<SimulationStatsSystem>();
         }
 
         /// <summary>Run the bootstrap system to create a full MVP world.</summary>
@@ -188,10 +196,13 @@ namespace Groundwork.TestHelpers
             var configQuery = EntityManager.CreateEntityQuery(typeof(SimulationConfig));
             var calQuery = EntityManager.CreateEntityQuery(typeof(CalendarSingleton));
             var mapQuery = EntityManager.CreateEntityQuery(typeof(MapGridData));
+            var statsQuery = EntityManager.CreateEntityQuery(typeof(SimulationStats));
 
             EntityManager.DestroyEntity(configQuery);
             EntityManager.DestroyEntity(calQuery);
             EntityManager.DestroyEntity(mapQuery);
+            if (!statsQuery.IsEmpty)
+                EntityManager.DestroyEntity(statsQuery);
 
             if (_mapGridBlob.IsCreated)
             {

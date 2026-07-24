@@ -48,4 +48,8 @@ namespace Groundwork.Simulation
     [UpdateInGroup(typeof(GroundworkSimulationGroup))]
     [UpdateAfter(typeof(BuildingProductionSystem))]
     public partial struct DeathSystem { }
+
+    [UpdateInGroup(typeof(GroundworkSimulationGroup))]
+    [UpdateAfter(typeof(DeathSystem))]
+    public partial struct SimulationStatsSystem { }
 }
