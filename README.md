@@ -38,6 +38,7 @@ See [`TODO.md`](TODO.md) for the task board.
 - [`docs/design.md`](docs/design.md) — Game design: entities, simulation loop, MVP scope
 - [`docs/architecture.md`](docs/architecture.md) — System boundaries, ECS design, command bus
 - [`docs/decisions.md`](docs/decisions.md) — Architecture Decision Records
+- [`docs/unity-features.md`](docs/unity-features.md) — Unity built-in feature catalog: what to USE vs EXTEND vs BUILD
 
 ## License
 

@@ -142,3 +142,49 @@
 **Consequences:**
 - Easier: debugging, testing, save/load, bisecting
 - Harder: single-core performance ceiling, may need multi-threading for 10k+ citizens
+
+---
+
+### 2026-07-23 — Engine Selection Under Revised Constraints
+
+**Status:** proposed
+
+**Context:** Original ADR assumed 4 targets including native Android. User clarified that tablet play via browser (WebGL) is acceptable, removing native Android as a requirement. Targets are now: Windows, Linux, WebGL. Question: does Unity still win, or do alternatives become viable?
+
+**Constraint check:**
+- Cross-platform: desktop (Windows, Linux) + WebGL — **must ship to all 3 from one codebase**
+- ECS architecture: data-oriented, thousands of entities, deterministic tick loop
+- Modding: embeddable Lua runtime
+- Touch-first UI: input abstraction layer
+- Language: simulation logic in a systems language (C#, Rust, C++ — not GDScript/JS)
+- License: open-source project, no per-install royalty risk
+
+**Options:**
+
+| Criterion | Unity | Godot 4 | Bevy (Rust) | Custom C++ |
+|---|---|---|---|---|
+| WebGL export | ✅ | ✅ (smaller builds) | ⚠️ immature | ✅ (Emscripten) |
+| C# on WebGL | ✅ | ❌ (GDScript only) | N/A | N/A |
+| First-class ECS | ✅ (DOTS) | ❌ (node/scene) | ✅ (best-in-class) | ✅ (EnTT) |
+| Lua embedding | ✅ (MoonSharp) | ✅ (GDExtension) | ✅ (mlua) | ✅ |
+| Touch input | ✅ (Input System) | ✅ | ⚠️ manual | ⚠️ manual |
+| Build simplicity | Medium | Low | Low | High pain |
+| Licensing risk | ⚠️ Unity runtime fee history | ✅ MIT, zero risk | ✅ MIT/Apache | ✅ |
+| Ecosystem | Huge asset store | Growing fast (2,864 Steam releases 2025-26) | Small | None |
+| AAA precedent | Genshin Impact, Hearthstone | Cassette Beasts, Dome Keeper | Tiny Glade (rendering only) | Factorio |
+
+**Critical finding — Godot WebGL C# gap:** Godot 4.x does not support C# on WebGL exports. This is a fundamental mismatch: we'd need to write the simulation in C# for desktop but GDScript for web, or write the entire sim in GDScript. Neither is acceptable — GDScript is too slow for thousands of entities, and maintaining two codebases defeats the point.
+
+**Critical finding — Godot no first-class ECS:** Godot's architecture is node/scene-based, not data-oriented. You can build ECS on top of it (add-ons exist), but it fights the engine's design. Unity DOTS is purpose-built for this pattern.
+
+**Analysis:**
+- **Unity** is the only engine that hits all constraints: C# on WebGL, first-class ECS, touch input, Lua embedding. The runtime fee controversy is a real risk but Unity backtracked under community pressure and the Personal tier remains free under $200K. Genshin Impact proves the model works at AAA scale.
+- **Godot** wins on licensing (MIT, zero risk, forever) and WebGL build size (smaller), but loses on the two most important technical constraints (C# on web, ECS). It's the right answer for a different project.
+- **Bevy** has the best ECS architecture of any engine and would be the first choice for a pure-desktop project, but WebGL support is immature and there's no editor. Too early for a cross-platform game targeting tablet browsers.
+- **Custom C++** gives maximum control and Factorio proves it works, but the build system burden is enormous and eats time that should go into the simulation. Premature optimization.
+
+**Decision:** **Stay with Unity ECS (DOTS).** The revised constraints actually strengthen the case — removing native Android doesn't open up alternatives because WebGL + C# + ECS narrows the field to Unity.
+
+**Consequences:**
+- Easier: all 3 targets from one C# codebase, DOTS fits the architecture, Genshin validates the approach
+- Harder: Unity licensing uncertainty (mitigated by open-source nature and <$200K revenue threshold), larger WebGL builds than Godot, Unity dependency lock-in

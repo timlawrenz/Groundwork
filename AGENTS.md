@@ -10,6 +10,8 @@ Instructions for AI agents (Hermes, Claude, Codex, etc.) working on this project
 
 3. **Check [`docs/decisions.md`](docs/decisions.md)** — before proposing a technology or architecture change, see if it's already been decided. Re-litigating settled decisions wastes time.
 
+4. **Check [`docs/unity-features.md`](docs/unity-features.md)** — before building any system, verify Unity doesn't already ship it. The catalog tags every feature as USE, EXTEND, or BUILD.
+
 ## Governance
 
 This project is in the **research and scaffolding** phase. Governance is lightweight:
