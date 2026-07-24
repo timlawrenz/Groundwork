@@ -38,5 +38,8 @@ namespace Groundwork.Simulation
         // Cumulative (life-of-sim)
         public int CumulativeBirths;
         public int CumulativeDeaths;
+
+        // Internal tracking (not meaningful to external readers)
+        internal int _lastLoggedSeason;
     }
 }

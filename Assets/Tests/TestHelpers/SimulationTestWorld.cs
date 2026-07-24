@@ -144,6 +144,13 @@ namespace Groundwork.TestHelpers
             return query.GetSingleton<SimulationStats>();
         }
 
+        /// <summary>Read the CalendarSingleton. Must exist in the world.</summary>
+        public CalendarSingleton GetCalendar()
+        {
+            var query = EntityManager.CreateEntityQuery(typeof(CalendarSingleton));
+            return query.GetSingleton<CalendarSingleton>();
+        }
+
         // ─── System execution ───
 
         public void AdvanceTicks(int count)
@@ -176,6 +183,40 @@ namespace Groundwork.TestHelpers
             UpdateSystem<BuildingProductionSystem>();
             UpdateSystem<DeathSystem>();
             UpdateSystem<SimulationStatsSystem>();
+        }
+
+        /// <summary>
+        /// Run the full simulation pipeline for many ticks efficiently.
+        /// Systems are added to the update list once, then the group updates
+        /// N times (running all systems each time). Avoids the state-slot
+        /// exhaustion caused by add/remove per tick in RunFullTick().
+        /// </summary>
+        public void RunFullTicks(int count)
+        {
+            // Add all systems to the group once
+            var systems = new SystemHandle[]
+            {
+                World.CreateSystem<TickDispatchSystem>(),
+                World.CreateSystem<CalendarSystem>(),
+                World.CreateSystem<CitizenAgeSystem>(),
+                World.CreateSystem<CitizenNeedSystem>(),
+                World.CreateSystem<PathfindingSystem>(),
+                World.CreateSystem<CitizenMovementSystem>(),
+                World.CreateSystem<BuildingProductionSystem>(),
+                World.CreateSystem<DeathSystem>(),
+                World.CreateSystem<SimulationStatsSystem>(),
+            };
+
+            foreach (var handle in systems)
+                _testGroup.AddSystemToUpdateList(handle);
+
+            // Update N times — the group runs all systems in order each time
+            for (int i = 0; i < count; i++)
+                _testGroup.Update();
+
+            // Clean up
+            foreach (var handle in systems)
+                _testGroup.RemoveSystemFromUpdateList(handle);
         }
 
         /// <summary>Run the bootstrap system to create a full MVP world.</summary>

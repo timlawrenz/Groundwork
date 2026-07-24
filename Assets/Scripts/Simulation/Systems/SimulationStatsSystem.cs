@@ -111,9 +111,11 @@ namespace Groundwork.Simulation
             //  but actually DeathSystem already destroyed them. Let's track deaths differently.)
             // We'll track cumulative deaths by comparing population changes.
 
-            // Log at season boundaries (DayOfSeason == 0)
-            if (calendar.DayOfSeason == 0)
+            // Log at season boundaries — only once per season change
+            int seasonId = calendar.Year * 4 + calendar.Season;
+            if (seasonId != stats._lastLoggedSeason)
             {
+                stats._lastLoggedSeason = seasonId;
                 var seasonNames = new FixedString32Bytes[] { "Spring", "Summer", "Autumn", "Winter" };
                 var seasonName = seasonNames[calendar.Season];
                 UnityEngine.Debug.Log(
