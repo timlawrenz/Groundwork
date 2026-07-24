@@ -76,6 +76,7 @@
     <Analyzer Include="/home/tim/source/activity/Groundwork/Library/PackageCache/com.unity.entities@70f9a4aadeb2/Unity.Entities/SourceGenerators/Unity.Entities.Analyzer.CodeFixes.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets/Tests/EditMode/Simulation/InventoryDiagnosticTests.cs" />
     <Compile Include="Assets/Tests/EditMode/Simulation/TickDispatchSystemTests.cs" />
     <Compile Include="Assets/Tests/EditMode/Simulation/CitizenNeedSystemTests.cs" />
     <Compile Include="Assets/Tests/EditMode/Simulation/CitizenAgeSystemTests.cs" />

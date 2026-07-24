@@ -43,7 +43,20 @@ namespace Groundwork.Simulation
                     }
                     else if (order.RecipeId == "chop_firewood")
                     {
-                        if (TryRemoveFromInventory(inventory, "logs", 1))
+                        // Inlined consumption logic for debugging
+                        bool consumed = false;
+                        for (int j = 0; j < inventory.Length; j++)
+                        {
+                            var slot = inventory[j];
+                            if (slot.ItemId == new FixedString32Bytes("logs") && slot.Quantity >= 1)
+                            {
+                                slot.Quantity -= 1;
+                                inventory[j] = slot;
+                                consumed = true;
+                                break;
+                            }
+                        }
+                        if (consumed)
                         {
                             order.Progress += 0.1f;
                             if (order.Progress >= 1f)
