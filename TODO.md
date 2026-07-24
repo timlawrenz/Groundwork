@@ -18,10 +18,11 @@
 
 ## Phase 1 — Simulation Core (MVP)
 
-- [ ] Implement data model — Citizen, Building, Item, Map, Calendar as pure C# structs
-- [ ] Implement sim loop skeleton — tick dispatch, entity iteration
-- [ ] Implement first production chain: logs → firewood
-- [ ] Implement citizen needs + pathfinding stub
+- [x] Implement data model — Citizen, Building, Item, Map, Calendar as pure C# structs (2026-07-23)
+- [x] Implement sim loop skeleton — tick dispatch, system ordering, bootstrap (2026-07-23)
+- [x] Implement first production chain: logs → firewood (2026-07-23)
+- [x] Implement citizen needs system (2026-07-23)
+- [ ] Implement pathfinding stub (A* on grid)
 - [ ] Headless test harness: tick 100 years, verify population stability (30-50 citizens)
 - [ ] Success criterion met: stable population for 100 game-years
 
