@@ -1,5 +1,4 @@
 using Unity.Entities;
-using Unity.Burst;
 using Unity.Collections;
 
 namespace Groundwork.Simulation
@@ -11,26 +10,33 @@ namespace Groundwork.Simulation
     /// </summary>
     public partial struct BuildingProductionSystem : ISystem
     {
+        private EntityQuery _query;
+
+        public void OnCreate(ref SystemState state)
+        {
+            _query = state.GetEntityQuery(
+                ComponentType.ReadOnly<Building>(),
+                ComponentType.ReadWrite<InventorySlot>(),
+                ComponentType.ReadWrite<ProductionOrder>(),
+                ComponentType.Exclude<UnderConstruction>());
+        }
+
         public void OnUpdate(ref SystemState state)
         {
-            foreach (var (building, entity) in
-                     SystemAPI.Query<RefRO<Building>>()
-                         .WithNone<UnderConstruction>()
-                         .WithEntityAccess())
+            var buildings = _query.ToComponentDataArray<Building>(Allocator.Temp);
+            var entities = _query.ToEntityArray(Allocator.Temp);
+
+            for (int i = 0; i < entities.Length; i++)
             {
-                if (!building.ValueRO.IsOperational)
+                if (!buildings[i].IsOperational)
                     continue;
 
-                if (!SystemAPI.HasBuffer<InventorySlot>(entity) ||
-                    !SystemAPI.HasBuffer<ProductionOrder>(entity))
-                    continue;
+                var inventory = state.EntityManager.GetBuffer<InventorySlot>(entities[i]);
+                var productionQueue = state.EntityManager.GetBuffer<ProductionOrder>(entities[i]);
 
-                var inventory = state.EntityManager.GetBuffer<InventorySlot>(entity);
-                var productionQueue = state.EntityManager.GetBuffer<ProductionOrder>(entity);
-
-                for (int i = 0; i < productionQueue.Length; i++)
+                for (int j = 0; j < productionQueue.Length; j++)
                 {
-                    var order = productionQueue[i];
+                    var order = productionQueue[j];
                     if (order.Progress >= 1f)
                         continue;
 
@@ -42,15 +48,14 @@ namespace Groundwork.Simulation
                     }
                     else if (order.RecipeId == "chop_firewood")
                     {
-                        // Inlined consumption logic for debugging
                         bool consumed = false;
-                        for (int j = 0; j < inventory.Length; j++)
+                        for (int k = 0; k < inventory.Length; k++)
                         {
-                            var slot = inventory[j];
+                            var slot = inventory[k];
                             if (slot.ItemId == new FixedString32Bytes("logs") && slot.Quantity >= 1)
                             {
                                 slot.Quantity -= 1;
-                                inventory[j] = slot;
+                                inventory[k] = slot;
                                 consumed = true;
                                 break;
                             }
@@ -63,9 +68,12 @@ namespace Groundwork.Simulation
                         }
                     }
 
-                    productionQueue[i] = order;
+                    productionQueue[j] = order;
                 }
             }
+
+            buildings.Dispose();
+            entities.Dispose();
         }
 
         private static void AddToInventory(DynamicBuffer<InventorySlot> inventory, FixedString32Bytes itemId, int quantity)
@@ -81,21 +89,6 @@ namespace Groundwork.Simulation
                 }
             }
             inventory.Add(new InventorySlot { ItemId = itemId, Quantity = quantity });
-        }
-
-        private static bool TryRemoveFromInventory(DynamicBuffer<InventorySlot> inventory, FixedString32Bytes itemId, int quantity)
-        {
-            for (int i = 0; i < inventory.Length; i++)
-            {
-                if (inventory[i].ItemId == itemId && inventory[i].Quantity >= quantity)
-                {
-                    var slot = inventory[i];
-                    slot.Quantity -= quantity;
-                    inventory[i] = slot;
-                    return true;
-                }
-            }
-            return false;
         }
     }
 }
