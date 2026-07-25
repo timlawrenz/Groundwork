@@ -4,7 +4,7 @@ namespace Groundwork.Simulation
 {
     /// <summary>
     /// Custom system group for Groundwork simulation systems.
-    /// Execution order: ContentLoader → Bootstrap → Tick → Calendar → Births → Age → Needs → Pathfinding → Movement → Production → Death → DebugViz → Stats → EventDispatch.
+    /// Execution order: ContentLoader → Bootstrap → Tick → Calendar → Births → Age → Needs → Pathfinding → Movement → HaulCompletion → Production → Haul → Death → DebugViz → Stats → EventDispatch.
     /// </summary>
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     public partial class GroundworkSimulationGroup : ComponentSystemGroup
@@ -12,7 +12,6 @@ namespace Groundwork.Simulation
     }
 
     // === System Ordering Attributes ===
-    // These partial structs define the dependency graph.
 
     [UpdateInGroup(typeof(GroundworkSimulationGroup))]
     public partial struct ContentLoaderSystem { }
@@ -51,10 +50,18 @@ namespace Groundwork.Simulation
 
     [UpdateInGroup(typeof(GroundworkSimulationGroup))]
     [UpdateAfter(typeof(CitizenMovementSystem))]
+    public partial struct HaulCompletionSystem { }
+
+    [UpdateInGroup(typeof(GroundworkSimulationGroup))]
+    [UpdateAfter(typeof(HaulCompletionSystem))]
     public partial struct BuildingProductionSystem { }
 
     [UpdateInGroup(typeof(GroundworkSimulationGroup))]
     [UpdateAfter(typeof(BuildingProductionSystem))]
+    public partial struct CitizenHaulSystem { }
+
+    [UpdateInGroup(typeof(GroundworkSimulationGroup))]
+    [UpdateAfter(typeof(CitizenHaulSystem))]
     public partial struct DeathSystem { }
 
     [UpdateInGroup(typeof(GroundworkSimulationGroup))]

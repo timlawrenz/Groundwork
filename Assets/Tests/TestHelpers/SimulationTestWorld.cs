@@ -220,7 +220,9 @@ namespace Groundwork.TestHelpers
             UpdateSystem<CitizenNeedSystem>();
             UpdateSystem<PathfindingSystem>();
             UpdateSystem<CitizenMovementSystem>();
+            UpdateSystem<HaulCompletionSystem>();
             UpdateSystem<BuildingProductionSystem>();
+            UpdateSystem<CitizenHaulSystem>();
             UpdateSystem<DeathSystem>();
             UpdateSystem<DebugVizSystem>();
             UpdateSystem<SimulationStatsSystem>();
@@ -246,7 +248,9 @@ namespace Groundwork.TestHelpers
                 World.CreateSystem<CitizenNeedSystem>(),
                 World.CreateSystem<PathfindingSystem>(),
                 World.CreateSystem<CitizenMovementSystem>(),
+                World.CreateSystem<HaulCompletionSystem>(),
                 World.CreateSystem<BuildingProductionSystem>(),
+                World.CreateSystem<CitizenHaulSystem>(),
                 World.CreateSystem<DeathSystem>(),
                 World.CreateSystem<DebugVizSystem>(),
                 World.CreateSystem<EventDispatchSystem>(),

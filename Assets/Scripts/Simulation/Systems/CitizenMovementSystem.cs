@@ -28,12 +28,12 @@ namespace Groundwork.Simulation
             foreach (var (position, task, pathBuffer, entity) in
                      SystemAPI.Query<RefRW<MapPosition>, RefRW<CitizenTask>, DynamicBuffer<PathFollowing>>()
                          .WithAll<Citizen>()
-                         .WithNone<Dead>()
+                         .WithNone<Dead, HaulTask>()
                          .WithEntityAccess())
             {
                 if (pathBuffer.Length == 0)
                 {
-                    if (task.ValueRO.TaskType == "walking")
+                    if (task.ValueRO.TaskType == "walking" || task.ValueRO.TaskType == "hauling" || task.ValueRO.TaskType == "idle")
                     {
                         task.ValueRW.TaskType = "idle";
                         task.ValueRW.TargetEntity = Entity.Null;
