@@ -81,14 +81,12 @@
     <Compile Include="Assets/Scripts/Simulation/Buffers/BuildingRecipe.cs" />
     <Compile Include="Assets/Scripts/Simulation/Systems/BuildingProductionSystem.cs" />
     <Compile Include="Assets/Scripts/Simulation/Components/Citizen.cs" />
-    <Compile Include="Assets/Scripts/Simulation/Systems/CitizenAgeSystem.cs" />
     <Compile Include="Assets/Scripts/Simulation/Buffers/PathFollowing.cs" />
     <Compile Include="Assets/Scripts/Simulation/Systems/PathfindingSystem.cs" />
     <Compile Include="Assets/Scripts/Simulation/Components/CalendarSingleton.cs" />
     <Compile Include="Assets/Scripts/Simulation/Systems/CitizenHaulSystem.cs" />
     <Compile Include="Assets/Scripts/Simulation/Components/SimulationConfig.cs" />
     <Compile Include="Assets/Scripts/Simulation/Components/SimulationStats.cs" />
-    <Compile Include="Assets/Scripts/Simulation/Systems/CitizenNeedSystem.cs" />
     <Compile Include="Assets/Scripts/Simulation/Buffers/SimulationEvent.cs" />
     <Compile Include="Assets/Scripts/Simulation/Components/Building.cs" />
     <Compile Include="Assets/Scripts/Simulation/Components/ContentDefinitions.cs" />
@@ -116,6 +114,8 @@
     <Compile Include="Assets/Scripts/Simulation/Components/CitizenTask.cs" />
     <Compile Include="Assets/Scripts/Simulation/Buffers/CitizenNeed.cs" />
     <Compile Include="Assets/Scripts/Simulation/Systems/EventDispatchSystem.cs" />
+    <Compile Include="Assets/Scripts/Simulation/Systems/NeedSystem.cs" />
+    <Compile Include="Assets/Scripts/Simulation/Systems/AgeSystem.cs" />
     <Compile Include="Assets/Scripts/Simulation/Buffers/InventorySlot.cs" />
   </ItemGroup>
   <ItemGroup>

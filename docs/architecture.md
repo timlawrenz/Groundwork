@@ -72,8 +72,8 @@ ContentLoader and Bootstrap run once at startup, outside the tick loop.
 | `TickDispatchSystem` | `Assets/Scripts/Simulation/Systems/TickDispatchSystem.cs` | Advances CurrentTick |
 | `CalendarSystem` | `Assets/Scripts/Simulation/Systems/CalendarSystem.cs` | Day/season/year, temperature, daylight |
 | `BirthSystem` | `Assets/Scripts/Simulation/Systems/BirthSystem.cs` | Creates children for eligible females |
-| `CitizenAgeSystem` | `Assets/Scripts/Simulation/Systems/CitizenAgeSystem.cs` | Ages citizens, applies Child/Elderly tags |
-| `CitizenNeedSystem` | `Assets/Scripts/Simulation/Systems/CitizenNeedSystem.cs` | Food/warmth consumption, need growth, health decay |
+| `AgeSystem` | `Assets/Scripts/Simulation/Systems/AgeSystem.cs` | Ages citizens, applies Child/Elderly tags |
+| `NeedSystem` | `Assets/Scripts/Simulation/Systems/NeedSystem.cs` | Food/warmth consumption, need growth, health decay |
 | `PathfindingSystem` | `Assets/Scripts/Simulation/Systems/PathfindingSystem.cs` | A* on grid, fills PathFollowing buffers |
 | `CitizenMovementSystem` | `Assets/Scripts/Simulation/Systems/CitizenMovementSystem.cs` | Moves citizens one tile/tick, re-paths each step |
 | `BuildingProductionSystem` | `Assets/Scripts/Simulation/Systems/BuildingProductionSystem.cs` | Consumes inputs, advances recipes, produces outputs |
@@ -101,7 +101,7 @@ Systems emit `SimulationEvent` entries into a singleton `DynamicBuffer<Simulatio
 
 ## Public Buildings
 
-Per ADR 2026-07-25 §1, buildings are public resources. `CitizenNeedSystem` checks buildings at the citizen's current tile position (via `NativeHashMap<int2, Entity>` lookup) and consumes food/firewood from any building, not just the citizen's home or workplace. This is step 1 of the goods transport architecture — prevents citizens from freezing next to a stocked woodcutter.
+Per ADR 2026-07-25 §1, buildings are public resources. `NeedSystem` checks buildings at the citizen's current tile position (via `NativeHashMap<int2, Entity>` lookup) and consumes food/firewood from any building, not just the citizen's home or workplace. This is step 1 of the goods transport architecture — prevents citizens from freezing next to a stocked woodcutter.
 
 ## Re-pathing
 

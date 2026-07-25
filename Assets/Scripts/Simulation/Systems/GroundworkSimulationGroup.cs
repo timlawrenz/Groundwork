@@ -34,14 +34,14 @@ namespace Groundwork.Simulation
 
     [UpdateInGroup(typeof(GroundworkSimulationGroup))]
     [UpdateAfter(typeof(BirthSystem))]
-    public partial struct CitizenAgeSystem { }
+    public partial struct AgeSystem { }
 
     [UpdateInGroup(typeof(GroundworkSimulationGroup))]
-    [UpdateAfter(typeof(CitizenAgeSystem))]
-    public partial struct CitizenNeedSystem { }
+    [UpdateAfter(typeof(AgeSystem))]
+    public partial struct NeedSystem { }
 
     [UpdateInGroup(typeof(GroundworkSimulationGroup))]
-    [UpdateAfter(typeof(CitizenNeedSystem))]
+    [UpdateAfter(typeof(NeedSystem))]
     public partial struct PathfindingSystem { }
 
     [UpdateInGroup(typeof(GroundworkSimulationGroup))]

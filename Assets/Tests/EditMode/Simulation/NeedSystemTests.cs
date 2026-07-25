@@ -8,7 +8,7 @@ using Groundwork.TestHelpers;
 namespace Groundwork.Tests.Simulation
 {
     [TestFixture]
-    public class CitizenNeedSystemTests
+    public class NeedSystemTests
     {
         [Test]
         public void GeneratesFoodNeed_Daily()
@@ -17,7 +17,7 @@ namespace Groundwork.Tests.Simulation
             var citizen = world.CreateCitizen(age: 30f, health: 100f);
             world.SetTick(24);
 
-            world.UpdateSystem<CitizenNeedSystem>();
+            world.UpdateSystem<NeedSystem>();
 
             var needs = world.EntityManager.GetBuffer<CitizenNeed>(citizen);
             float foodUrgency = 0f;
@@ -44,7 +44,7 @@ namespace Groundwork.Tests.Simulation
             var citizen = world.CreateCitizen(age: 30f);
             world.SetTick(24);
 
-            world.UpdateSystem<CitizenNeedSystem>();
+            world.UpdateSystem<NeedSystem>();
 
             var needs = world.EntityManager.GetBuffer<CitizenNeed>(citizen);
             float warmthUrgency = 0f;
@@ -74,7 +74,7 @@ namespace Groundwork.Tests.Simulation
             }
 
             world.SetTick(24);
-            world.UpdateSystem<CitizenNeedSystem>();
+            world.UpdateSystem<NeedSystem>();
 
             var c = world.EntityManager.GetComponentData<Citizen>(citizen);
             var lb = world.EntityManager.GetComponentData<LivingBeing>(citizen);
@@ -100,7 +100,7 @@ namespace Groundwork.Tests.Simulation
             }
 
             world.SetTick(24);
-            world.UpdateSystem<CitizenNeedSystem>();
+            world.UpdateSystem<NeedSystem>();
 
             Assert.That(world.EntityManager.HasComponent<Dead>(citizen),
                 "Citizen with zero health should be tagged Dead");
@@ -113,7 +113,7 @@ namespace Groundwork.Tests.Simulation
             var citizen = world.CreateCitizen(age: 30f);
             world.SetTick(24);
 
-            world.UpdateSystem<CitizenNeedSystem>();
+            world.UpdateSystem<NeedSystem>();
 
             var needs = world.EntityManager.GetBuffer<CitizenNeed>(citizen);
             bool hasShelter = false;
@@ -133,7 +133,7 @@ namespace Groundwork.Tests.Simulation
             for (int day = 0; day < 100; day++)
             {
                 world.SetTick(day * 24 + 24);
-                world.UpdateSystem<CitizenNeedSystem>();
+                world.UpdateSystem<NeedSystem>();
             }
 
             var needs = world.EntityManager.GetBuffer<CitizenNeed>(citizen);
@@ -165,7 +165,7 @@ namespace Groundwork.Tests.Simulation
             }
 
             world.SetTick(24);
-            world.UpdateSystem<CitizenNeedSystem>();
+            world.UpdateSystem<NeedSystem>();
 
             float foodUrgency = 0f;
             needs = world.EntityManager.GetBuffer<CitizenNeed>(citizen);
@@ -205,7 +205,7 @@ namespace Groundwork.Tests.Simulation
             }
 
             world.SetTick(24);
-            world.UpdateSystem<CitizenNeedSystem>();
+            world.UpdateSystem<NeedSystem>();
 
             var inventory = world.EntityManager.GetBuffer<InventorySlot>(citizen);
             int foodLeft = 0;
@@ -241,7 +241,7 @@ namespace Groundwork.Tests.Simulation
             }
 
             world.SetTick(24);
-            world.UpdateSystem<CitizenNeedSystem>();
+            world.UpdateSystem<NeedSystem>();
 
             needs = world.EntityManager.GetBuffer<CitizenNeed>(citizen);
             float foodUrgency = 0f;
@@ -285,7 +285,7 @@ namespace Groundwork.Tests.Simulation
             }
 
             world.SetTick(24);
-            world.UpdateSystem<CitizenNeedSystem>();
+            world.UpdateSystem<NeedSystem>();
 
             var personalInv = world.EntityManager.GetBuffer<InventorySlot>(citizen);
             int personalFood = 0;

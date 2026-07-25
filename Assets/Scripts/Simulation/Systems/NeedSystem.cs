@@ -10,7 +10,7 @@ namespace Groundwork.Simulation
     /// Buildings are public resources — any building on the citizen's tile can be used.
     /// Runs after CalendarSystem, before DeathSystem.
     /// </summary>
-    public partial struct CitizenNeedSystem : ISystem
+    public partial struct NeedSystem : ISystem
     {
         public void OnUpdate(ref SystemState state)
         {

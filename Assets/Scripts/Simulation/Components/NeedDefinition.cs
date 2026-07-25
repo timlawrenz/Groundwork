@@ -6,7 +6,7 @@ namespace Groundwork.Simulation
     /// <summary>
     /// Defines a citizen need type — what item satisfies it, how urgency grows,
     /// seasonal climate modifiers, and what happens at critical urgency.
-    /// Created by ContentLoaderSystem at startup. Read by CitizenNeedSystem.
+    /// Created by ContentLoaderSystem at startup. Read by NeedSystem.
     /// Part of ADR 2026-07-25 §3 — Needs Generalization.
     /// </summary>
     public struct NeedDefinition : IComponentData

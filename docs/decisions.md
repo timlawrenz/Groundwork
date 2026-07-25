@@ -298,7 +298,7 @@ Adding a dedicated "firewood delivery" system would be the wrong pattern — eve
 
 **Status:** accepted
 
-**Context:** The current `Citizen` component bundles human-specific traits (Name, EducationLevel, HomeBuilding, WorkplaceBuilding, LastBirthYear) with biological traits (Age, Sex, Health, Happiness). When animals (chickens, livestock) are introduced later, they will need the same biological systems — aging, natural death, health, needs — but without the human-specific baggage. Without abstraction, every biological system would need to be duplicated (CitizenAgeSystem → AnimalAgeSystem, CitizenNeeds → AnimalNeeds, etc.), violating "mod API == internal API."
+**Context:** The current `Citizen` component bundles human-specific traits (Name, EducationLevel, HomeBuilding, WorkplaceBuilding, LastBirthYear) with biological traits (Age, Sex, Health, Happiness). When animals (chickens, livestock) are introduced later, they will need the same biological systems — aging, natural death, health, needs — but without the human-specific baggage. Without abstraction, every biological system would need to be duplicated (AgeSystem → AnimalAgeSystem, CitizenNeeds → AnimalNeeds, etc.), violating "mod API == internal API."
 
 **Decision:** Extract shared biological traits into a `LivingBeing` component. `Citizen` keeps only human-specific traits. All systems that operate on biological properties (aging, natural death, health decay, needs) query for `LivingBeing` instead of `Citizen`.
 
@@ -314,8 +314,8 @@ LivingBeing              Citizen
 ```
 
 Systems that become generic (query `LivingBeing`):
-- `CitizenAgeSystem` → ages any living being, applies Child/Elderly tags, checks natural death
-- `CitizenNeedSystem` → needs already apply to any entity with needs buffer; health check now reads `LivingBeing`
+- `AgeSystem` → ages any living being, applies Child/Elderly tags, checks natural death
+- `NeedSystem` → needs already apply to any entity with needs buffer; health check now reads `LivingBeing`
 - `DeathSystem` → already generic (queries `Dead` tag)
 - Natural death → works on any `LivingBeing` regardless of `Citizen`
 
@@ -332,7 +332,7 @@ Entity creation updates:
 **Rationale:**
 
 - **Forward compatibility:** Chickens add `LivingBeing` without touching any human code. Aging, death, and needs "just work" for any living creature.
-- **One system, many creatures:** `CitizenAgeSystem` ages chickens and citizens identically. If chickens need different aging rates, that becomes a config parameter on `LivingBeing` (or a data-driven curve), not a new system.
+- **One system, many creatures:** `AgeSystem` ages chickens and citizens identically. If chickens need different aging rates, that becomes a config parameter on `LivingBeing` (or a data-driven curve), not a new system.
 - **Separation of concerns:** Biological traits belong to the entity type "living being," not "citizen." Code that only needs Age/Health doesn't need to know about EducationLevel or HomeBuilding.
 - **Minimal refactor:** Only fields move from `Citizen` to `LivingBeing`. Systems already iterate components independently — adding one more component to the query is trivial.
 

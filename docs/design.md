@@ -109,7 +109,7 @@ Simulation engine runs headless. Event-driven debug visualization and CSV stats 
 
 ### Current (hardcoded)
 
-Each citizen has a `DynamicBuffer<CitizenNeed>` with types: "food", "warmth", "shelter", "health". Each need type has hardcoded logic in `CitizenNeedSystem`:
+Each citizen has a `DynamicBuffer<CitizenNeed>` with types: "food", "warmth", "shelter", "health". Each need type has hardcoded logic in `NeedSystem`:
 - Food: urgency grows 0.15/day; satisfied by eating 1 food from inventory (personal→workplace→home→public building)
 - Warmth: urgency grows 0.01/day (warm) or 0.1/day (cold seasons); satisfied by burning 1 firewood from building inventory
 - Shelter: urgency grows 0.25/day if homeless; no satisfaction mechanism
@@ -134,7 +134,7 @@ NeedDefinition {
 }
 ```
 
-New needs (social, entertainment, medicine) become data entries. The `CitizenNeedSystem` becomes a generic need processor that reads `NeedDefinition` components and applies them uniformly.
+New needs (social, entertainment, medicine) become data entries. The `NeedSystem` becomes a generic need processor that reads `NeedDefinition` components and applies them uniformly.
 
 ## Mod API
 

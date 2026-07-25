@@ -78,9 +78,9 @@
   <ItemGroup>
     <Compile Include="Assets/Tests/EditMode/Simulation/InventoryDiagnosticTests.cs" />
     <Compile Include="Assets/Tests/EditMode/Simulation/TickDispatchSystemTests.cs" />
-    <Compile Include="Assets/Tests/EditMode/Simulation/CitizenNeedSystemTests.cs" />
+    <Compile Include="Assets/Tests/EditMode/Simulation/NeedSystemTests.cs" />
     <Compile Include="Assets/Tests/EditMode/Simulation/StabilityTest.cs" />
-    <Compile Include="Assets/Tests/EditMode/Simulation/CitizenAgeSystemTests.cs" />
+    <Compile Include="Assets/Tests/EditMode/Simulation/AgeSystemTests.cs" />
     <Compile Include="Assets/Tests/EditMode/Simulation/PathfindingSystemTests.cs" />
     <Compile Include="Assets/Tests/EditMode/Simulation/SimulationBootstrapTests.cs" />
     <Compile Include="Assets/Tests/EditMode/Simulation/DeathSystemTests.cs" />

@@ -8,7 +8,7 @@ using Groundwork.TestHelpers;
 namespace Groundwork.Tests.Simulation
 {
     [TestFixture]
-    public class CitizenAgeSystemTests
+    public class AgeSystemTests
     {
         [Test]
         public void AgesCitizen_EachDay()
@@ -17,7 +17,7 @@ namespace Groundwork.Tests.Simulation
             var citizen = world.CreateCitizen(age: 30f);
             world.SetTick(24); // 1 day
 
-            world.UpdateSystem<CitizenAgeSystem>();
+            world.UpdateSystem<AgeSystem>();
 
             var c = world.EntityManager.GetComponentData<Citizen>(citizen);
             var lb = world.EntityManager.GetComponentData<LivingBeing>(citizen);
@@ -31,7 +31,7 @@ namespace Groundwork.Tests.Simulation
             var citizen = world.CreateCitizen(age: 30f);
             world.SetTick(12); // mid-day
 
-            world.UpdateSystem<CitizenAgeSystem>();
+            world.UpdateSystem<AgeSystem>();
 
             var c = world.EntityManager.GetComponentData<Citizen>(citizen);
             var lb = world.EntityManager.GetComponentData<LivingBeing>(citizen);
@@ -84,7 +84,7 @@ namespace Groundwork.Tests.Simulation
             var ancient = world.CreateCitizen(age: 90f);
             world.SetTick(24); // must be a day boundary
 
-            world.UpdateSystem<CitizenAgeSystem>();
+            world.UpdateSystem<AgeSystem>();
 
             Assert.That(world.EntityManager.HasComponent<Dead>(ancient),
                 "Citizen at or over 90 should be tagged Dead");
@@ -107,7 +107,7 @@ namespace Groundwork.Tests.Simulation
             world.EntityManager.AddComponent<Dead>(deadCitizen);
             world.SetTick(24);
 
-            world.UpdateSystem<CitizenAgeSystem>();
+            world.UpdateSystem<AgeSystem>();
 
             var c = world.EntityManager.GetComponentData<Citizen>(deadCitizen);
             var lb = world.EntityManager.GetComponentData<LivingBeing>(deadCitizen);

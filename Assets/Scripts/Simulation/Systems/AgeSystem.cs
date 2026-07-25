@@ -12,7 +12,7 @@ namespace Groundwork.Simulation
     /// Per ADR 2026-07-25 — LivingBeing Abstraction.
     /// </summary>
     [BurstCompile]
-    public partial struct CitizenAgeSystem : ISystem
+    public partial struct AgeSystem : ISystem
     {
         [BurstCompile]
         public void OnUpdate(ref SystemState state)

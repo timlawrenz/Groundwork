@@ -12,7 +12,7 @@ namespace Groundwork.TestHelpers
     /// Usage:
     ///   using var testWorld = new SimulationTestWorld();
     ///   var citizen = testWorld.CreateCitizen(age: 30f, position: new int2(10, 10));
-    ///   testWorld.UpdateSystem&lt;CitizenAgeSystem&gt;();
+    ///   testWorld.UpdateSystem&lt;AgeSystem&gt;();
     ///   var result = testWorld.EntityManager.GetComponentData&lt;Citizen&gt;(citizen);
     /// </summary>
     public class SimulationTestWorld : System.IDisposable
@@ -219,8 +219,8 @@ namespace Groundwork.TestHelpers
             UpdateSystem<ContentLoaderSystem>();
             UpdateSystem<CalendarSystem>();
             UpdateSystem<BirthSystem>();
-            UpdateSystem<CitizenAgeSystem>();
-            UpdateSystem<CitizenNeedSystem>();
+            UpdateSystem<AgeSystem>();
+            UpdateSystem<NeedSystem>();
             UpdateSystem<PathfindingSystem>();
             UpdateSystem<CitizenMovementSystem>();
             UpdateSystem<HaulCompletionSystem>();
@@ -247,8 +247,8 @@ namespace Groundwork.TestHelpers
                 World.CreateSystem<ContentLoaderSystem>(),
                 World.CreateSystem<CalendarSystem>(),
                 World.CreateSystem<BirthSystem>(),
-                World.CreateSystem<CitizenAgeSystem>(),
-                World.CreateSystem<CitizenNeedSystem>(),
+                World.CreateSystem<AgeSystem>(),
+                World.CreateSystem<NeedSystem>(),
                 World.CreateSystem<PathfindingSystem>(),
                 World.CreateSystem<CitizenMovementSystem>(),
                 World.CreateSystem<HaulCompletionSystem>(),

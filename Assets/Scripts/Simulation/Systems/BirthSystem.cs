@@ -6,7 +6,7 @@ namespace Groundwork.Simulation
 {
     /// <summary>
     /// Creates new citizen entities (children) for eligible adult females.
-    /// Runs after CalendarSystem, before CitizenAgeSystem.
+    /// Runs after CalendarSystem, before AgeSystem.
     /// Eligibility: female, age 16-50, health &gt; 50, has home, hasn't given birth this year.
     /// </summary>
     public partial struct BirthSystem : ISystem
