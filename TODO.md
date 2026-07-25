@@ -41,8 +41,8 @@
 - [x] Public buildings: any building on citizen's tile provides resources (ADR 2026-07-25 §1) (2026-07-25)
 - [x] HTML dashboard: Field Notes Dark, CSV stats input (2026-07-25)
 - [x] Production archetypes: Workshop + Gathering with zone overlap (ADR 2026-07-25 §5) (2026-07-25)
+- [x] Goods transport: hauling tests + PathRequest fix + lower thresholds (2026-07-25)
 - [ ] 100-year stability test: population stable 30-50 for 100 game-years
-- [ ] Goods transport: citizens haul goods between buildings (ADR 2026-07-25 §2)
 - [ ] Needs generalization: config-driven need types (ADR 2026-07-25 §3)
 
 ## Phase 2 — Content & Modding

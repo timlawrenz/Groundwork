@@ -6,7 +6,7 @@
 
 **Phase 1 — Simulation Core (MVP)** — nearly complete
 
-13|13 systems, 279 tests (276 green, 3 pre-existing failures from no-stockpile config). Event buffer fully integrated with CitizenBorn, CitizenDied, ProductionComplete, TileEnter/TileLeave events. Public buildings — any building on a citizen's tile can provide food and warmth. Birth tracking confirmed (94 births across 10-year sim). Re-pathing (fresh A* each step). Co-location (multiple citizens per tile). Debug visualization (100×100 event-driven ASCII grid). CSV stats output. HTML dashboard (Field Notes Dark). Production archetypes: Workshop (woodcutter, worker at tile), Gathering (forager hut, zone radius 5, overlap penalty). Abundance bootstrap: 8 houses, 9 gatherer huts, 3 woodcutters, TicksPerCycle=1.
+13|13 systems, 293 tests green. Event buffer fully integrated with CitizenBorn, CitizenDied, ProductionComplete, TileEnter/TileLeave events. Public buildings — any building on a citizen's tile can provide food and warmth. Birth tracking confirmed (94 births across 10-year sim). Re-pathing (fresh A* each step). Co-location (multiple citizens per tile). Debug visualization (100×100 event-driven ASCII grid). CSV stats output. HTML dashboard (Field Notes Dark). Production archetypes: Workshop (woodcutter, worker at tile), Gathering (forager hut, zone radius 5, overlap penalty). Goods transport: CitizenHaulSystem + HaulCompletionSystem with 14 haul tests, PathRequest conflict fixed, thresholds lowered (10/10).
 
 ## Next Action
 
