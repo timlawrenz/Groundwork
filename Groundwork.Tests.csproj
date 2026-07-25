@@ -87,6 +87,8 @@
     <Compile Include="Assets/Tests/EditMode/Simulation/CalendarSystemTests.cs" />
     <Compile Include="Assets/Tests/EditMode/Simulation/BuildingProductionSystemTests.cs" />
     <Compile Include="Assets/Tests/EditMode/Simulation/SimulationStatsSystemTests.cs" />
+    <Compile Include="Assets/Tests/EditMode/Simulation/HaulCompletionSystemTests.cs" />
+    <Compile Include="Assets/Tests/EditMode/Simulation/CitizenHaulSystemTests.cs" />
     <Compile Include="Assets/Tests/EditMode/Simulation/CitizenMovementSystemTests.cs" />
     <Compile Include="Assets/Tests/EditMode/Simulation/EventDispatchSystemTests.cs" />
     <Compile Include="Assets/Tests/EditMode/Simulation/BirthSystemTests.cs" />

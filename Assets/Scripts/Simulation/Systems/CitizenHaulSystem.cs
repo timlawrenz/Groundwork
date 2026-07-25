@@ -13,8 +13,8 @@ namespace Groundwork.Simulation
     /// </summary>
     public partial struct CitizenHaulSystem : ISystem
     {
-        private const int SURPLUS_THRESHOLD = 50;  // building has surplus above this
-        private const int DEFICIT_THRESHOLD = 20;   // building needs goods below this
+        private const int SURPLUS_THRESHOLD = 10;  // building has surplus above this
+        private const int DEFICIT_THRESHOLD = 10;   // building needs goods below this
 
         public void OnUpdate(ref SystemState state)
         {
@@ -32,10 +32,13 @@ namespace Groundwork.Simulation
                 buildingPositions.TryAdd(bEntity, pos.ValueRO.TileCoordinate);
             }
 
-            // Find idle citizens (no HaulTask, not doing anything)
+            // Find idle citizens (no HaulTask, no PathRequest, not doing anything)
             foreach (var (task, citizen, cPos, entity) in
                      SystemAPI.Query<RefRW<CitizenTask>, RefRO<Citizen>, RefRO<MapPosition>>()
-                         .WithNone<Dead, Child, HaulTask>()
+                         .WithNone<Dead>()
+                         .WithNone<Child>()
+                         .WithNone<HaulTask>()
+                         .WithNone<PathRequest>()
                          .WithEntityAccess())
             {
                 if (task.ValueRO.TaskType != "idle")
