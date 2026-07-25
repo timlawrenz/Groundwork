@@ -1,5 +1,4 @@
 using Unity.Entities;
-using Unity.Burst;
 using Unity.Collections;
 using Unity.Mathematics;
 
@@ -14,7 +13,6 @@ namespace Groundwork.Simulation
     {
         private EntityQuery _citizenQuery;
         private EntityQuery _buildingQuery;
-        private EntityQuery _deadQuery;
         private EntityQuery _statsQuery;
 
         public void OnCreate(ref SystemState state)
@@ -23,8 +21,6 @@ namespace Groundwork.Simulation
                 typeof(Citizen), typeof(MapPosition));
             _buildingQuery = state.GetEntityQuery(
                 typeof(Building), typeof(InventorySlot));
-            _deadQuery = state.GetEntityQuery(
-                typeof(Dead), typeof(Citizen));
             _statsQuery = state.GetEntityQuery(typeof(SimulationStats));
 
             // Ensure stats singleton exists (idempotent — may be recreated after bootstrap)
@@ -105,11 +101,6 @@ namespace Groundwork.Simulation
             stats.TotalFood = totalFood;
             stats.TotalLogs = totalLogs;
             stats.TotalFirewood = totalFirewood;
-
-            // Death tracking: count dead citizens awaiting cleanup
-            // (they haven't been destroyed yet — DeathSystem runs before us in the same tick,
-            //  but actually DeathSystem already destroyed them. Let's track deaths differently.)
-            // We'll track cumulative deaths by comparing population changes.
 
             // Log at season boundaries — only once per season change
             int seasonId = calendar.Year * 4 + calendar.Season;

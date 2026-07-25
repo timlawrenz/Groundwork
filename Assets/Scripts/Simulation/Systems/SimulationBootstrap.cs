@@ -8,7 +8,7 @@ namespace Groundwork.Simulation
     /// Creates the initial world state in abundance mode — enough food, housing,
     /// and production to sustain a growing population. Runs once at startup.
     /// World: 100x100 flat temperate map, 50 citizens (25M/25F), 8 houses,
-    /// 8 gatherer huts, 1 woodcutter, generous starting resources.
+    /// 8 gatherer huts, 2 woodcutters, generous starting resources.
     /// </summary>
     public partial struct SimulationBootstrap : ISystem
     {
@@ -40,12 +40,13 @@ namespace Groundwork.Simulation
                 GrowingMultiplier = 0.5f,
             });
 
-            // Buildings: 8 houses, 8 gatherer huts, 1 woodcutter
+            // Buildings: 8 houses, 8 gatherer huts, 2 woodcutters
             for (int i = 0; i < 8; i++)
                 CreateBuilding(ecb, "house", new int2(10 + i, 15));
             for (int i = 0; i < 8; i++)
                 CreateBuilding(ecb, "gatherer_hut", new int2(20 + i * 2, 10));
             CreateBuilding(ecb, "woodcutter", new int2(40, 10));
+            CreateBuilding(ecb, "woodcutter", new int2(42, 10));
 
             ecb.Playback(state.EntityManager);
             ecb.Dispose();
@@ -95,40 +96,40 @@ namespace Groundwork.Simulation
         }
 
         private void AddInitialResources(ref SystemState state)
+        {
+            var query = state.GetEntityQuery(
+                typeof(Building),
+                typeof(InventorySlot),
+                typeof(ProductionOrder));
+
+            var buildings = query.ToComponentDataArray<Building>(Allocator.Temp);
+            var entities = query.ToEntityArray(Allocator.Temp);
+
+            for (int i = 0; i < entities.Length; i++)
+            {
+                var inventory = state.EntityManager.GetBuffer<InventorySlot>(entities[i]);
+                var productionQueue = state.EntityManager.GetBuffer<ProductionOrder>(entities[i]);
+
+                if (buildings[i].BuildingType == "woodcutter")
                 {
-                    var query = state.GetEntityQuery(
-                        typeof(Building),
-                        typeof(InventorySlot),
-                        typeof(ProductionOrder));
-
-                    var buildings = query.ToComponentDataArray<Building>(Allocator.Temp);
-                    var entities = query.ToEntityArray(Allocator.Temp);
-
-                    for (int i = 0; i < entities.Length; i++)
-                    {
-                        var inventory = state.EntityManager.GetBuffer<InventorySlot>(entities[i]);
-                        var productionQueue = state.EntityManager.GetBuffer<ProductionOrder>(entities[i]);
-
-                        if (buildings[i].BuildingType == "woodcutter")
-                        {
-                            inventory.Add(new InventorySlot { ItemId = "logs", Quantity = 5000 });
-                            productionQueue.Add(new ProductionOrder { RecipeId = "chop_firewood", Progress = 0f });
-                        }
-                        else if (buildings[i].BuildingType == "gatherer_hut")
-                        {
-                            inventory.Add(new InventorySlot { ItemId = "food", Quantity = 2000 });
-                            productionQueue.Add(new ProductionOrder { RecipeId = "gather_food", Progress = 0f });
-                        }
-                        else if (buildings[i].BuildingType == "house")
-                        {
-                            inventory.Add(new InventorySlot { ItemId = "food", Quantity = 500 });
-                            inventory.Add(new InventorySlot { ItemId = "firewood", Quantity = 1000 });
-                        }
-                    }
-
-                    buildings.Dispose();
-                    entities.Dispose();
+                    inventory.Add(new InventorySlot { ItemId = "logs", Quantity = 5000 });
+                    productionQueue.Add(new ProductionOrder { RecipeId = "chop_firewood", Progress = 0f });
                 }
+                else if (buildings[i].BuildingType == "gatherer_hut")
+                {
+                    inventory.Add(new InventorySlot { ItemId = "food", Quantity = 2000 });
+                    productionQueue.Add(new ProductionOrder { RecipeId = "gather_food", Progress = 0f });
+                }
+                else if (buildings[i].BuildingType == "house")
+                {
+                    inventory.Add(new InventorySlot { ItemId = "food", Quantity = 500 });
+                    inventory.Add(new InventorySlot { ItemId = "firewood", Quantity = 1000 });
+                }
+            }
+
+            buildings.Dispose();
+            entities.Dispose();
+        }
 
         private void CreateCitizens(ref SystemState state)
         {
@@ -161,10 +162,11 @@ namespace Groundwork.Simulation
                 float age = random.NextFloat(16f, 55f);
                 byte sex = (byte)(i % 2); // alternate male/female for even distribution
                 var homeEntity = houses[i % houses.Length];
+
                 // Most citizens are gatherers, a few are woodcutters
                 Entity workplace;
-                if (i < 4 && woodcutters.Length > 0)
-                    workplace = woodcutters[0]; // first 4 citizens → woodcutter
+                if (i < 6 && woodcutters.Length > 0)
+                    workplace = woodcutters[i % woodcutters.Length]; // first 6 → woodcutters
                 else
                     workplace = gathererHuts[i % gathererHuts.Length]; // rest → gatherers
 
@@ -180,7 +182,7 @@ namespace Groundwork.Simulation
                     EducationLevel = 0,
                     HomeBuilding = homeEntity,
                     WorkplaceBuilding = workplace,
-                    LastBirthYear = 0, // never gave birth — eligible from year 1
+                    LastBirthYear = 0,
                 });
 
                 ecb.AddComponent(entity, new MapPosition { TileCoordinate = homePos, Rotation = 0 });
