@@ -108,6 +108,7 @@
     <Compile Include="Assets/Scripts/Simulation/Systems/GroundworkSimulationGroup.cs" />
     <Compile Include="Assets/Scripts/Simulation/Systems/BirthSystem.cs" />
     <Compile Include="Assets/Scripts/Simulation/Systems/DeathSystem.cs" />
+    <Compile Include="Assets/Scripts/Simulation/Components/LivingBeing.cs" />
     <Compile Include="Assets/Scripts/Simulation/Systems/DebugVizSystem.cs" />
     <Compile Include="Assets/Scripts/Simulation/Systems/HeadlessRunner.cs" />
     <Compile Include="Assets/Scripts/Simulation/Buffers/ProductionOrder.cs" />

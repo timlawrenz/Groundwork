@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using Unity.Entities;
 using Unity.Collections;
+using Groundwork.TestHelpers;
 using Groundwork.Simulation;
 using Groundwork.TestHelpers;
 

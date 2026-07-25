@@ -88,13 +88,16 @@ namespace Groundwork.TestHelpers
             float health = 100f, float happiness = 50f)
         {
             var entity = EntityManager.CreateEntity(
-                typeof(Citizen), typeof(MapPosition), typeof(CitizenTask),
+                typeof(LivingBeing), typeof(Citizen), typeof(MapPosition), typeof(CitizenTask),
                 typeof(CitizenNeed), typeof(InventorySlot), typeof(PathFollowing));
 
+            EntityManager.SetComponentData(entity, new LivingBeing
+            {
+                Age = age, Sex = 0, Health = health, Happiness = happiness,
+            });
             EntityManager.SetComponentData(entity, new Citizen
             {
-                Name = "Test Citizen", Age = age, Sex = 0,
-                Health = health, Happiness = happiness, EducationLevel = 0,
+                Name = "Test Citizen", EducationLevel = 0,
                 HomeBuilding = home, WorkplaceBuilding = workplace,
             });
             EntityManager.SetComponentData(entity, new MapPosition

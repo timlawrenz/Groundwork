@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using Unity.Entities;
 using Unity.Mathematics;
+using Groundwork.TestHelpers;
 using Groundwork.Simulation;
 using Groundwork.TestHelpers;
 
@@ -19,7 +20,8 @@ namespace Groundwork.Tests.Simulation
             world.UpdateSystem<CitizenAgeSystem>();
 
             var c = world.EntityManager.GetComponentData<Citizen>(citizen);
-            Assert.That(c.Age, Is.GreaterThan(30f));
+            var lb = world.EntityManager.GetComponentData<LivingBeing>(citizen);
+            Assert.That(lb.Age, Is.GreaterThan(30f));
         }
 
         [Test]
@@ -32,7 +34,8 @@ namespace Groundwork.Tests.Simulation
             world.UpdateSystem<CitizenAgeSystem>();
 
             var c = world.EntityManager.GetComponentData<Citizen>(citizen);
-            Assert.That(c.Age, Is.EqualTo(30f));
+            var lb = world.EntityManager.GetComponentData<LivingBeing>(citizen);
+            Assert.That(lb.Age, Is.EqualTo(30f));
         }
 
         [Test]
@@ -107,7 +110,8 @@ namespace Groundwork.Tests.Simulation
             world.UpdateSystem<CitizenAgeSystem>();
 
             var c = world.EntityManager.GetComponentData<Citizen>(deadCitizen);
-            Assert.That(c.Age, Is.EqualTo(30f), "Dead citizens should not age");
+            var lb = world.EntityManager.GetComponentData<LivingBeing>(deadCitizen);
+            Assert.That(lb.Age, Is.EqualTo(30f), "Dead citizens should not age");
         }
     }
 }

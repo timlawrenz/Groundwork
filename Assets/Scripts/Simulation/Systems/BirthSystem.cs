@@ -25,29 +25,32 @@ namespace Groundwork.Simulation
                 return;
             var eventBuffer = state.EntityManager.GetBuffer<SimulationEvent>(eventEntity);
 
-            foreach (var (citizen, position, entity) in
-                     SystemAPI.Query<RefRW<Citizen>, RefRO<MapPosition>>()
+            foreach (var (citizen, lb, position, entity) in
+                     SystemAPI.Query<RefRW<Citizen>, RefRO<LivingBeing>, RefRO<MapPosition>>()
                          .WithNone<Dead, Child>()
                          .WithEntityAccess())
             {
                 var c = citizen.ValueRO;
 
                 // Eligibility checks
-                if (c.Sex != 1) continue;                    // must be female
-                if (c.Age < 16f || c.Age > 50f) continue;   // reproductive age
-                if (c.Health < 50f) continue;                // must be healthy
+                if (lb.ValueRO.Sex != 1) continue;                    // must be female
+                if (lb.ValueRO.Age < 16f || lb.ValueRO.Age > 50f) continue;   // reproductive age
+                if (lb.ValueRO.Health < 50f) continue;                // must be healthy
                 if (c.HomeBuilding == Entity.Null) continue; // must have a home
                 if (c.LastBirthYear >= calendar.Year) continue; // already had child this year
 
                 // Create child entity
                 var child = ecb.CreateEntity();
-                ecb.AddComponent(child, new Citizen
+                ecb.AddComponent(child, new LivingBeing
                 {
-                    Name = $"Child of {c.Name}",
                     Age = 0f,
                     Sex = (byte)(new Unity.Mathematics.Random((uint)(entity.Index + calendar.Year * 1000)).NextInt(0, 2)),
                     Health = 100f,
                     Happiness = 50f,
+                });
+                ecb.AddComponent(child, new Citizen
+                {
+                    Name = $"Child of {c.Name}",
                     EducationLevel = 0,
                     HomeBuilding = c.HomeBuilding,
                     WorkplaceBuilding = Entity.Null,

@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using Unity.Entities;
 using Unity.Collections;
+using Groundwork.TestHelpers;
 using Groundwork.Simulation;
 using Groundwork.TestHelpers;
 
@@ -76,7 +77,8 @@ namespace Groundwork.Tests.Simulation
             world.UpdateSystem<CitizenNeedSystem>();
 
             var c = world.EntityManager.GetComponentData<Citizen>(citizen);
-            Assert.That(c.Health, Is.LessThan(100f),
+            var lb = world.EntityManager.GetComponentData<LivingBeing>(citizen);
+            Assert.That(lb.Health, Is.LessThan(100f),
                 "Health should decay when critical need is unmet");
         }
 

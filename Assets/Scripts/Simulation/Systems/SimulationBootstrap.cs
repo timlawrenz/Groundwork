@@ -239,13 +239,16 @@ namespace Groundwork.Simulation
 
                 var homePos = new int2(10 + (i % 16), 16 + (i / 16));
 
-                ecb.AddComponent(entity, new Citizen
+                ecb.AddComponent(entity, new LivingBeing
                 {
-                    Name = $"Citizen {i + 1}",
                     Age = age,
                     Sex = sex,
                     Health = 100f,
                     Happiness = 60f,
+                });
+                ecb.AddComponent(entity, new Citizen
+                {
+                    Name = $"Citizen {i + 1}",
                     EducationLevel = 0,
                     HomeBuilding = homeEntity,
                     WorkplaceBuilding = workplace,

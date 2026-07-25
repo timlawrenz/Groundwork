@@ -18,7 +18,7 @@ namespace Groundwork.Simulation
         public void OnCreate(ref SystemState state)
         {
             _citizenQuery = state.GetEntityQuery(
-                typeof(Citizen), typeof(MapPosition));
+                typeof(LivingBeing), typeof(Citizen), typeof(MapPosition));
             _buildingQuery = state.GetEntityQuery(
                 typeof(Building), typeof(InventorySlot));
             _statsQuery = state.GetEntityQuery(typeof(SimulationStats));
@@ -45,19 +45,21 @@ namespace Groundwork.Simulation
 
             // Collect population stats
             var citizens = _citizenQuery.ToComponentDataArray<Citizen>(Allocator.Temp);
+            var livingBeings = _citizenQuery.ToComponentDataArray<LivingBeing>(Allocator.Temp);
             int children = 0, adults = 0, elderly = 0, pop = citizens.Length;
             float totalHealth = 0f, totalHappiness = 0f;
 
             for (int i = 0; i < pop; i++)
             {
-                var c = citizens[i];
-                totalHealth += c.Health;
-                totalHappiness += c.Happiness;
-                if (c.Age < 16f) children++;
-                else if (c.Age >= 60f) elderly++;
+                var lb = livingBeings[i];
+                totalHealth += lb.Health;
+                totalHappiness += lb.Happiness;
+                if (lb.Age < 16f) children++;
+                else if (lb.Age >= 60f) elderly++;
                 else adults++;
             }
             citizens.Dispose();
+            livingBeings.Dispose();
 
             stats.Population = pop;
             stats.Children = children;

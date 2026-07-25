@@ -291,3 +291,52 @@ Adding a dedicated "firewood delivery" system would be the wrong pattern — eve
 
 - **Easier:** Firewood distribution emerges as a natural consequence, not a special case. New resources and needs become data changes. Idle citizens find useful work automatically. The economy feels alive.
 - **Harder:** Pathfinding load increases (citizens hauling = more path requests). Priority system needs careful tuning to prevent starvation while goods are being hauled. Public buildings mean citizens may congregate, increasing tile density.
+
+---
+
+### 2026-07-25 — LivingBeing Abstraction for Shared Biological Traits
+
+**Status:** accepted
+
+**Context:** The current `Citizen` component bundles human-specific traits (Name, EducationLevel, HomeBuilding, WorkplaceBuilding, LastBirthYear) with biological traits (Age, Sex, Health, Happiness). When animals (chickens, livestock) are introduced later, they will need the same biological systems — aging, natural death, health, needs — but without the human-specific baggage. Without abstraction, every biological system would need to be duplicated (CitizenAgeSystem → AnimalAgeSystem, CitizenNeeds → AnimalNeeds, etc.), violating "mod API == internal API."
+
+**Decision:** Extract shared biological traits into a `LivingBeing` component. `Citizen` keeps only human-specific traits. All systems that operate on biological properties (aging, natural death, health decay, needs) query for `LivingBeing` instead of `Citizen`.
+
+Component split:
+
+```
+LivingBeing              Citizen
+├── Age                  ├── Name
+├── Sex                  ├── EducationLevel
+├── Health               ├── HomeBuilding
+├── Happiness            ├── WorkplaceBuilding
+                         └── LastBirthYear
+```
+
+Systems that become generic (query `LivingBeing`):
+- `CitizenAgeSystem` → ages any living being, applies Child/Elderly tags, checks natural death
+- `CitizenNeedSystem` → needs already apply to any entity with needs buffer; health check now reads `LivingBeing`
+- `DeathSystem` → already generic (queries `Dead` tag)
+- Natural death → works on any `LivingBeing` regardless of `Citizen`
+
+Human-specific systems stay on `Citizen`:
+- `BirthSystem` → creates children with both `LivingBeing` and `Citizen`
+- Future: `AnimalBirthSystem` → creates animals with `LivingBeing` (no `Citizen`)
+
+Entity creation updates:
+- `SimulationBootstrap` → creates entities with both `LivingBeing` and `Citizen`
+- `BirthSystem` → child entities get both
+- `SimulationTestWorld.CreateCitizen` → adds both
+- Animals (future) → `LivingBeing` only, no `Citizen`
+
+**Rationale:**
+
+- **Forward compatibility:** Chickens add `LivingBeing` without touching any human code. Aging, death, and needs "just work" for any living creature.
+- **One system, many creatures:** `CitizenAgeSystem` ages chickens and citizens identically. If chickens need different aging rates, that becomes a config parameter on `LivingBeing` (or a data-driven curve), not a new system.
+- **Separation of concerns:** Biological traits belong to the entity type "living being," not "citizen." Code that only needs Age/Health doesn't need to know about EducationLevel or HomeBuilding.
+- **Minimal refactor:** Only fields move from `Citizen` to `LivingBeing`. Systems already iterate components independently — adding one more component to the query is trivial.
+
+**Consequences:**
+
+- **Easier:** Animals become data — add `LivingBeing` + animal-specific components. No duplicate systems. No "reinventing" for chickens.
+- **Harder:** Entity archetypes now require `LivingBeing` in addition to `Citizen` — one more structural component per human entity. Systems that need both `LivingBeing` and `Citizen` fields must query both. Migration touches many files but each change is mechanical.

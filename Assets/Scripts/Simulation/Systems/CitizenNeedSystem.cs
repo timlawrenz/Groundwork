@@ -42,8 +42,8 @@ namespace Groundwork.Simulation
                 buildingPositions.TryAdd(bpos.ValueRO.TileCoordinate, bEntity);
             }
 
-            foreach (var (citizen, position, entity) in
-                     SystemAPI.Query<RefRW<Citizen>, RefRO<MapPosition>>()
+            foreach (var (citizen, lb, position, entity) in
+                     SystemAPI.Query<RefRW<Citizen>, RefRW<LivingBeing>, RefRO<MapPosition>>()
                          .WithNone<Dead>()
                          .WithEntityAccess())
             {
@@ -127,7 +127,7 @@ namespace Groundwork.Simulation
                     UpsertNeed(needs, "shelter", 0.25f);
 
                 // Health need — escalates when health is low
-                if (citizen.ValueRO.Health < 30f)
+                if (lb.ValueRO.Health < 30f)
                     UpsertNeed(needs, "health", 0.05f);
 
                 // ─── Health decay (data-driven critical threshold) ───
@@ -141,14 +141,14 @@ namespace Groundwork.Simulation
                     if (need.Urgency > ndef.CriticalThreshold)
                     {
                         float decay = (need.Urgency - ndef.CriticalThreshold) * ndef.HealthDecayRate;
-                        citizen.ValueRW.Health -= decay;
-                        if (citizen.ValueRW.Health < 0f)
-                            citizen.ValueRW.Health = 0f;
+                        lb.ValueRW.Health -= decay;
+                        if (lb.ValueRW.Health < 0f)
+                            lb.ValueRW.Health = 0f;
                     }
                 }
 
                 // Death by health
-                if (citizen.ValueRO.Health <= 0f && !SystemAPI.HasComponent<Dead>(entity))
+                if (lb.ValueRO.Health <= 0f && !SystemAPI.HasComponent<Dead>(entity))
                     ecb.AddComponent<Dead>(entity);
             }
 

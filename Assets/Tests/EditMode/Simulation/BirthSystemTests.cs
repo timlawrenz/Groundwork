@@ -1,10 +1,9 @@
 using NUnit.Framework;
 using Unity.Entities;
 using Unity.Collections;
-using Unity.Mathematics;
+
 using Groundwork.Simulation;
 using Groundwork.TestHelpers;
-
 namespace Groundwork.Tests.Simulation
 {
     [TestFixture]
@@ -16,15 +15,15 @@ namespace Groundwork.Tests.Simulation
             using var world = new SimulationTestWorld();
             var house = world.CreateBuilding("house", new(10, 10), maxWorkers: 0);
 
-            // Adult female with home and good health
             var mother = world.CreateCitizen(age: 25f, home: house);
             var c = world.EntityManager.GetComponentData<Citizen>(mother);
-            c.Sex = 1; // female
-            c.Health = 80f;
+            var lb = world.EntityManager.GetComponentData<LivingBeing>(mother);
+            lb.Sex = 1;
+            lb.Health = 80f;
             c.LastBirthYear = 0;
             world.EntityManager.SetComponentData(mother, c);
+            world.EntityManager.SetComponentData(mother, lb);
 
-            // Advance to day 1 of year 2 (she had no child in year 1)
             var cal = world.GetCalendarSingletonEntity();
             var calData = world.EntityManager.GetComponentData<CalendarSingleton>(cal);
             calData.Year = 2;
@@ -32,27 +31,25 @@ namespace Groundwork.Tests.Simulation
             world.EntityManager.SetComponentData(cal, calData);
             world.SetTick(24);
 
-            // Count citizens before
             int before = world.CountEntities<Citizen>();
-
             world.UpdateSystem<BirthSystem>();
-
-            // Should have one more citizen (the child)
             int after = world.CountEntities<Citizen>();
             Assert.That(after, Is.EqualTo(before + 1), "Should create one child");
 
-            // The child should have Child tag and be at mother's home
+            // The child's age lives on LivingBeing now
             bool foundChild = false;
             var childQuery = world.EntityManager.CreateEntityQuery(
-                typeof(Citizen), typeof(Child));
-            var children = childQuery.ToComponentDataArray<Citizen>(Allocator.Temp);
-            for (int i = 0; i < children.Length; i++)
+                typeof(Citizen), typeof(LivingBeing), typeof(Child));
+            var childCitizens = childQuery.ToComponentDataArray<Citizen>(Allocator.Temp);
+            var childLBs = childQuery.ToComponentDataArray<LivingBeing>(Allocator.Temp);
+            for (int i = 0; i < childCitizens.Length; i++)
             {
-                Assert.That(children[i].Age, Is.EqualTo(0f));
-                Assert.That(children[i].HomeBuilding, Is.EqualTo(house));
+                Assert.That(childLBs[i].Age, Is.EqualTo(0f));
+                Assert.That(childCitizens[i].HomeBuilding, Is.EqualTo(house));
                 foundChild = true;
             }
-            children.Dispose();
+            childCitizens.Dispose();
+            childLBs.Dispose();
             Assert.That(foundChild, "Should find a child entity");
 
             // Mother's LastBirthYear should be updated
@@ -68,10 +65,12 @@ namespace Groundwork.Tests.Simulation
 
             var mother = world.CreateCitizen(age: 25f, home: house);
             var c = world.EntityManager.GetComponentData<Citizen>(mother);
-            c.Sex = 1;
-            c.Health = 80f;
+            var lb = world.EntityManager.GetComponentData<LivingBeing>(mother);
+            lb.Sex = 1;
+            lb.Health = 80f;
             c.LastBirthYear = 2; // already had child this year
             world.EntityManager.SetComponentData(mother, c);
+            world.EntityManager.SetComponentData(mother, lb);
 
             var cal = world.GetCalendarSingletonEntity();
             var calData = world.EntityManager.GetComponentData<CalendarSingleton>(cal);
@@ -95,9 +94,11 @@ namespace Groundwork.Tests.Simulation
 
             var male = world.CreateCitizen(age: 25f, home: house);
             var c = world.EntityManager.GetComponentData<Citizen>(male);
-            c.Sex = 0; // male
-            c.Health = 80f;
+            var lb = world.EntityManager.GetComponentData<LivingBeing>(male);
+            lb.Sex = 0; // male
+            lb.Health = 80f;
             world.EntityManager.SetComponentData(male, c);
+            world.EntityManager.SetComponentData(male, lb);
 
             var cal = world.GetCalendarSingletonEntity();
             var calData = world.EntityManager.GetComponentData<CalendarSingleton>(cal);
@@ -121,10 +122,12 @@ namespace Groundwork.Tests.Simulation
 
             var mother = world.CreateCitizen(age: 25f, home: house);
             var c = world.EntityManager.GetComponentData<Citizen>(mother);
-            c.Sex = 1;
-            c.Health = 30f; // unhealthy
+            var lb = world.EntityManager.GetComponentData<LivingBeing>(mother);
+            lb.Sex = 1;
+            lb.Health = 30f; // unhealthy
             c.LastBirthYear = 0;
             world.EntityManager.SetComponentData(mother, c);
+            world.EntityManager.SetComponentData(mother, lb);
 
             var cal = world.GetCalendarSingletonEntity();
             var calData = world.EntityManager.GetComponentData<CalendarSingleton>(cal);
@@ -148,11 +151,13 @@ namespace Groundwork.Tests.Simulation
             // No home building
             var mother = world.CreateCitizen(age: 25f);
             var c = world.EntityManager.GetComponentData<Citizen>(mother);
-            c.Sex = 1;
-            c.Health = 80f;
+            var lb = world.EntityManager.GetComponentData<LivingBeing>(mother);
+            lb.Sex = 1;
+            lb.Health = 80f;
             c.LastBirthYear = 0;
             c.HomeBuilding = Entity.Null;
             world.EntityManager.SetComponentData(mother, c);
+            world.EntityManager.SetComponentData(mother, lb);
 
             var cal = world.GetCalendarSingletonEntity();
             var calData = world.EntityManager.GetComponentData<CalendarSingleton>(cal);
@@ -174,12 +179,14 @@ namespace Groundwork.Tests.Simulation
             using var world = new SimulationTestWorld();
             var house = world.CreateBuilding("house", new(10, 10), maxWorkers: 0);
 
-            var child = world.CreateCitizen(age: 14f, home: house);
-            var c = world.EntityManager.GetComponentData<Citizen>(child);
-            c.Sex = 1;
-            c.Health = 80f;
+            var childEntity = world.CreateCitizen(age: 14f, home: house);
+            var c = world.EntityManager.GetComponentData<Citizen>(childEntity);
+            var lb = world.EntityManager.GetComponentData<LivingBeing>(childEntity);
+            lb.Sex = 1;
+            lb.Health = 80f;
             c.LastBirthYear = 0;
-            world.EntityManager.SetComponentData(child, c);
+            world.EntityManager.SetComponentData(childEntity, c);
+            world.EntityManager.SetComponentData(childEntity, lb);
 
             var cal = world.GetCalendarSingletonEntity();
             var calData = world.EntityManager.GetComponentData<CalendarSingleton>(cal);
@@ -203,10 +210,12 @@ namespace Groundwork.Tests.Simulation
 
             var mother = world.CreateCitizen(age: 25f, home: house);
             var c = world.EntityManager.GetComponentData<Citizen>(mother);
-            c.Sex = 1;
-            c.Health = 80f;
+            var lb = world.EntityManager.GetComponentData<LivingBeing>(mother);
+            lb.Sex = 1;
+            lb.Health = 80f;
             c.LastBirthYear = 0;
             world.EntityManager.SetComponentData(mother, c);
+            world.EntityManager.SetComponentData(mother, lb);
 
             var cal = world.GetCalendarSingletonEntity();
             var calData = world.EntityManager.GetComponentData<CalendarSingleton>(cal);
@@ -222,8 +231,8 @@ namespace Groundwork.Tests.Simulation
             var events = world.EntityManager.GetBuffer<SimulationEvent>(eventEntity);
             Assert.That(events.Length, Is.EqualTo(1));
             Assert.That(events[0].Type, Is.EqualTo(EventType.CitizenBorn));
-            Assert.That(events[0].Data0, Is.EqualTo(0f)); // mother's x
-            Assert.That(events[0].Data1, Is.EqualTo(0f)); // mother's y (default position)
+            Assert.That(events[0].Data0, Is.EqualTo(0f));
+            Assert.That(events[0].Data1, Is.EqualTo(0f));
         }
     }
 }

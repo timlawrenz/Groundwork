@@ -2,6 +2,7 @@ using NUnit.Framework;
 using Unity.Entities;
 using Groundwork.Simulation;
 using Groundwork.TestHelpers;
+using Groundwork.TestHelpers;
 
 namespace Groundwork.Tests.Simulation
 {
