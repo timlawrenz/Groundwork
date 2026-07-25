@@ -86,24 +86,55 @@ Every tick (configurable, e.g., 1 game-hour = 1 tick at 1x speed):
 
 ## MVP Scope
 
-One map (flat, temperate, no water), 50 citizens, 3 resources:
+One map (flat, temperate, 100×100, no water), 50 citizens, 3 resources:
 
-- **Logs** — harvested from forest tiles
-- **Firewood** — produced at woodcutter from logs
-- **Food** — harvested from gatherer's hut
+- **Logs** — initial stockpile at woodcutters (50K each)
+- **Firewood** — produced at woodcutter from logs (TicksPerCycle=1)
+- **Food** — produced at gatherer's hut (TicksPerCycle=1)
 
-3 building types: House, Woodcutter, Gatherer's Hut
+4 building types: House (8), Gatherer's Hut (9), Woodcutter (3). Total: 20 buildings.
 
-Core loop working:
-1. Citizens are born, age, get hungry/cold
-2. Citizens path to workplace, gather/harvest, return home
-3. Resources deplete, production chains run, citizens consume
+Core loop operational:
+1. Citizens are born (94 births tracked across 10-year sim), age, get hungry/cold
+2. Citizens path to workplace; buildings produce goods autonomously
+3. Resources are consumed from building inventories (public buildings — any building on citizen's tile)
 4. If food or firewood runs out, citizens get sick and die
-5. Population stabilizes or collapses
+5. Population grows to ~119 then declines as deaths outpace births; sim survives 10 years
 
-No modding, no trading, no seasons, no UI. Simulation engine only, verifiable via headless test harness.
+Simulation engine runs headless. Event-driven debug visualization and CSV stats output. HTML dashboard.
 
 **Success criterion:** Simulation runs for 100 game-years with a stable population oscillating between 30-50.
+
+## Needs System (Current & Planned)
+
+### Current (hardcoded)
+
+Each citizen has a `DynamicBuffer<CitizenNeed>` with types: "food", "warmth", "shelter", "health". Each need type has hardcoded logic in `CitizenNeedSystem`:
+- Food: urgency grows 0.15/day; satisfied by eating 1 food from inventory (personal→workplace→home→public building)
+- Warmth: urgency grows 0.01/day (warm) or 0.1/day (cold seasons); satisfied by burning 1 firewood from building inventory
+- Shelter: urgency grows 0.25/day if homeless; no satisfaction mechanism
+- Health: urgency grows 0.05/day when health < 30; no direct satisfaction mechanism
+
+Social need was removed (reserved for future DLC) — it had no satisfaction mechanism and caused unbounded health decay.
+
+### Planned (config-driven)
+
+Per ADR 2026-07-25 §3, needs become data-defined. A `NeedDefinition` (IComponentData or JSON) specifies:
+
+```
+NeedDefinition {
+    NeedType: "food" | "warmth" | "shelter" | ...
+    SatisfyingItem: "food" | "firewood" | ...    // which item satisfies this need
+    UrgencyGrowthPerDay: 0.15                      // base growth rate
+    ClimateModifier: {                             // seasonal multiplier
+        spring: 1.0, summer: 0.8, fall: 1.2, winter: 1.5
+    }
+    CriticalThreshold: 0.8                         // urgency level where health decays
+    HealthDecayRate: 2.0                           // (urgency - threshold) * rate = health loss/day
+}
+```
+
+New needs (social, entertainment, medicine) become data entries. The `CitizenNeedSystem` becomes a generic need processor that reads `NeedDefinition` components and applies them uniformly.
 
 ## Mod API
 
@@ -155,11 +186,11 @@ end
 
 | Phase | Scope | Status |
 |---|---|---|
-| 0 — Scaffolding | Repo, docs, architecture, Unity project | In progress |
-| 1 — Simulation Core (MVP) | 3 resources, 3 buildings, 50 citizens, headless test harness | Not started |
-| 2 — Content & Modding | JSON loader, Lua runtime, mod API hooks, sandbox | Not started |
-| 3 — UI (Touch) | Touch-first interface layer, renderer, camera controls | Not started |
-| 4 — UI (Desktop) | Keyboard + mouse interface, same command bus | Not started |
-| 5 — Seasons & Depth | Calendar, weather, crop seasons, citizen well-being | Not started |
-| 6 — Trade | Inter-settlement trade routes, merchant AI | Not started |
-| 7 — Polish & Release | Tutorial, mod workshop, Steam/mobile stores | Not started |
+| 0 — Scaffolding | Repo, docs, architecture, Unity project | ✅ Complete |
+| 1 — Simulation Core (MVP) | 3 resources, 20 buildings, 50 citizens, headless harness, event buffer, debug viz | 🟡 Nearly complete |
+| 2 — Content & Modding | JSON loader, Lua runtime, mod API hooks, sandbox | 🔴 Not started |
+| 3 — UI (Touch) | Touch-first interface layer, renderer, camera controls | 🔴 Not started |
+| 4 — UI (Desktop) | Keyboard + mouse interface, same command bus | 🔴 Not started |
+| 5 — Seasons & Depth | Calendar, weather, crop seasons, citizen well-being | 🔴 Not started |
+| 6 — Trade | Inter-settlement trade routes, merchant AI | 🔴 Not started |
+| 7 — Polish & Release | Tutorial, mod workshop, Steam/mobile stores | 🔴 Not started |

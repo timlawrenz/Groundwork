@@ -19,7 +19,7 @@
 
 ## Phase 1 — Simulation Core (MVP)
 
-- [x] Implement data model — Citizen, Building, Item, Map, Calendar as pure C# structs (2026-07-23)
+- [x] Implement data model — Citizen, Building, Item, Map, Calendar (2026-07-23)
 - [x] Implement sim loop skeleton — tick dispatch, system ordering, bootstrap (2026-07-23)
 - [x] Implement first production chain: logs → firewood (2026-07-23)
 - [x] Implement citizen needs system (2026-07-23)
@@ -27,14 +27,22 @@
 - [x] Implement citizen aging & death (2026-07-24)
 - [x] Test infrastructure + TDD ADR + 46 tests for all 10 systems (2026-07-24)
 - [x] Simulation stats system — population, resources, seasonal logging (2026-07-24)
-- [x] Fix: production orders now cycle continuously (reset on completion) (2026-07-24)
+- [x] Fix: production orders now cycle continuously (2026-07-24)
 - [x] Fix: citizens consume food from inventory to reduce food need (2026-07-24)
 - [x] Birth system — eligible females produce 1 child/year (2026-07-24)
 - [x] Firewood consumption — citizens burn firewood from home for warmth (2026-07-24)
-- [x] Abundance bootstrap — 8 houses, 9 gatherer huts, 3 woodcutters, generous supplies (2026-07-24)
-- [x] 66 tests all green (2026-07-24)
-- [ ] Headless test harness: tick 100 years, verify population stability (30-50 citizens)
-- [ ] Success criterion met: stable population for 100 game-years
+- [x] Abundance bootstrap — 8 houses, 9 gatherer huts, 3 woodcutters (2026-07-24)
+- [x] Headless test harness: HeadlessRunner (2026-07-25)
+- [x] Event buffer: SimulationEvent + EventDispatchSystem (ADRs 2026-07-25)
+- [x] Re-pathing: citizens recalculate A* each step (2026-07-25)
+- [x] Co-location: multiple citizens per tile (2026-07-25)
+- [x] Debug viz: event-driven ASCII grid (DebugVizSystem) (2026-07-25)
+- [x] Birth/death tracking via event buffer (SimulationStatsSystem) (2026-07-25)
+- [x] Public buildings: any building on citizen's tile provides resources (ADR 2026-07-25 §1) (2026-07-25)
+- [x] HTML dashboard: Field Notes Dark, CSV stats input (2026-07-25)
+- [ ] 100-year stability test: population stable 30-50 for 100 game-years
+- [ ] Goods transport: citizens haul goods between buildings (ADR 2026-07-25 §2)
+- [ ] Needs generalization: config-driven need types (ADR 2026-07-25 §3)
 
 ## Phase 2 — Content & Modding
 
@@ -42,11 +50,10 @@
 - [x] ContentLoaderSystem — creates definition entities at startup (2026-07-25)
 - [x] BuildingProductionSystem refactored: reads from definitions, no hardcoded recipes (2026-07-25)
 - [x] SimulationStatsSystem: building counting is type-agnostic (2026-07-25)
-- [x] Content loader: Items.json, Buildings.json, Recipes.json from StreamingAssets (2026-07-25)
 - [x] Buffer types moved to Buffers/ folder per architecture conventions (2026-07-25)
 - [x] SimulationBootstrap reads MaxWorkers from BuildingDefinitionData (2026-07-25)
 - [x] Pipeline comments updated to reflect full system order (2026-07-25)
+- [ ] JSON content files (Items.json, Buildings.json, Recipes.json) — currently hardcoded in ContentLoaderSystem
 - [ ] Lua runtime integration
-- [x] Event buffer: SimulationEvent + EventDispatchSystem (per ADR 2026-07-25) (2026-07-25)
 - [ ] Mod API hooks: on_init, on_tick, on_season_change, on_building_complete, etc.
 - [ ] Sandbox validation: no filesystem, no network, no OS access

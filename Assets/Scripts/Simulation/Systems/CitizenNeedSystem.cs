@@ -5,8 +5,8 @@ using Unity.Mathematics;
 namespace Groundwork.Simulation
 {
     /// <summary>
-    /// Updates citizen needs each game-day. Decays health when critical needs go unmet.
-    /// Needs are satisfied by consuming resources from inventory (e.g. eating food).
+    /// Updates citizen needs each game-day. Reads NeedDefinition components to determine
+    /// satisfaction items, urgency growth rates, climate modifiers, and critical thresholds.
     /// Buildings are public resources — any building on the citizen's tile can be used.
     /// Runs after CalendarSystem, before DeathSystem.
     /// </summary>
@@ -21,6 +21,16 @@ namespace Groundwork.Simulation
             var calendar = SystemAPI.GetSingleton<CalendarSingleton>();
             var ecb = new EntityCommandBuffer(Allocator.Temp);
 
+            // Build need definition lookup: NeedType → NeedDefinition
+            var needDefs = new NativeHashMap<FixedString32Bytes, NeedDefinition>(16, Allocator.Temp);
+            foreach (var nd in SystemAPI.Query<RefRO<NeedDefinition>>())
+            {
+                needDefs.TryAdd(nd.ValueRO.NeedType, nd.ValueRO);
+            }
+
+            // Determine if we're in a cold season (fall=2, winter=3)
+            bool isColdSeason = calendar.Season >= 2;
+
             // Build building position lookup for public building access
             var buildingPositions = new NativeHashMap<int2, Entity>(64, Allocator.Temp);
             foreach (var (bldg, bpos, bEntity) in
@@ -29,7 +39,7 @@ namespace Groundwork.Simulation
                          .WithNone<UnderConstruction>()
                          .WithEntityAccess())
             {
-                buildingPositions.Add(bpos.ValueRO.TileCoordinate, bEntity);
+                buildingPositions.TryAdd(bpos.ValueRO.TileCoordinate, bEntity);
             }
 
             foreach (var (citizen, position, entity) in
@@ -38,143 +48,99 @@ namespace Groundwork.Simulation
                          .WithEntityAccess())
             {
                 var needs = state.EntityManager.GetBuffer<CitizenNeed>(entity);
-                var inventory = state.EntityManager.GetBuffer<InventorySlot>(entity);
+                var personalInv = state.EntityManager.GetBuffer<InventorySlot>(entity);
                 var citizenPos = position.ValueRO.TileCoordinate;
 
-                // ─── Consume food from inventory to reduce food need ───
-                bool ateFromPersonal = false;
-                bool ateFromWorkplace = false;
-                bool ateFromHome = false;
+                // ─── Satisfy commodity needs (defined by NeedDefinition.SatisfyingItem) ───
 
-                for (int i = 0; i < needs.Length; i++)
-                {
-                    if (needs[i].NeedType != "food")
-                        continue;
-                    if (needs[i].Urgency < 0.3f)
-                        break; // not hungry enough to eat
-
-                    // 1. Try personal inventory first
-                    for (int j = 0; j < inventory.Length; j++)
-                    {
-                        if (inventory[j].ItemId != "food" || inventory[j].Quantity <= 0)
-                            continue;
-
-                        var slot = inventory[j];
-                        slot.Quantity -= 1;
-                        inventory[j] = slot;
-                        ateFromPersonal = true;
-                        break;
-                    }
-
-                    // 2. Fall back to workplace inventory
-                    if (!ateFromPersonal && citizen.ValueRO.WorkplaceBuilding != Entity.Null)
-                    {
-                        var workInv = state.EntityManager.GetBuffer<InventorySlot>(
-                            citizen.ValueRO.WorkplaceBuilding);
-                        for (int j = 0; j < workInv.Length; j++)
-                        {
-                            if (workInv[j].ItemId != "food" || workInv[j].Quantity <= 0)
-                                continue;
-
-                            var slot = workInv[j];
-                            slot.Quantity -= 1;
-                            workInv[j] = slot;
-                            ateFromWorkplace = true;
-                            break;
-                        }
-                    }
-
-                    // 3. Fall back to home building inventory
-                    if (!ateFromPersonal && !ateFromWorkplace && citizen.ValueRO.HomeBuilding != Entity.Null)
-                    {
-                        var homeInv = state.EntityManager.GetBuffer<InventorySlot>(
-                            citizen.ValueRO.HomeBuilding);
-                        for (int j = 0; j < homeInv.Length; j++)
-                        {
-                            if (homeInv[j].ItemId != "food" || homeInv[j].Quantity <= 0)
-                                continue;
-
-                            var slot = homeInv[j];
-                            slot.Quantity -= 1;
-                            homeInv[j] = slot;
-                            ateFromHome = true;
-                            break;
-                        }
-                    }
-
-                    // 4. Fall back to any building on this tile (public)
-                    if (!ateFromPersonal && !ateFromWorkplace && !ateFromHome)
-                    {
-                        if (TryConsumeFromPublicBuilding(ref state, buildingPositions, citizenPos, "food"))
-                            ateFromHome = true; // semantically "ate from a building"
-                    }
-
-                    // Reduce urgency if we ate anything
-                    if (ateFromPersonal || ateFromWorkplace || ateFromHome)
-                    {
-                        var need = needs[i];
-                        need.Urgency = math.max(0f, need.Urgency - 0.5f);
-                        needs[i] = need;
-                    }
-                    break; // only process food need once per citizen per day
-                }
-
-                // ─── Consume firewood for warmth ───
-                for (int i = 0; i < needs.Length; i++)
-                {
-                    if (needs[i].NeedType != "warmth")
-                        continue;
-                    if (needs[i].Urgency < 0.3f)
-                        break;
-
-                    bool warmedUp = false;
-
-                    // 1. Try home building
-                    if (citizen.ValueRO.HomeBuilding != Entity.Null)
-                    {
-                        warmedUp = TryConsumeFromBuilding(ref state,
-                            citizen.ValueRO.HomeBuilding, "firewood");
-                    }
-
-                    // 2. Try any building on this tile (public)
-                    if (!warmedUp)
-                    {
-                        warmedUp = TryConsumeFromPublicBuilding(ref state,
-                            buildingPositions, citizenPos, "firewood", citizen.ValueRO.HomeBuilding);
-                    }
-
-                    if (warmedUp)
-                    {
-                        var need = needs[i];
-                        need.Urgency = math.max(0f, need.Urgency - 0.5f);
-                        needs[i] = need;
-                    }
-                    break;
-                }
-
-                // ─── Need growth ───
-                UpsertNeed(needs, "food", 0.15f);
-
-                if (calendar.Season >= 2)
-                    UpsertNeed(needs, "warmth", 0.1f);
-                else
-                    UpsertNeed(needs, "warmth", 0.01f);
-
-                if (citizen.ValueRO.HomeBuilding == Entity.Null)
-                    UpsertNeed(needs, "shelter", 0.25f);
-
-                if (citizen.ValueRO.Health < 30f)
-                    UpsertNeed(needs, "health", 0.05f);
-
-                // Social need reserved for future DLC
-
-                // Apply critical needs → health decay
                 for (int i = 0; i < needs.Length; i++)
                 {
                     var need = needs[i];
-                    if (need.Urgency > 0.8f)
+
+                    // Look up the definition for this need type
+                    if (!needDefs.TryGetValue(need.NeedType, out var ndef))
+                        continue;
+
+                    // Only process commodity needs (those with a satisfying item)
+                    if (ndef.SatisfyingItem.Length == 0)
+                        continue;
+
+                    // Skip if urgency below threshold for consumption
+                    if (need.Urgency < 0.3f)
+                        continue;
+
+                    bool satisfied = false;
+
+                    // 1. Try personal inventory
+                    satisfied = TryConsumeFromInventory(personalInv, ndef.SatisfyingItem);
+
+                    // 2. Try workplace inventory
+                    if (!satisfied && citizen.ValueRO.WorkplaceBuilding != Entity.Null)
                     {
-                        float decay = (need.Urgency - 0.8f) * 2f;
+                        var workInv = state.EntityManager.GetBuffer<InventorySlot>(
+                            citizen.ValueRO.WorkplaceBuilding);
+                        satisfied = TryConsumeFromInventory(workInv, ndef.SatisfyingItem);
+                    }
+
+                    // 3. Try home inventory
+                    if (!satisfied && citizen.ValueRO.HomeBuilding != Entity.Null)
+                    {
+                        var homeInv = state.EntityManager.GetBuffer<InventorySlot>(
+                            citizen.ValueRO.HomeBuilding);
+                        satisfied = TryConsumeFromInventory(homeInv, ndef.SatisfyingItem);
+                    }
+
+                    // 4. Try any building on this tile (public)
+                    if (!satisfied)
+                    {
+                        satisfied = TryConsumeFromPublicBuilding(ref state,
+                            buildingPositions, citizenPos, ndef.SatisfyingItem);
+                    }
+
+                    if (satisfied)
+                    {
+                        need.Urgency = math.max(0f, need.Urgency - ndef.SatisfactionReduction);
+                        needs[i] = need;
+                    }
+                }
+
+                // ─── Need growth (data-driven) ───
+
+                for (int i = 0; i < needs.Length; i++)
+                {
+                    var need = needs[i];
+                    if (!needDefs.TryGetValue(need.NeedType, out var ndef))
+                        continue;
+
+                    float growth = ndef.UrgencyGrowthPerDay;
+                    if (isColdSeason)
+                        growth *= ndef.ColdSeasonGrowthMultiplier;
+
+                    need.Urgency = math.min(1f, need.Urgency + growth);
+                    needs[i] = need;
+                }
+
+                // ─── Condition-based needs (hardcoded for now) ───
+
+                // Shelter need — homeless citizens
+                if (citizen.ValueRO.HomeBuilding == Entity.Null)
+                    UpsertNeed(needs, "shelter", 0.25f);
+
+                // Health need — escalates when health is low
+                if (citizen.ValueRO.Health < 30f)
+                    UpsertNeed(needs, "health", 0.05f);
+
+                // ─── Health decay (data-driven critical threshold) ───
+
+                for (int i = 0; i < needs.Length; i++)
+                {
+                    var need = needs[i];
+                    if (!needDefs.TryGetValue(need.NeedType, out var ndef))
+                        continue;
+
+                    if (need.Urgency > ndef.CriticalThreshold)
+                    {
+                        float decay = (need.Urgency - ndef.CriticalThreshold) * ndef.HealthDecayRate;
                         citizen.ValueRW.Health -= decay;
                         if (citizen.ValueRW.Health < 0f)
                             citizen.ValueRW.Health = 0f;
@@ -186,55 +152,43 @@ namespace Groundwork.Simulation
                     ecb.AddComponent<Dead>(entity);
             }
 
+            needDefs.Dispose();
             buildingPositions.Dispose();
             ecb.Playback(state.EntityManager);
             ecb.Dispose();
         }
 
-        /// <summary>Try to consume one unit of an item from a specific building.</summary>
-        private static bool TryConsumeFromBuilding(ref SystemState state, Entity building, FixedString32Bytes itemId)
+        /// <summary>Try to consume one unit of an item from a DynamicBuffer inventory. Returns true if consumed.</summary>
+        private static bool TryConsumeFromInventory(DynamicBuffer<InventorySlot> inventory, FixedString32Bytes itemId)
         {
-            if (building == Entity.Null) return false;
-            var inv = state.EntityManager.GetBuffer<InventorySlot>(building);
-            for (int j = 0; j < inv.Length; j++)
+            for (int j = 0; j < inventory.Length; j++)
             {
-                if (inv[j].ItemId != itemId || inv[j].Quantity <= 0)
+                if (inventory[j].ItemId != itemId || inventory[j].Quantity <= 0)
                     continue;
-                var slot = inv[j];
+                var slot = inventory[j];
                 slot.Quantity -= 1;
-                inv[j] = slot;
+                inventory[j] = slot;
                 return true;
             }
             return false;
         }
 
-        /// <summary>Try to consume one unit from any public building on the tile (excluding skipBuilding).</summary>
+        /// <summary>Try to consume one unit from any public building on the tile.</summary>
         private static bool TryConsumeFromPublicBuilding(
             ref SystemState state,
             NativeHashMap<int2, Entity> buildingPositions,
             int2 citizenPos,
-            FixedString32Bytes itemId,
-            Entity skipBuilding = default)
+            FixedString32Bytes itemId)
         {
             if (buildingPositions.TryGetValue(citizenPos, out var building))
             {
-                if (building != skipBuilding)
-                {
-                    var inv = state.EntityManager.GetBuffer<InventorySlot>(building);
-                    for (int j = 0; j < inv.Length; j++)
-                    {
-                        if (inv[j].ItemId != itemId || inv[j].Quantity <= 0)
-                            continue;
-                        var slot = inv[j];
-                        slot.Quantity -= 1;
-                        inv[j] = slot;
-                        return true;
-                    }
-                }
+                var inv = state.EntityManager.GetBuffer<InventorySlot>(building);
+                return TryConsumeFromInventory(inv, itemId);
             }
             return false;
         }
 
+        /// <summary>Add or update a need in the citizen's needs buffer.</summary>
         private static void UpsertNeed(DynamicBuffer<CitizenNeed> needs, FixedString32Bytes needType, float urgencyIncrease)
         {
             for (int i = 0; i < needs.Length; i++)

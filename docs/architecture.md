@@ -41,86 +41,85 @@
 
 ## Key Architectural Decisions
 
-### Unity ECS (DOTS)
+See [`docs/decisions.md`](docs/decisions.md) for the full ADR log.
 
-Data-oriented design for thousands of entities on tablet CPUs. Citizens are archetypes, not GameObjects.
+| Decision | Date | Summary |
+|---|---|---|
+| Unity ECS (DOTS) | 2026-07-23 | Entities, not GameObjects. Data-oriented, Burst-compatible. |
+| JSON for Content, Lua for Behavior | 2026-07-23 | Content in JSON, game logic in sandboxed Lua. |
+| Command Pattern | 2026-07-23 | All mutations via command bus. UI decoupled from sim. |
+| Deterministic Simulation | 2026-07-23 | Single-threaded, ID-order. Reproducible and debuggable. |
+| Tile-Based Map | 2026-07-23 | Grid-based. Simplifies pathfinding and placement. |
+| TDD Mandate | 2026-07-23 | All simulation code test-driven. |
+| Deterministic Event Buffer | 2026-07-25 | Lightweight ECS buffer for notification flow. Commands mutate, events notify. |
+| Public Buildings & Goods Transport | 2026-07-25 | 3-stage: public buildings → citizen hauling → needs generalization. |
 
-- **Entities**: lightweight IDs, not objects
-- **Components**: pure data structs (CitizenData, BuildingData, ItemData)
-- **Systems**: stateless functions that iterate components (CitizenAgeSystem, ProductionSystem, PathfindingSystem)
+## Simulation Pipeline
 
-### Command Pattern
-
-All mutations flow through the command bus. UI submits commands, sim processes them.
-
-```
-Touch UI ──→ Command Bus ──→ Simulation Engine
-Mouse+KB ──→              ──→
-Test Harness ──→          ──→
-```
-
-Commands:
-- `PlaceBuilding(building_type, x, z)`
-- `AssignWorker(citizen_id, building_id)`
-- `SetSpeed(1x | 2x | 4x | pause)`
-- `Select(x, z)`
-- `Pan(dx, dz)`
-- `Zoom(delta)`
-
-**Benefits:**
-- UI decoupled from simulation
-- Commands can be recorded, replayed, networked later
-- Test harness drives the sim through the same API a player uses
-
-### Deterministic Simulation
-
-Single-threaded, citizens tick in ID order. Reproducible and debuggable.
-
-- No race conditions
-- Save files are command logs — replay from initial state = load game
-- Bisect bugs by replaying command logs
-
-### Stateless Renderer
-
-Renderer reads a read-only `GameSnapshot` each frame. Simulation never touches rendering.
+Thirteen systems run in fixed order each tick (1 game-hour):
 
 ```
-GameSnapshot {
-  citizens: [CitizenState],
-  buildings: [BuildingState],
-  items: [ItemState],
-  map: TileState[][],
-  calendar: CalendarState,
-  trade_routes: [TradeRouteState],
-  camera: CameraState,
-  selection: SelectionState,
-  ui_state: UIState
-}
+TickDispatch → Calendar → Birth → Age → Needs → Pathfinding → Movement
+→ Production → Death → DebugViz → Stats → EventDispatch
 ```
 
-### Tile-Based Map
+ContentLoader and Bootstrap run once at startup, outside the tick loop.
 
-Not freeform. Simplifies:
-- Pathfinding (grid-based A* or flow field)
-- Building placement (snap to grid)
-- Adjacency rules (buildings affect neighboring tiles)
-- Resource distribution (trees on forest tiles, ore on mountain tiles)
+### Actual System Files
 
-## Simulation Loop Detail
+| System | File | Purpose |
+|---|---|---|
+| `TickDispatchSystem` | `Assets/Scripts/Simulation/Systems/TickDispatchSystem.cs` | Advances CurrentTick |
+| `CalendarSystem` | `Assets/Scripts/Simulation/Systems/CalendarSystem.cs` | Day/season/year, temperature, daylight |
+| `BirthSystem` | `Assets/Scripts/Simulation/Systems/BirthSystem.cs` | Creates children for eligible females |
+| `CitizenAgeSystem` | `Assets/Scripts/Simulation/Systems/CitizenAgeSystem.cs` | Ages citizens, applies Child/Elderly tags |
+| `CitizenNeedSystem` | `Assets/Scripts/Simulation/Systems/CitizenNeedSystem.cs` | Food/warmth consumption, need growth, health decay |
+| `PathfindingSystem` | `Assets/Scripts/Simulation/Systems/PathfindingSystem.cs` | A* on grid, fills PathFollowing buffers |
+| `CitizenMovementSystem` | `Assets/Scripts/Simulation/Systems/CitizenMovementSystem.cs` | Moves citizens one tile/tick, re-paths each step |
+| `BuildingProductionSystem` | `Assets/Scripts/Simulation/Systems/BuildingProductionSystem.cs` | Consumes inputs, advances recipes, produces outputs |
+| `DeathSystem` | `Assets/Scripts/Simulation/Systems/DeathSystem.cs` | Destroys entities tagged Dead |
+| `DebugVizSystem` | `Assets/Scripts/Simulation/Systems/DebugVizSystem.cs` | Event-driven ASCII grid renderer |
+| `SimulationStatsSystem` | `Assets/Scripts/Simulation/Systems/SimulationStatsSystem.cs` | Collects population/resources, counts births/deaths from events |
+| `EventDispatchSystem` | `Assets/Scripts/Simulation/Systems/EventDispatchSystem.cs` | Processes event buffer, invokes Lua hooks, clears |
+| `SimulationBootstrap` | `Assets/Scripts/Simulation/Systems/SimulationBootstrap.cs` | Creates initial world (run once) |
+| `ContentLoaderSystem` | `Assets/Scripts/Simulation/Systems/ContentLoaderSystem.cs` | Creates recipe/building definitions (run once) |
 
-Every tick (configurable, e.g., 1 game-hour = 1 tick at 1x speed):
+## Event Buffer
 
-1. **Season tick** — advance calendar, update temperature/daylight/growing conditions
-2. **Citizen tick** — for each citizen: age check → need evaluation → task selection → path step → inventory update
-3. **Building tick** — for each building: consume inputs → progress production → output goods → worker attendance check
-4. **Resource tick** — spoilage check on stored items, crop growth on farm tiles
-5. **Trade tick** — advance trade routes, check arrivals, deliver shipments
-6. **Event dispatch** — process SimulationEvent buffer: invoke Lua mod hooks for subscribed event types, clear buffer for next tick
-7. **Death & birth** — check health thresholds, age limits, population reproduction
+Systems emit `SimulationEvent` entries into a singleton `DynamicBuffer<SimulationEvent>`. `SimulationStatsSystem` and `DebugVizSystem` read events before `EventDispatchSystem` clears them. This is the mechanism behind mod hooks — internal systems and mods subscribe to the same event stream. See ADR 2026-07-25.
 
-### Event Buffer
+**Event types in use:**
 
-Systems emit `SimulationEvent` entries into a singleton `DynamicBuffer<SimulationEvent>` during their update. `EventDispatchSystem` runs late in the pipeline, processes all events in emission order, and clears the buffer. This is the mechanism behind mod hooks — internal systems and mods subscribe to the same event stream. See ADR 2026-07-25.
+| Event | Emitter | Data |
+|---|---|---|
+| `CitizenBorn` | BirthSystem | EntityId=child.Index, Data0/1=position |
+| `CitizenDied` | DeathSystem | EntityId, Data0/1=position |
+| `ProductionComplete` | BuildingProductionSystem | EntityId=building.Index |
+| `TileEnter` / `TileLeave` | CitizenMovementSystem | EntityId, Data0/1=position |
+| `BuildingPlaced` | SimulationBootstrap | EntityId, Data0/1=position |
+| `CitizenSpawned` | SimulationBootstrap | EntityId, Data0/1=position |
+
+## Public Buildings
+
+Per ADR 2026-07-25 §1, buildings are public resources. `CitizenNeedSystem` checks buildings at the citizen's current tile position (via `NativeHashMap<int2, Entity>` lookup) and consumes food/firewood from any building, not just the citizen's home or workplace. This is step 1 of the goods transport architecture — prevents citizens from freezing next to a stocked woodcutter.
+
+## Re-pathing
+
+`CitizenMovementSystem` clears remaining waypoints after each step and issues a fresh `PathRequest` for the original destination. `PathfindingSystem` fills a new optimal path next tick — ensuring routes stay optimal even if the world changes. Citizens effectively pause one tick per step for re-path.
+
+## Co-location
+
+Multiple citizens can occupy the same tile. `DebugVizSystem` tracks per-tile citizen counts and renders digits (1-9, or `+` for 10+).
+
+## Headless Runner
+
+`HeadlessRunner.cs` runs the simulation headless via `-executeMethod`. Produces CSV stats at `/tmp/groundwork_stats.csv` and debug viz at `/tmp/groundwork_viz.txt`.
+
+```bash
+Unity -batchmode -nographics -quit \
+  -executeMethod Groundwork.Simulation.HeadlessRunner.Run \
+  -projectPath /home/tim/source/activity/Groundwork
+```
 
 ## Mod API Architecture
 
@@ -134,10 +133,7 @@ Mods/YourModName/
   init.lua          — behavior hooks
 ```
 
-**Lua runtime:**
-- MoonSharp or NLua embedded in Unity
-- Sandboxed: no filesystem, no network, no OS calls
-- Hooks registered in `init.lua`, called by the simulation engine at appropriate tick phases
+**Lua runtime:** MoonSharp or NLua embedded in Unity. Sandboxed: no filesystem, no network, no OS calls. Hooks registered in `init.lua`, called by `EventDispatchSystem` at end of each tick.
 
 **Mod API surface:**
 - `SpawnItem(item_id, position, quantity)`

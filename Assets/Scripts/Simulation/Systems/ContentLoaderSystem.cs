@@ -75,6 +75,32 @@ namespace Groundwork.Simulation
             var wcRecipes = ecb.AddBuffer<BuildingRecipe>(woodcutter);
             wcRecipes.Add(new BuildingRecipe { RecipeId = "chop_firewood" });
 
+            
+            // ─── Need definitions (ADR 2026-07-25 §3 — Needs Generalization) ───
+
+            var foodNeed = ecb.CreateEntity();
+            ecb.AddComponent(foodNeed, new NeedDefinition
+            {
+                NeedType = "food",
+                SatisfyingItem = "food",
+                UrgencyGrowthPerDay = 0.15f,
+                ColdSeasonGrowthMultiplier = 1.0f,
+                CriticalThreshold = 0.8f,
+                HealthDecayRate = 2.0f,
+                SatisfactionReduction = 0.5f,
+            });
+
+            var warmthNeed = ecb.CreateEntity();
+            ecb.AddComponent(warmthNeed, new NeedDefinition
+            {
+                NeedType = "warmth",
+                SatisfyingItem = "firewood",
+                UrgencyGrowthPerDay = 0.01f,
+                ColdSeasonGrowthMultiplier = 10.0f,
+                CriticalThreshold = 0.8f,
+                HealthDecayRate = 2.0f,
+                SatisfactionReduction = 0.5f,
+            });
             ecb.Playback(state.EntityManager);
             ecb.Dispose();
         }
