@@ -340,3 +340,68 @@ Entity creation updates:
 
 - **Easier:** Animals become data — add `LivingBeing` + animal-specific components. No duplicate systems. No "reinventing" for chickens.
 - **Harder:** Entity archetypes now require `LivingBeing` in addition to `Citizen` — one more structural component per human entity. Systems that need both `LivingBeing` and `Citizen` fields must query both. Migration touches many files but each change is mechanical.
+
+---
+
+### 2026-07-25 — Building Abstraction & Production Archetypes
+
+**Status:** accepted
+
+**Context:** Currently all buildings share a single `Building` component with an undifferentiated `InventorySlot` buffer. Production is autonomous — buildings produce regardless of worker presence. A gatherer hut and a woodcutter use identical production logic despite fundamentally different mechanics: a woodcutter transforms stockpiled logs at the building tile, while a forager harvests from distributed map tiles and deposits at the hut. The well was raised as a counterexample — no worker, no inputs, yet produces real goods (water) that enter the hauling economy. The church produces nothing physical, only need relief.
+
+Mixing these under one production model forces special-case code and makes future building types harder to add.
+
+**Decision:** Four production archetypes, distinguished by worker requirement, input/output semantics, and how goods enter the economy:
+
+| Archetype | Worker | Input | Output | Hauled | Example |
+|---|---|---|---|---|---|
+| **Workshop** | At building tile | Goods consumed from `InputInventory` | Transformed goods into `OutputInventory` | Yes | Woodcutter, Tanner |
+| **Gathering** | In zone (radius R) | Map tiles with harvest pressure | Harvested goods into `OutputInventory` | Yes | Forager hut, Fisher |
+| **Source** | None | None (infinite supply) | Goods into `OutputInventory` on demand | Yes | Well (water) |
+| **Service** | Optional | None | Need relief (no goods) | No | Church, Theater |
+
+Inventory split: each building gets two buffers — `InputInventory` (goods waiting to be consumed by production) and `OutputInventory` (produced goods available for hauling). This prevents citizens from stealing raw materials before processing. Hauling citizens only take from `OutputInventory`.
+
+**Workshop semantics:** A woodcutter consumes logs from `InputInventory`, produces firewood into `OutputInventory`. Two woodcutters with logs produce 2×. Worker must be present at the building tile for production to advance. Workers assigned via `Building.MaxWorkers` and citizen's `WorkplaceBuilding`. No spatial component — workshop operates on inventoried goods.
+
+**Gathering semantics:** A forager hut projects a `GatheringZone { int Radius }`. Each tile in the zone has a `degradation` value (0.0 = pristine, 1.0 = fully depleted). When a gatherer harvests from a tile, degradation increases; subsequent gatherers on that tile get less yield. Degradation regenerates over time (daily reset). Two gatherers in non-overlapping zones get full yield; overlapping zones share degradation, producing sublinear scaling. The forager moves through the zone, harvests, and deposits at the hut's `OutputInventory`. The hut is a **depot**, not a production site.
+
+**Source semantics:** A well has no worker, no `InputInventory`, and no production cycle. Each tick, its `OutputInventory` is set to a fixed capacity (e.g., 10 water). Citizens and haulers draw from it like any other inventory. The well cannot overflow the economy because citizens only take water when demanded — a tanner needs 1 water per leather, so he takes exactly 1. The infinite supply is bounded by downstream demand, not production limits.
+
+**Service semantics:** A church has no inventory buffers, no worker. When a citizen paths to it and arrives, their relevant need (happiness, spiritual) drops directly. `NeedSystem` checks "is there a Service building on my tile that satisfies my active need?" No goods enter the economy, no hauling involved.
+
+**Zone overlap model (for Gathering only):**
+```
+Non-overlapping (full efficiency):     Overlapping (penalty):
+┌──────────────────┐                   ┌──────────────────┐
+│  F1  F1  F1     │                   │ F1  F1  F1,F2   │
+│  F1 [H1] F2     │                   │ F1 [H1][H2] F2  │
+│     F2  F2      │                   │     F2,F1 F2    │
+└──────────────────┘                   └──────────────────┘
+```
+Per-tile degradation tracked via `NativeHashMap<int2, float>`, reset daily. A tile harvested by both zones gets depleted faster and regenerates at the same rate, so overlapping gatherers produce less per worker.
+
+**Worker presence:** Currently production is autonomous regardless of worker location. After this ADR, production requires worker presence:
+- Workshop: citizen must be at the building's entrance tile
+- Gathering: citizen must be within the building's `GatheringZone` radius
+- Source: no worker needed
+- Service: no worker needed (or optional, for manned churches)
+
+**Archetype storage on entity:** `BuildingDefinition` gains a `ProductionArchetype` enum. At entity creation, the building gets archetype-specific components:
+- `Workshop` → `InputInventory`, `OutputInventory`
+- `Gathering` → `OutputInventory`, `GatheringZone`
+- `Source` → `OutputInventory` (replenished each tick)
+- `Service` → no inventory buffers
+
+**Rationale:**
+
+- **One model doesn't fit all:** The woodcutter, forager, and well have fundamentally different production mechanics. Forcing them into one code path creates edge-case branches that grow with every new building type.
+- **Composition over inheritance, applied to buildings:** Archetypes are component configurations, not class hierarchies. A building "is" whatever components it has. A well that later needs a maintenance worker just gains `MaxWorkers=1` — no refactor.
+- **Inventory separation prevents a real bug:** Currently haulers can grab logs meant for firewood production, stalling the woodcutter. Input/Output separation makes the hauling scan trivial — only `OutputInventory` is considered for surplus.
+- **Zone degradation makes city planning matter:** Hut placement isn't cosmetic — overlapping zones reduce efficiency. Players make decisions about where to place buildings.
+- **Source type is demand-bounded:** The well can't break the economy because its output only enters the system when someone has a reason to take it. This is the same pattern as a public fountain — infinite supply, finite demand.
+
+**Consequences:**
+
+- **Easier:** New building types are archetype + definitions, not new systems. Adding a Fisher is `Gathering` archetype with water tiles. Adding a Mine is `Workshop` archetype with ore→metal recipe.
+- **Harder:** Inventory split requires migrating existing buildings and tests. `BuildingProductionSystem` and `CitizenHaulSystem` need to distinguish input from output buffers. Zone-based gathering needs a tile-degradation data structure. Worker-presence checks add query complexity to production systems.
