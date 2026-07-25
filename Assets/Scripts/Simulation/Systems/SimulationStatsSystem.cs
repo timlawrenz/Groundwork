@@ -20,7 +20,7 @@ namespace Groundwork.Simulation
             _citizenQuery = state.GetEntityQuery(
                 typeof(LivingBeing), typeof(Citizen), typeof(MapPosition));
             _buildingQuery = state.GetEntityQuery(
-                typeof(Building), typeof(InventorySlot));
+                typeof(Building), typeof(OutputSlot));
             _statsQuery = state.GetEntityQuery(typeof(SimulationStats));
 
             // Ensure stats singleton exists (idempotent — may be recreated after bootstrap)
@@ -78,7 +78,7 @@ namespace Groundwork.Simulation
 
             for (int i = 0; i < buildingTypes.Length; i++)
             {
-                var inv = state.EntityManager.GetBuffer<InventorySlot>(buildingEntities[i]);
+                var inv = state.EntityManager.GetBuffer<OutputSlot>(buildingEntities[i]);
                 for (int j = 0; j < inv.Length; j++)
                 {
                     var slot = inv[j];

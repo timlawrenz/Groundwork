@@ -158,15 +158,19 @@ namespace Groundwork.Simulation
                 MaxWorkers = maxWorkers,
             });
             ecb.AddComponent(entity, new MapPosition { TileCoordinate = position, Rotation = 0 });
-            ecb.AddBuffer<InventorySlot>(entity);
+            ecb.AddBuffer<OutputSlot>(entity);
             ecb.AddBuffer<ProductionOrder>(entity);
+
+            // Woodcutters (Workshop archetype) need input inventory for logs
+            if (buildingType == "woodcutter")
+                ecb.AddBuffer<InventorySlot>(entity);
         }
 
         private void AddInitialResources(ref SystemState state)
         {
             var query = state.GetEntityQuery(
                 typeof(Building),
-                typeof(InventorySlot),
+                typeof(OutputSlot),
                 typeof(ProductionOrder));
 
             var buildings = query.ToComponentDataArray<Building>(Allocator.Temp);
@@ -174,23 +178,28 @@ namespace Groundwork.Simulation
 
             for (int i = 0; i < entities.Length; i++)
             {
-                var inventory = state.EntityManager.GetBuffer<InventorySlot>(entities[i]);
+                var outputInv = state.EntityManager.GetBuffer<OutputSlot>(entities[i]);
                 var productionQueue = state.EntityManager.GetBuffer<ProductionOrder>(entities[i]);
 
                 if (buildings[i].BuildingType == "woodcutter")
                 {
-                    inventory.Add(new InventorySlot { ItemId = "logs", Quantity = 50000 });
+                    // Input inventory (logs) — Workshop archetype
+                    if (state.EntityManager.HasBuffer<InventorySlot>(entities[i]))
+                    {
+                        var inputInv = state.EntityManager.GetBuffer<InventorySlot>(entities[i]);
+                        inputInv.Add(new InventorySlot { ItemId = "logs", Quantity = 50000 });
+                    }
                     productionQueue.Add(new ProductionOrder { RecipeId = "chop_firewood", Progress = 0f });
                 }
                 else if (buildings[i].BuildingType == "gatherer_hut")
                 {
-                    inventory.Add(new InventorySlot { ItemId = "food", Quantity = 2000 });
+                    outputInv.Add(new OutputSlot { ItemId = "food", Quantity = 2000 });
                     productionQueue.Add(new ProductionOrder { RecipeId = "gather_food", Progress = 0f });
                 }
                 else if (buildings[i].BuildingType == "house")
                 {
-                    inventory.Add(new InventorySlot { ItemId = "food", Quantity = 500 });
-                    inventory.Add(new InventorySlot { ItemId = "firewood", Quantity = 1000 });
+                    outputInv.Add(new OutputSlot { ItemId = "food", Quantity = 500 });
+                    outputInv.Add(new OutputSlot { ItemId = "firewood", Quantity = 1000 });
                 }
             }
 

@@ -17,7 +17,7 @@ namespace Groundwork.Tests.Simulation
             var building = world.CreateBuilding("woodcutter", new(10, 10));
             world.AddToInventory(building, "logs", 10);
 
-            var inventory = world.EntityManager.GetBuffer<InventorySlot>(building);
+            var inventory = world.EntityManager.GetBuffer<OutputSlot>(building);
             Assert.That(inventory.Length, Is.EqualTo(1));
             Assert.That(inventory[0].ItemId.ToString(), Is.EqualTo("logs"));
             Assert.That(inventory[0].Quantity, Is.EqualTo(10));
@@ -30,7 +30,7 @@ namespace Groundwork.Tests.Simulation
             var building = world.CreateBuilding("woodcutter", new(10, 10));
             world.AddToInventory(building, "logs", 10);
 
-            var inventory = world.EntityManager.GetBuffer<InventorySlot>(building);
+            var inventory = world.EntityManager.GetBuffer<OutputSlot>(building);
 
             // Simulate TryRemoveFromInventory
             for (int i = 0; i < inventory.Length; i++)

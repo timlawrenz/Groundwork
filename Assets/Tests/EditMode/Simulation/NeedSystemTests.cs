@@ -252,7 +252,7 @@ namespace Groundwork.Tests.Simulation
             Assert.That(foodUrgency, Is.LessThan(0.8f),
                 "Should reduce food urgency by eating from workplace");
 
-            var workplaceInv = world.EntityManager.GetBuffer<InventorySlot>(hut);
+            var workplaceInv = world.EntityManager.GetBuffer<OutputSlot>(hut);
             int foodAtWork = 0;
             for (int i = 0; i < workplaceInv.Length; i++)
                 if (workplaceInv[i].ItemId == "food")
@@ -296,7 +296,7 @@ namespace Groundwork.Tests.Simulation
             Assert.That(personalFood, Is.LessThan(3),
                 "Should eat personal food first before workplace food");
 
-            var workInv = world.EntityManager.GetBuffer<InventorySlot>(hut);
+            var workInv = world.EntityManager.GetBuffer<OutputSlot>(hut);
             int workFood = 0;
             for (int i = 0; i < workInv.Length; i++)
                 if (workInv[i].ItemId == "food")

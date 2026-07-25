@@ -30,7 +30,7 @@ namespace Groundwork.Simulation
                 if (haul.ValueRO.Phase == 0)
                 {
                     // ─── Arrived at source — pick up goods ───
-                    var srcInv = state.EntityManager.GetBuffer<InventorySlot>(haul.ValueRO.SourceBuilding);
+                    var srcInv = state.EntityManager.GetBuffer<OutputSlot>(haul.ValueRO.SourceBuilding);
                     int taken = TakeFromInventory(srcInv, haul.ValueRO.ItemId, haul.ValueRO.Quantity);
                     if (taken > 0)
                     {
@@ -57,7 +57,7 @@ namespace Groundwork.Simulation
                 else
                 {
                     // ─── Arrived at destination — drop off goods ───
-                    var destInv = state.EntityManager.GetBuffer<InventorySlot>(haul.ValueRO.DestinationBuilding);
+                    var destInv = state.EntityManager.GetBuffer<OutputSlot>(haul.ValueRO.DestinationBuilding);
                     AddToInventory(destInv, haul.ValueRO.ItemId, haul.ValueRO.Quantity);
 
                     // Haul complete
@@ -71,7 +71,7 @@ namespace Groundwork.Simulation
             ecb.Dispose();
         }
 
-        private static int TakeFromInventory(DynamicBuffer<InventorySlot> inventory, FixedString32Bytes itemId, int amount)
+        private static int TakeFromInventory(DynamicBuffer<OutputSlot> inventory, FixedString32Bytes itemId, int amount)
         {
             for (int i = 0; i < inventory.Length; i++)
             {
@@ -86,7 +86,7 @@ namespace Groundwork.Simulation
             return 0;
         }
 
-        private static void AddToInventory(DynamicBuffer<InventorySlot> inventory, FixedString32Bytes itemId, int quantity)
+        private static void AddToInventory(DynamicBuffer<OutputSlot> inventory, FixedString32Bytes itemId, int quantity)
         {
             for (int i = 0; i < inventory.Length; i++)
             {
@@ -98,7 +98,7 @@ namespace Groundwork.Simulation
                     return;
                 }
             }
-            inventory.Add(new InventorySlot { ItemId = itemId, Quantity = quantity });
+            inventory.Add(new OutputSlot { ItemId = itemId, Quantity = quantity });
         }
     }
 }

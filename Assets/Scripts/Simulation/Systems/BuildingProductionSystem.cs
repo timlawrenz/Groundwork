@@ -4,10 +4,11 @@ using Unity.Collections;
 namespace Groundwork.Simulation
 {
     /// <summary>
-    /// Processes production orders in buildings. Consumes inputs from building inventory,
-    /// advances recipe progress, and outputs products when complete.
-    /// All recipe logic comes from RecipeDefinitionData entities — no hardcoded recipes.
-    /// Worker requirements come from BuildingDefinitionData.
+    /// Processes production orders in buildings. Consumes inputs from InventorySlot
+    /// (input inventory), advances recipe progress, and deposits outputs into OutputSlot
+    /// (output inventory). Input/Output separation prevents haulers from stealing
+    /// raw materials before processing.
+    /// Per ADR 2026-07-25 — Building Abstraction & Production Archetypes.
     /// </summary>
     public partial struct BuildingProductionSystem : ISystem
     {
@@ -20,7 +21,7 @@ namespace Groundwork.Simulation
         {
             _buildingQuery = state.GetEntityQuery(
                 ComponentType.ReadOnly<Building>(),
-                ComponentType.ReadWrite<InventorySlot>(),
+                ComponentType.ReadWrite<OutputSlot>(),
                 ComponentType.ReadWrite<ProductionOrder>(),
                 ComponentType.Exclude<UnderConstruction>());
 
@@ -43,12 +44,10 @@ namespace Groundwork.Simulation
             var buildings = _buildingQuery.ToComponentDataArray<Building>(Allocator.Temp);
             var entities = _buildingQuery.ToEntityArray(Allocator.Temp);
 
-            // Get event buffer for production events
             if (!SystemAPI.TryGetSingletonEntity<SimulationEventSingleton>(out var eventEntity))
                 return;
             var eventBuffer = state.EntityManager.GetBuffer<SimulationEvent>(eventEntity);
 
-            // Build recipe lookup: recipe ID → entity
             var recipeEntities = _recipeQuery.ToEntityArray(Allocator.Temp);
             var recipeDefs = _recipeQuery.ToComponentDataArray<RecipeDefinitionData>(Allocator.Temp);
             var recipeLookup = new NativeHashMap<FixedString32Bytes, Entity>(
@@ -56,7 +55,6 @@ namespace Groundwork.Simulation
             for (int i = 0; i < recipeDefs.Length; i++)
                 recipeLookup.TryAdd(recipeDefs[i].RecipeId, recipeEntities[i]);
 
-            // Build building definition lookup: building type → BuildingDefinitionData
             var bDefEntities = _buildingDefQuery.ToEntityArray(Allocator.Temp);
             var bDefs = _buildingDefQuery.ToComponentDataArray<BuildingDefinitionData>(Allocator.Temp);
             var bDefLookup = new NativeHashMap<FixedString32Bytes, BuildingDefinitionData>(
@@ -64,9 +62,7 @@ namespace Groundwork.Simulation
             for (int i = 0; i < bDefs.Length; i++)
                 bDefLookup.TryAdd(bDefs[i].BuildingType, bDefs[i]);
 
-            // Count workers per building
-            var workerCounts = new NativeHashMap<Entity, int>(
-                entities.Length, Allocator.Temp);
+            var workerCounts = new NativeHashMap<Entity, int>(entities.Length, Allocator.Temp);
             var citizens = _citizenQuery.ToComponentDataArray<Citizen>(Allocator.Temp);
             for (int i = 0; i < citizens.Length; i++)
             {
@@ -86,7 +82,6 @@ namespace Groundwork.Simulation
                 if (!building.IsOperational)
                     continue;
 
-                // Worker check: uses building instance's MaxWorkers, definition's RequiresWorkers
                 if (bDefLookup.TryGetValue(building.BuildingType, out var bDef))
                 {
                     if (bDef.RequiresWorkers && building.MaxWorkers > 0)
@@ -96,14 +91,20 @@ namespace Groundwork.Simulation
                     }
                 }
 
-                var inventory = state.EntityManager.GetBuffer<InventorySlot>(entities[i]);
+                // Input inventory: only exists on buildings that consume goods (woodcutter has logs)
+                // Output inventory: exists on all production buildings (firewood, food)
+                var outputInv = state.EntityManager.GetBuffer<OutputSlot>(entities[i]);
+                var hasInputInv = state.EntityManager.HasBuffer<InventorySlot>(entities[i]);
+                DynamicBuffer<InventorySlot> inputInv = default;
+                if (hasInputInv)
+                    inputInv = state.EntityManager.GetBuffer<InventorySlot>(entities[i]);
+
                 var productionQueue = state.EntityManager.GetBuffer<ProductionOrder>(entities[i]);
 
                 for (int j = 0; j < productionQueue.Length; j++)
                 {
                     var order = productionQueue[j];
 
-                    // Look up recipe definition
                     if (!recipeLookup.TryGetValue(order.RecipeId, out var recipeEntity))
                         continue;
 
@@ -111,21 +112,24 @@ namespace Groundwork.Simulation
                     var recipeInputs = state.EntityManager.GetBuffer<RecipeInput>(recipeEntity);
                     var recipeOutputs = state.EntityManager.GetBuffer<RecipeOutput>(recipeEntity);
 
-                    // Consume inputs
+                    // Consume inputs from input inventory
                     bool allInputsAvailable = true;
-                    for (int k = 0; k < recipeInputs.Length; k++)
+                    if (recipeInputs.Length > 0 && hasInputInv)
                     {
-                        int needed = recipeInputs[k].Quantity;
-                        int found = 0;
-                        for (int m = 0; m < inventory.Length; m++)
+                        for (int k = 0; k < recipeInputs.Length; k++)
                         {
-                            if (inventory[m].ItemId == recipeInputs[k].ItemId)
-                                found += inventory[m].Quantity;
-                        }
-                        if (found < needed)
-                        {
-                            allInputsAvailable = false;
-                            break;
+                            int needed = recipeInputs[k].Quantity;
+                            int found = 0;
+                            for (int m = 0; m < inputInv.Length; m++)
+                            {
+                                if (inputInv[m].ItemId == recipeInputs[k].ItemId)
+                                    found += inputInv[m].Quantity;
+                            }
+                            if (found < needed)
+                            {
+                                allInputsAvailable = false;
+                                break;
+                            }
                         }
                     }
 
@@ -133,16 +137,19 @@ namespace Groundwork.Simulation
                         continue;
 
                     // Consume one unit of each input per tick
-                    for (int k = 0; k < recipeInputs.Length; k++)
+                    if (recipeInputs.Length > 0 && hasInputInv)
                     {
-                        for (int m = 0; m < inventory.Length; m++)
+                        for (int k = 0; k < recipeInputs.Length; k++)
                         {
-                            if (inventory[m].ItemId == recipeInputs[k].ItemId && inventory[m].Quantity > 0)
+                            for (int m = 0; m < inputInv.Length; m++)
                             {
-                                var slot = inventory[m];
-                                slot.Quantity -= 1;
-                                inventory[m] = slot;
-                                break;
+                                if (inputInv[m].ItemId == recipeInputs[k].ItemId && inputInv[m].Quantity > 0)
+                                {
+                                    var slot = inputInv[m];
+                                    slot.Quantity -= 1;
+                                    inputInv[m] = slot;
+                                    break;
+                                }
                             }
                         }
                     }
@@ -153,11 +160,10 @@ namespace Groundwork.Simulation
 
                     if (order.Progress >= 1f)
                     {
-                        // Produce outputs
+                        // Deposit outputs into output inventory
                         for (int k = 0; k < recipeOutputs.Length; k++)
-                            AddToInventory(inventory, recipeOutputs[k].ItemId, recipeOutputs[k].Quantity);
+                            AddToOutput(outputInv, recipeOutputs[k].ItemId, recipeOutputs[k].Quantity);
 
-                        // Emit production complete event
                         eventBuffer.Add(new SimulationEvent
                         {
                             Type = EventType.ProductionComplete,
@@ -182,19 +188,19 @@ namespace Groundwork.Simulation
             entities.Dispose();
         }
 
-        private static void AddToInventory(DynamicBuffer<InventorySlot> inventory, FixedString32Bytes itemId, int quantity)
+        private static void AddToOutput(DynamicBuffer<OutputSlot> outputInv, FixedString32Bytes itemId, int quantity)
         {
-            for (int i = 0; i < inventory.Length; i++)
+            for (int i = 0; i < outputInv.Length; i++)
             {
-                if (inventory[i].ItemId == itemId)
+                if (outputInv[i].ItemId == itemId)
                 {
-                    var slot = inventory[i];
+                    var slot = outputInv[i];
                     slot.Quantity += quantity;
-                    inventory[i] = slot;
+                    outputInv[i] = slot;
                     return;
                 }
             }
-            inventory.Add(new InventorySlot { ItemId = itemId, Quantity = quantity });
+            outputInv.Add(new OutputSlot { ItemId = itemId, Quantity = quantity });
         }
     }
 }

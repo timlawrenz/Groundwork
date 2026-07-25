@@ -119,7 +119,7 @@ namespace Groundwork.TestHelpers
         {
             var entity = EntityManager.CreateEntity(
                 typeof(Building), typeof(MapPosition),
-                typeof(InventorySlot), typeof(ProductionOrder));
+                typeof(OutputSlot), typeof(InventorySlot), typeof(ProductionOrder));
             EntityManager.SetComponentData(entity, new Building
             {
                 BuildingType = buildingType, ConstructionProgress = 1f,
@@ -132,8 +132,17 @@ namespace Groundwork.TestHelpers
 
         public void AddToInventory(Entity entity, FixedString32Bytes itemId, int quantity)
         {
-            var inv = EntityManager.GetBuffer<InventorySlot>(entity);
-            inv.Add(new InventorySlot { ItemId = itemId, Quantity = quantity });
+            // Buildings have OutputSlot; citizens have InventorySlot (personal)
+            if (EntityManager.HasBuffer<OutputSlot>(entity))
+            {
+                var inv = EntityManager.GetBuffer<OutputSlot>(entity);
+                inv.Add(new OutputSlot { ItemId = itemId, Quantity = quantity });
+            }
+            else if (EntityManager.HasBuffer<InventorySlot>(entity))
+            {
+                var inv = EntityManager.GetBuffer<InventorySlot>(entity);
+                inv.Add(new InventorySlot { ItemId = itemId, Quantity = quantity });
+            }
         }
 
         public void AddProductionOrder(Entity building, FixedString32Bytes recipeId)

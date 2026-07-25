@@ -25,7 +25,7 @@ namespace Groundwork.Simulation
 
             foreach (var (bldg, pos, bEntity) in
                      SystemAPI.Query<RefRO<Building>, RefRO<MapPosition>>()
-                         .WithAll<InventorySlot>()
+                         .WithAll<OutputSlot>()
                          .WithNone<UnderConstruction>()
                          .WithEntityAccess())
             {
@@ -111,7 +111,7 @@ namespace Groundwork.Simulation
                 var srcPos = srcKvp.Value;
 
                 // Check if this building has surplus of any item
-                var srcInv = state.EntityManager.GetBuffer<InventorySlot>(srcBldg);
+                var srcInv = state.EntityManager.GetBuffer<OutputSlot>(srcBldg);
                 for (int s = 0; s < srcInv.Length; s++)
                 {
                     if (srcInv[s].Quantity <= SURPLUS_THRESHOLD)
@@ -127,7 +127,7 @@ namespace Groundwork.Simulation
                         if (srcBldg == dstBldg)
                             continue;
 
-                        var dstInv = state.EntityManager.GetBuffer<InventorySlot>(dstBldg);
+                        var dstInv = state.EntityManager.GetBuffer<OutputSlot>(dstBldg);
                         for (int d = 0; d < dstInv.Length; d++)
                         {
                             if (dstInv[d].ItemId != good)

@@ -35,7 +35,7 @@ namespace Groundwork.Simulation
             var buildingPositions = new NativeHashMap<int2, Entity>(64, Allocator.Temp);
             foreach (var (bldg, bpos, bEntity) in
                      SystemAPI.Query<RefRO<Building>, RefRO<MapPosition>>()
-                         .WithAll<InventorySlot>()
+                         .WithAll<OutputSlot>()
                          .WithNone<UnderConstruction>()
                          .WithEntityAccess())
             {
@@ -77,7 +77,7 @@ namespace Groundwork.Simulation
                     // 2. Try workplace inventory
                     if (!satisfied && citizen.ValueRO.WorkplaceBuilding != Entity.Null)
                     {
-                        var workInv = state.EntityManager.GetBuffer<InventorySlot>(
+                        var workInv = state.EntityManager.GetBuffer<OutputSlot>(
                             citizen.ValueRO.WorkplaceBuilding);
                         satisfied = TryConsumeFromInventory(workInv, ndef.SatisfyingItem);
                     }
@@ -85,7 +85,7 @@ namespace Groundwork.Simulation
                     // 3. Try home inventory
                     if (!satisfied && citizen.ValueRO.HomeBuilding != Entity.Null)
                     {
-                        var homeInv = state.EntityManager.GetBuffer<InventorySlot>(
+                        var homeInv = state.EntityManager.GetBuffer<OutputSlot>(
                             citizen.ValueRO.HomeBuilding);
                         satisfied = TryConsumeFromInventory(homeInv, ndef.SatisfyingItem);
                     }
@@ -159,6 +159,20 @@ namespace Groundwork.Simulation
         }
 
         /// <summary>Try to consume one unit of an item from a DynamicBuffer inventory. Returns true if consumed.</summary>
+        private static bool TryConsumeFromInventory(DynamicBuffer<OutputSlot> inventory, FixedString32Bytes itemId)
+        {
+            for (int j = 0; j < inventory.Length; j++)
+            {
+                if (inventory[j].ItemId != itemId || inventory[j].Quantity <= 0)
+                    continue;
+                var slot = inventory[j];
+                slot.Quantity -= 1;
+                inventory[j] = slot;
+                return true;
+            }
+            return false;
+        }
+
         private static bool TryConsumeFromInventory(DynamicBuffer<InventorySlot> inventory, FixedString32Bytes itemId)
         {
             for (int j = 0; j < inventory.Length; j++)
@@ -182,7 +196,7 @@ namespace Groundwork.Simulation
         {
             if (buildingPositions.TryGetValue(citizenPos, out var building))
             {
-                var inv = state.EntityManager.GetBuffer<InventorySlot>(building);
+                var inv = state.EntityManager.GetBuffer<OutputSlot>(building);
                 return TryConsumeFromInventory(inv, itemId);
             }
             return false;
