@@ -34,6 +34,12 @@ namespace Groundwork.TestHelpers
             World = new World(worldName);
             _testGroup = World.GetOrCreateSystemManaged<GroundworkSimulationGroup>();
             CreateSingletons();
+
+            // Create content definitions (recipes, building types)
+            var contentHandle = World.CreateSystem<ContentLoaderSystem>();
+            _testGroup.AddSystemToUpdateList(contentHandle);
+            _testGroup.Update();
+            _testGroup.RemoveSystemFromUpdateList(contentHandle);
         }
 
         private void CreateSingletons()
@@ -189,6 +195,7 @@ namespace Groundwork.TestHelpers
         public void RunFullTick()
         {
             AdvanceTicks(1);
+            UpdateSystem<ContentLoaderSystem>();
             UpdateSystem<CalendarSystem>();
             UpdateSystem<BirthSystem>();
             UpdateSystem<CitizenAgeSystem>();
@@ -212,6 +219,7 @@ namespace Groundwork.TestHelpers
             var systems = new SystemHandle[]
             {
                 World.CreateSystem<TickDispatchSystem>(),
+                World.CreateSystem<ContentLoaderSystem>(),
                 World.CreateSystem<CalendarSystem>(),
                 World.CreateSystem<BirthSystem>(),
                 World.CreateSystem<CitizenAgeSystem>(),

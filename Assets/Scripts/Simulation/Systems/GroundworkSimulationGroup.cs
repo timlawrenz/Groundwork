@@ -15,6 +15,10 @@ namespace Groundwork.Simulation
     // These partial structs define the dependency graph.
 
     [UpdateInGroup(typeof(GroundworkSimulationGroup))]
+    public partial struct ContentLoaderSystem { }
+
+    [UpdateInGroup(typeof(GroundworkSimulationGroup))]
+    [UpdateAfter(typeof(ContentLoaderSystem))]
     public partial struct SimulationBootstrap { }
 
     [UpdateInGroup(typeof(GroundworkSimulationGroup))]

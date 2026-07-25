@@ -72,16 +72,10 @@ namespace Groundwork.Simulation
             // Count buildings and resources
             var buildingEntities = _buildingQuery.ToEntityArray(Allocator.Temp);
             var buildingTypes = _buildingQuery.ToComponentDataArray<Building>(Allocator.Temp);
-            int houseCount = 0, woodcutterCount = 0, gathererHutCount = 0;
             int totalFood = 0, totalLogs = 0, totalFirewood = 0;
 
             for (int i = 0; i < buildingTypes.Length; i++)
             {
-                var bt = buildingTypes[i].BuildingType;
-                if (bt == "house") houseCount++;
-                else if (bt == "woodcutter") woodcutterCount++;
-                else if (bt == "gatherer_hut") gathererHutCount++;
-
                 var inv = state.EntityManager.GetBuffer<InventorySlot>(buildingEntities[i]);
                 for (int j = 0; j < inv.Length; j++)
                 {
@@ -95,9 +89,6 @@ namespace Groundwork.Simulation
             buildingTypes.Dispose();
 
             stats.BuildingCount = buildingTypes.Length;
-            stats.HouseCount = houseCount;
-            stats.WoodcutterCount = woodcutterCount;
-            stats.GathererHutCount = gathererHutCount;
             stats.TotalFood = totalFood;
             stats.TotalLogs = totalLogs;
             stats.TotalFirewood = totalFirewood;

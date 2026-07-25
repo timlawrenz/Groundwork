@@ -35,9 +35,6 @@ namespace Groundwork.Tests.Simulation
 
             var stats = world.GetStats();
             Assert.That(stats.BuildingCount, Is.EqualTo(18));
-            Assert.That(stats.HouseCount, Is.EqualTo(8));
-            Assert.That(stats.WoodcutterCount, Is.EqualTo(2));
-            Assert.That(stats.GathererHutCount, Is.EqualTo(8));
         }
 
         [Test]

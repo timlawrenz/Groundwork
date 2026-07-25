@@ -6,30 +6,90 @@ namespace Groundwork.Simulation
     /// <summary>
     /// Processes production orders in buildings. Consumes inputs from building inventory,
     /// advances recipe progress, and outputs products when complete.
-    /// MVP: logs → firewood at woodcutter; food at gatherer's hut (no inputs needed).
+    /// All recipe logic comes from RecipeDefinitionData entities — no hardcoded recipes.
+    /// Worker requirements come from BuildingDefinitionData.
     /// </summary>
     public partial struct BuildingProductionSystem : ISystem
     {
-        private EntityQuery _query;
+        private EntityQuery _buildingQuery;
+        private EntityQuery _citizenQuery;
+        private EntityQuery _recipeQuery;
+        private EntityQuery _buildingDefQuery;
 
         public void OnCreate(ref SystemState state)
         {
-            _query = state.GetEntityQuery(
+            _buildingQuery = state.GetEntityQuery(
                 ComponentType.ReadOnly<Building>(),
                 ComponentType.ReadWrite<InventorySlot>(),
                 ComponentType.ReadWrite<ProductionOrder>(),
                 ComponentType.Exclude<UnderConstruction>());
+
+            _citizenQuery = state.GetEntityQuery(
+                ComponentType.ReadOnly<Citizen>(),
+                ComponentType.Exclude<Dead>());
+
+            _recipeQuery = state.GetEntityQuery(
+                typeof(RecipeDefinitionData),
+                typeof(RecipeInput),
+                typeof(RecipeOutput));
+
+            _buildingDefQuery = state.GetEntityQuery(
+                typeof(BuildingDefinitionData),
+                typeof(BuildingRecipe));
         }
 
         public void OnUpdate(ref SystemState state)
         {
-            var buildings = _query.ToComponentDataArray<Building>(Allocator.Temp);
-            var entities = _query.ToEntityArray(Allocator.Temp);
+            var buildings = _buildingQuery.ToComponentDataArray<Building>(Allocator.Temp);
+            var entities = _buildingQuery.ToEntityArray(Allocator.Temp);
+
+            // Build recipe lookup: recipe ID → entity
+            var recipeEntities = _recipeQuery.ToEntityArray(Allocator.Temp);
+            var recipeDefs = _recipeQuery.ToComponentDataArray<RecipeDefinitionData>(Allocator.Temp);
+            var recipeLookup = new NativeHashMap<FixedString32Bytes, Entity>(
+                recipeDefs.Length, Allocator.Temp);
+            for (int i = 0; i < recipeDefs.Length; i++)
+                recipeLookup.TryAdd(recipeDefs[i].RecipeId, recipeEntities[i]);
+
+            // Build building definition lookup: building type → BuildingDefinitionData
+            var bDefEntities = _buildingDefQuery.ToEntityArray(Allocator.Temp);
+            var bDefs = _buildingDefQuery.ToComponentDataArray<BuildingDefinitionData>(Allocator.Temp);
+            var bDefLookup = new NativeHashMap<FixedString32Bytes, BuildingDefinitionData>(
+                bDefs.Length, Allocator.Temp);
+            for (int i = 0; i < bDefs.Length; i++)
+                bDefLookup.TryAdd(bDefs[i].BuildingType, bDefs[i]);
+
+            // Count workers per building
+            var workerCounts = new NativeHashMap<Entity, int>(
+                entities.Length, Allocator.Temp);
+            var citizens = _citizenQuery.ToComponentDataArray<Citizen>(Allocator.Temp);
+            for (int i = 0; i < citizens.Length; i++)
+            {
+                if (citizens[i].WorkplaceBuilding != Entity.Null)
+                {
+                    if (workerCounts.TryGetValue(citizens[i].WorkplaceBuilding, out int c))
+                        workerCounts[citizens[i].WorkplaceBuilding] = c + 1;
+                    else
+                        workerCounts.Add(citizens[i].WorkplaceBuilding, 1);
+                }
+            }
+            citizens.Dispose();
 
             for (int i = 0; i < entities.Length; i++)
             {
-                if (!buildings[i].IsOperational)
+                var building = buildings[i];
+                if (!building.IsOperational)
                     continue;
+
+                // Worker check: uses building instance's MaxWorkers, definition's RequiresWorkers
+                if (bDefLookup.TryGetValue(building.BuildingType, out var bDef))
+                {
+                    if (bDef.RequiresWorkers && building.MaxWorkers > 0)
+                    {
+                        if (!workerCounts.TryGetValue(entities[i], out int count) || count == 0)
+                            continue;
+                    }
+                }
 
                 var inventory = state.EntityManager.GetBuffer<InventorySlot>(entities[i]);
                 var productionQueue = state.EntityManager.GetBuffer<ProductionOrder>(entities[i]);
@@ -38,44 +98,73 @@ namespace Groundwork.Simulation
                 {
                     var order = productionQueue[j];
 
-                    if (order.RecipeId == "gather_food")
+                    // Look up recipe definition
+                    if (!recipeLookup.TryGetValue(order.RecipeId, out var recipeEntity))
+                        continue;
+
+                    var recipe = state.EntityManager.GetComponentData<RecipeDefinitionData>(recipeEntity);
+                    var recipeInputs = state.EntityManager.GetBuffer<RecipeInput>(recipeEntity);
+                    var recipeOutputs = state.EntityManager.GetBuffer<RecipeOutput>(recipeEntity);
+
+                    // Consume inputs
+                    bool allInputsAvailable = true;
+                    for (int k = 0; k < recipeInputs.Length; k++)
                     {
-                        order.Progress += 0.1f;
-                        if (order.Progress >= 1f)
+                        int needed = recipeInputs[k].Quantity;
+                        int found = 0;
+                        for (int m = 0; m < inventory.Length; m++)
                         {
-                            AddToInventory(inventory, "food", 1);
-                            order.Progress = 0f;  // reset for next cycle
+                            if (inventory[m].ItemId == recipeInputs[k].ItemId)
+                                found += inventory[m].Quantity;
+                        }
+                        if (found < needed)
+                        {
+                            allInputsAvailable = false;
+                            break;
                         }
                     }
-                    else if (order.RecipeId == "chop_firewood")
+
+                    if (!allInputsAvailable)
+                        continue;
+
+                    // Consume one unit of each input per tick
+                    for (int k = 0; k < recipeInputs.Length; k++)
                     {
-                        bool consumed = false;
-                        for (int k = 0; k < inventory.Length; k++)
+                        for (int m = 0; m < inventory.Length; m++)
                         {
-                            var slot = inventory[k];
-                            if (slot.ItemId == new FixedString32Bytes("logs") && slot.Quantity >= 1)
+                            if (inventory[m].ItemId == recipeInputs[k].ItemId && inventory[m].Quantity > 0)
                             {
+                                var slot = inventory[m];
                                 slot.Quantity -= 1;
-                                inventory[k] = slot;
-                                consumed = true;
+                                inventory[m] = slot;
                                 break;
                             }
                         }
-                        if (consumed)
-                        {
-                            order.Progress += 0.1f;
-                            if (order.Progress >= 1f)
-                            {
-                                AddToInventory(inventory, "firewood", 1);
-                                order.Progress = 0f;  // reset for next cycle
-                            }
-                        }
+                    }
+
+                    // Advance progress
+                    float progressPerTick = 1f / recipe.TicksPerCycle;
+                    order.Progress += progressPerTick;
+
+                    if (order.Progress >= 1f)
+                    {
+                        // Produce outputs
+                        for (int k = 0; k < recipeOutputs.Length; k++)
+                            AddToInventory(inventory, recipeOutputs[k].ItemId, recipeOutputs[k].Quantity);
+                        order.Progress = 0f;
                     }
 
                     productionQueue[j] = order;
                 }
             }
 
+            recipeEntities.Dispose();
+            recipeDefs.Dispose();
+            recipeLookup.Dispose();
+            bDefEntities.Dispose();
+            bDefs.Dispose();
+            bDefLookup.Dispose();
+            workerCounts.Dispose();
             buildings.Dispose();
             entities.Dispose();
         }

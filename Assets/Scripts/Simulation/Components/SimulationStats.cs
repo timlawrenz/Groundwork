@@ -26,9 +26,6 @@ namespace Groundwork.Simulation
 
         // Buildings
         public int BuildingCount;
-        public int HouseCount;
-        public int WoodcutterCount;
-        public int GathererHutCount;
 
         // Environment
         public float Temperature;
