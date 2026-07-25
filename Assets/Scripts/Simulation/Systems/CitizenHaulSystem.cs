@@ -44,6 +44,18 @@ namespace Groundwork.Simulation
                 if (task.ValueRO.TaskType != "idle")
                     continue;
 
+                // Don't assign haul jobs if citizen is at their workplace (assumed to be working)
+                if (citizen.ValueRO.WorkplaceBuilding != Entity.Null)
+                {
+                    if (state.EntityManager.HasComponent<MapPosition>(citizen.ValueRO.WorkplaceBuilding))
+                    {
+                        var wpPos = state.EntityManager.GetComponentData<MapPosition>(
+                            citizen.ValueRO.WorkplaceBuilding);
+                        if (math.all(cPos.ValueRO.TileCoordinate == wpPos.TileCoordinate))
+                            continue;
+                    }
+                }
+
                 // Don't assign haul jobs if citizen's own needs are critical
                 var needs = state.EntityManager.GetBuffer<CitizenNeed>(entity);
                 bool ownNeedsUrgent = false;

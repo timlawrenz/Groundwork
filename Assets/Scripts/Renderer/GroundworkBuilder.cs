@@ -38,10 +38,10 @@ namespace Groundwork.Renderer
                 });
 
             if (report.summary.result == BuildResult.Succeeded)
-                Debug.Log($"[GroundworkBuilder] APK built: {report.summary.outputPath} ({report.summary.totalSize / 1024 / 1024} MB)");
+                Debug.Log($"[GroundworkBuilder] APK built: {report.summary.outputPath} " +
+                    $"({new System.IO.FileInfo(report.summary.outputPath).Length / 1024 / 1024} MB)");
             else
                 Debug.LogError($"[GroundworkBuilder] Build FAILED: {report.summary.result} — {report.summary.totalErrors} errors");
-        }
 
         // ── WebGL Build ──────────────────────────
 

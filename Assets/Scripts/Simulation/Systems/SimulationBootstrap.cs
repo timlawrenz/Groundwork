@@ -254,14 +254,16 @@ namespace Groundwork.Simulation
                 byte sex = (byte)(i % 2); // alternate male/female for even distribution
                 var homeEntity = houses[i % houses.Length];
 
-                // Most citizens are gatherers, some are woodcutters, some are foresters
+                // Most citizens are gatherers, some are woodcutters, some are foresters, some are haulers
                 Entity workplace;
-                if (i < 6 && woodcutters.Length > 0)
-                    workplace = woodcutters[i % woodcutters.Length]; // first 6 → woodcutters
-                else if (i < 12 && foresterHuts.Length > 0)
-                    workplace = foresterHuts[i % foresterHuts.Length]; // next 6 → foresters
+                if (i < 4 && woodcutters.Length > 0)
+                    workplace = woodcutters[i % woodcutters.Length]; // first 4 → woodcutters
+                else if (i < 8 && foresterHuts.Length > 0)
+                    workplace = foresterHuts[i % foresterHuts.Length]; // next 4 → foresters
+                else if (i < 42 && gathererHuts.Length > 0)
+                    workplace = gathererHuts[i % gathererHuts.Length]; // next 34 → gatherers
                 else
-                    workplace = gathererHuts[i % gathererHuts.Length]; // rest → gatherers
+                    workplace = Entity.Null; // remaining 8 → dedicated haulers
 
                 var homePos = new int2(10 + (i % 16), 16 + (i / 16));
 

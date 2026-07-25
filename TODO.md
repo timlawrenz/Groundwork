@@ -43,7 +43,8 @@
 - [x] Production archetypes: Workshop + Gathering with zone overlap (ADR 2026-07-25 §5) (2026-07-25)
 - [x] Goods transport: hauling tests + PathRequest fix + lower thresholds (2026-07-25)
 - [x] Needs generalization: config-driven need types (ADR 2026-07-25 §3) (2026-07-25)
-- [ ] Forestry hut: log producer to close firewood chain
+- [x] Forestry hut: log producer to close firewood chain (2026-07-25)
+- [x] Haul delivery to InputInventory: logs flow to woodcutters (2026-07-25)
 - [ ] 100-year stability test: population stable 30-50 for 100 game-years
 
 ## Phase 2 — Content & Modding
