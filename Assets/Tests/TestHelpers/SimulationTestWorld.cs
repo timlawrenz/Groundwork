@@ -117,9 +117,12 @@ namespace Groundwork.TestHelpers
         public Entity CreateBuilding(FixedString32Bytes buildingType, int2 position,
             bool operational = true, int maxWorkers = 3)
         {
-            var entity = EntityManager.CreateEntity(
+            var entityTypes = new ComponentType[]
+            {
                 typeof(Building), typeof(MapPosition),
-                typeof(OutputSlot), typeof(InventorySlot), typeof(ProductionOrder));
+                typeof(OutputSlot), typeof(InventorySlot), typeof(ProductionOrder),
+            };
+            var entity = EntityManager.CreateEntity(entityTypes);
             EntityManager.SetComponentData(entity, new Building
             {
                 BuildingType = buildingType, ConstructionProgress = 1f,
@@ -127,6 +130,14 @@ namespace Groundwork.TestHelpers
             });
             EntityManager.SetComponentData(entity, new MapPosition
                 { TileCoordinate = position, Rotation = 0 });
+
+            // Add GatheringZone for gathering buildings
+            if (buildingType == "gatherer_hut")
+            {
+                EntityManager.AddComponent<GatheringZone>(entity);
+                EntityManager.SetComponentData(entity, new GatheringZone { Radius = 5 });
+            }
+
             return entity;
         }
 

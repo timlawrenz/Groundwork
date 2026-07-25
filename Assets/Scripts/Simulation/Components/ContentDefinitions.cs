@@ -4,6 +4,18 @@ using Unity.Collections;
 namespace Groundwork.Simulation
 {
     /// <summary>
+    /// Production archetype for a building. Determines how goods are produced
+    /// and what worker requirements apply. Per ADR 2026-07-25.
+    /// </summary>
+    public enum ProductionArchetype : byte
+    {
+        Workshop,   // Worker at building tile, input→output transform
+        Gathering,  // Worker in zone, harvests from map tiles
+        Source,     // No worker, infinite supply to output
+        Service,    // No goods, need relief only
+    }
+
+    /// <summary>
     /// Definition of a recipe: ticks per cycle. Inputs and outputs are stored
     /// as RecipeInput and RecipeOutput buffers on the same entity.
     /// </summary>
@@ -24,5 +36,7 @@ namespace Groundwork.Simulation
         public bool RequiresWorkers;
         public int InputCapacity;   // max total items in input inventory
         public int OutputCapacity;  // max total items in output inventory
+        public ProductionArchetype Archetype;
+        public int GatheringRadius; // for Gathering archetype only, tiles from building center
     }
 }

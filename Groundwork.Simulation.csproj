@@ -97,6 +97,7 @@
     <Compile Include="Assets/Scripts/Simulation/Systems/SimulationBootstrap.cs" />
     <Compile Include="Assets/Scripts/Simulation/Components/PathRequest.cs" />
     <Compile Include="Assets/Scripts/Simulation/Systems/CitizenMovementSystem.cs" />
+    <Compile Include="Assets/Scripts/Simulation/Components/GatheringZone.cs" />
     <Compile Include="Assets/Scripts/Simulation/Systems/CalendarSystem.cs" />
     <Compile Include="Assets/Scripts/Simulation/Components/HaulTask.cs" />
     <Compile Include="Assets/Scripts/Simulation/Buffers/RecipeInput.cs" />

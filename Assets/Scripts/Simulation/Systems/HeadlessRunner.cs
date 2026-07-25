@@ -15,7 +15,7 @@ namespace Groundwork.Simulation
         private const int DAYS_PER_SEASON = 30;
         private const int TICKS_PER_SEASON = TICKS_PER_DAY * DAYS_PER_SEASON;
         private const int TICKS_PER_YEAR = TICKS_PER_SEASON * 4;
-        private const int TOTAL_TICKS = TICKS_PER_YEAR * 10; // 10-year sim
+        private const int TOTAL_TICKS = TICKS_PER_YEAR * 100; // 100-year sim
         private const string CSV_PATH = "/tmp/groundwork_stats.csv";
 
         public static void Run()

@@ -164,6 +164,10 @@ namespace Groundwork.Simulation
             // Woodcutters (Workshop archetype) need input inventory for logs
             if (buildingType == "woodcutter")
                 ecb.AddBuffer<InventorySlot>(entity);
+
+            // Gatherer huts (Gathering archetype) need zone component
+            if (buildingType == "gatherer_hut")
+                ecb.AddComponent(entity, new GatheringZone { Radius = 5 });
         }
 
         private void AddInitialResources(ref SystemState state)
@@ -187,19 +191,19 @@ namespace Groundwork.Simulation
                     if (state.EntityManager.HasBuffer<InventorySlot>(entities[i]))
                     {
                         var inputInv = state.EntityManager.GetBuffer<InventorySlot>(entities[i]);
-                        inputInv.Add(new InventorySlot { ItemId = "logs", Quantity = 50000 });
+                        inputInv.Add(new InventorySlot { ItemId = "logs", Quantity = 0 }); // no starting stockpile
                     }
                     productionQueue.Add(new ProductionOrder { RecipeId = "chop_firewood", Progress = 0f });
                 }
                 else if (buildings[i].BuildingType == "gatherer_hut")
                 {
-                    outputInv.Add(new OutputSlot { ItemId = "food", Quantity = 2000 });
+                    outputInv.Add(new OutputSlot { ItemId = "food", Quantity = 0 }); // no starting stockpile
                     productionQueue.Add(new ProductionOrder { RecipeId = "gather_food", Progress = 0f });
                 }
                 else if (buildings[i].BuildingType == "house")
                 {
-                    outputInv.Add(new OutputSlot { ItemId = "food", Quantity = 500 });
-                    outputInv.Add(new OutputSlot { ItemId = "firewood", Quantity = 1000 });
+                    outputInv.Add(new OutputSlot { ItemId = "food", Quantity = 0 }); // no starting stockpile
+                    outputInv.Add(new OutputSlot { ItemId = "firewood", Quantity = 0 }); // no starting stockpile
                 }
             }
 

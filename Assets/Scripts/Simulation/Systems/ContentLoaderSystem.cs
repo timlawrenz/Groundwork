@@ -54,6 +54,8 @@ namespace Groundwork.Simulation
                 RequiresWorkers = false,
                 InputCapacity = 0,
                 OutputCapacity = 200,
+                Archetype = ProductionArchetype.Service,
+                GatheringRadius = 0,
             });
             ecb.AddBuffer<BuildingRecipe>(house); // houses have no recipes
 
@@ -65,6 +67,8 @@ namespace Groundwork.Simulation
                 RequiresWorkers = true,
                 InputCapacity = 0,
                 OutputCapacity = 200,
+                Archetype = ProductionArchetype.Gathering,
+                GatheringRadius = 5,
             });
             var ghRecipes = ecb.AddBuffer<BuildingRecipe>(gathererHut);
             ghRecipes.Add(new BuildingRecipe { RecipeId = "gather_food" });
@@ -77,6 +81,8 @@ namespace Groundwork.Simulation
                 RequiresWorkers = true,
                 InputCapacity = 200,
                 OutputCapacity = 200,
+                Archetype = ProductionArchetype.Workshop,
+                GatheringRadius = 0,
             });
             var wcRecipes = ecb.AddBuffer<BuildingRecipe>(woodcutter);
             wcRecipes.Add(new BuildingRecipe { RecipeId = "chop_firewood" });
