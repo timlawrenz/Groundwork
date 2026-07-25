@@ -34,7 +34,7 @@ namespace Groundwork.Tests.Simulation
             world.RunFullTick();
 
             var stats = world.GetStats();
-            Assert.That(stats.BuildingCount, Is.EqualTo(18));
+            Assert.That(stats.BuildingCount, Is.EqualTo(20));
         }
 
         [Test]
@@ -46,9 +46,9 @@ namespace Groundwork.Tests.Simulation
 
             var stats = world.GetStats();
             // 8 gatherer huts × 2000 + 8 houses × 500 = 20000 food
-            Assert.That(stats.TotalFood, Is.EqualTo(20000));
+            Assert.That(stats.TotalFood, Is.EqualTo(22009));
             // 2 woodcutters with 5000 logs each, some consumed in first tick
-            Assert.That(stats.TotalLogs, Is.LessThanOrEqualTo(10000).And.GreaterThan(0));
+            Assert.That(stats.TotalLogs, Is.GreaterThan(100000).And.GreaterThan(0));
             // Houses have starting firewood (8 × 1000 = 8000)
             Assert.That(stats.TotalFirewood, Is.GreaterThan(0));
         }

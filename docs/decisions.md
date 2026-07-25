@@ -261,3 +261,33 @@ struct SimulationEvent : IBufferElementData {
 **Consequences:**
 - **Easier:** Adding reactive systems without pipeline gymnastics, mod hooks are automatic, inter-system communication is discoverable (grep for `EventType.X`), event-driven features (achievements, quests, tutorial triggers, UI notifications) become trivial
 - **Harder:** Pipeline ordering still matters for emission timing — a system that needs to react to births must run after the system that *emits* birth events. Event type proliferation needs discipline — every new event type should justify its existence. Debugging event chains requires tracing emission → consumption across systems.
+
+---
+
+### 2026-07-25 — Public Buildings & Citizen-Driven Goods Transport
+
+**Status:** accepted
+
+**Context:** The current simulation has a hard ownership model — citizens have a designated `HomeBuilding` and `WorkplaceBuilding`, and only access resources from those specific buildings. This creates artificial bottlenecks: firewood piles up at woodcutters while citizens freeze at home because there's no mechanism to move goods between buildings. The simulation also lacks any goods movement — all production and consumption happens in-place, which makes the economy feel static and prevents emergent behavior (e.g., citizens hauling food from a surplus hut to a starving household).
+
+Adding a dedicated "firewood delivery" system would be the wrong pattern — every new resource would need its own delivery logic, and the system would resist extension. The right model is the same one that made the event buffer work: a general mechanism that happens to handle firewood, food, tools, medicine, and everything else.
+
+**Decision:** Three architectural changes, implemented incrementally:
+
+1. **Public Buildings:** Drop hard ownership. Any citizen can enter any building on their tile. `HomeBuilding` and `WorkplaceBuilding` become preferences, not barriers. A freezing citizen enters the nearest building with warmth, regardless of who "owns" it. This is step 1 — minimal code change, immediate survival improvement.
+
+2. **Goods Transport:** Idle citizens scan for haul jobs: "building A has surplus X, building B has deficit X, path from A to B exists." Citizen paths to A, picks up goods, paths to B, drops off. Priority is urgency-driven: survival needs (food, warmth) take precedence over economic needs (tools, luxury goods). No goods-type-specific logic — hauling is hauling.
+
+3. **Need Generalization:** Replace hardcoded need types (food, warmth, shelter, health) with a configurable need system. Each need type specifies: which goods satisfy it, how urgency grows, what climate factors modify growth rate, and what happens at critical urgency. New needs (social, entertainment, medicine) become data entries, not code changes.
+
+**Rationale:**
+
+- **Public buildings solve the immediate stability problem** without baking in any specific good. A citizen freezing at home walks to the nearest warm building. The same logic applies to any future resource.
+- **Citizen-driven transport is emergent:** goods don't magically teleport — citizens move them. This creates realistic economic behavior (trade routes form naturally, shortages cause migration) and gives idle citizens productive work.
+- **Urgency-based priority ensures survival:** a citizen dying of hunger won't haul gold for jewelry. The priority is baked into the need system, not the hauling system.
+- **Generalized needs are the "DLC platform":** when social need returns as a DLC, it's a config entry + a new building type (tavern, temple), not a code refactor. The core engine stays stable while content expands.
+
+**Consequences:**
+
+- **Easier:** Firewood distribution emerges as a natural consequence, not a special case. New resources and needs become data changes. Idle citizens find useful work automatically. The economy feels alive.
+- **Harder:** Pathfinding load increases (citizens hauling = more path requests). Priority system needs careful tuning to prevent starvation while goods are being hauled. Public buildings mean citizens may congregate, increasing tile density.

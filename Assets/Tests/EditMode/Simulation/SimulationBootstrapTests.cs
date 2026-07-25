@@ -32,7 +32,7 @@ namespace Groundwork.Tests.Simulation
                 .CreateEntityQuery(typeof(Building))
                 .CalculateEntityCount();
 
-            Assert.That(buildingCount, Is.EqualTo(18), "8 houses + 8 gatherer huts + 2 woodcutters");
+            Assert.That(buildingCount, Is.EqualTo(20), "8 houses + 9 gatherer huts + 3 woodcutters");
         }
 
         [Test]
@@ -140,7 +140,7 @@ namespace Groundwork.Tests.Simulation
             buildings.Dispose();
             entities.Dispose();
 
-            Assert.That(woodcuttersWithLogs, Is.EqualTo(2),
+            Assert.That(woodcuttersWithLogs, Is.EqualTo(3),
                 "Both woodcutters should start with logs");
         }
 

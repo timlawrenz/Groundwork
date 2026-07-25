@@ -34,3 +34,5 @@ Thumbs.db
 # Hermes
 .hermes/sessions/
 .hermes/cache/
+TestResults-*.xml
+Assets/Temp.meta

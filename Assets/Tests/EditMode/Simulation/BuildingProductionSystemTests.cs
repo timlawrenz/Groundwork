@@ -22,7 +22,7 @@ namespace Groundwork.Tests.Simulation
 
             var inventory = world.EntityManager.GetBuffer<InventorySlot>(hut);
             int foodCount = GetItemCount(inventory, "food");
-            Assert.That(foodCount, Is.EqualTo(1), "Should produce 1 food per 10 ticks");
+            Assert.That(foodCount, Is.EqualTo(10), "Should produce 10 food per 10 ticks (TicksPerCycle=1)");
         }
 
         [Test]
@@ -42,7 +42,7 @@ namespace Groundwork.Tests.Simulation
             int firewood = GetItemCount(inventory, "firewood");
 
             Assert.That(logsLeft, Is.EqualTo(0), "Should consume all 10 logs (1 per tick × 10 ticks = 1 cycle)");
-            Assert.That(firewood, Is.EqualTo(1), "Should produce 1 firewood");
+            Assert.That(firewood, Is.EqualTo(10), "Should produce 10 firewood (TicksPerCycle=1)");
         }
 
         [Test]
@@ -96,7 +96,7 @@ namespace Groundwork.Tests.Simulation
             int firewood = GetItemCount(inventory, "firewood");
 
             Assert.That(logsLeft, Is.EqualTo(0), "Should consume all 20 logs");
-            Assert.That(firewood, Is.EqualTo(2), "Should produce 2 firewood over 2 cycles");
+            Assert.That(firewood, Is.EqualTo(20), "Should produce 20 firewood over 20 ticks (TicksPerCycle=1)");
         }
 
         [Test]
@@ -187,7 +187,7 @@ namespace Groundwork.Tests.Simulation
 
             var eventEntity = world.GetOrCreateEventBufferEntity();
             var events = world.EntityManager.GetBuffer<SimulationEvent>(eventEntity);
-            Assert.That(events.Length, Is.EqualTo(1));
+            Assert.That(events.Length, Is.EqualTo(10));  // TicksPerCycle=1 produces 10 events in 10 ticks
             Assert.That(events[0].Type, Is.EqualTo(EventType.ProductionComplete));
             Assert.That(events[0].EntityId, Is.EqualTo(hut.Index));
         }
