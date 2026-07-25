@@ -22,5 +22,7 @@ namespace Groundwork.Simulation
         public FixedString32Bytes BuildingType;
         public int MaxWorkers;
         public bool RequiresWorkers;
+        public int InputCapacity;   // max total items in input inventory
+        public int OutputCapacity;  // max total items in output inventory
     }
 }

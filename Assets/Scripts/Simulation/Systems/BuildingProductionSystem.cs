@@ -160,6 +160,15 @@ namespace Groundwork.Simulation
 
                     if (order.Progress >= 1f)
                     {
+                        // Check output capacity — stall if full
+                        if (bDefLookup.TryGetValue(building.BuildingType, out var bDefCap)
+                            && bDefCap.OutputCapacity > 0
+                            && CountItems(outputInv) >= bDefCap.OutputCapacity)
+                        {
+                            // Output full — don't complete, keep progress
+                            continue;
+                        }
+
                         // Deposit outputs into output inventory
                         for (int k = 0; k < recipeOutputs.Length; k++)
                             AddToOutput(outputInv, recipeOutputs[k].ItemId, recipeOutputs[k].Quantity);
@@ -201,6 +210,14 @@ namespace Groundwork.Simulation
                 }
             }
             outputInv.Add(new OutputSlot { ItemId = itemId, Quantity = quantity });
+        }
+
+        private static int CountItems(DynamicBuffer<OutputSlot> inventory)
+        {
+            int total = 0;
+            for (int i = 0; i < inventory.Length; i++)
+                total += inventory[i].Quantity;
+            return total;
         }
     }
 }

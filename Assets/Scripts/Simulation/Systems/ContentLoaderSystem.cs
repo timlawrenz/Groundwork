@@ -52,6 +52,8 @@ namespace Groundwork.Simulation
                 BuildingType = "house",
                 MaxWorkers = 0,
                 RequiresWorkers = false,
+                InputCapacity = 0,
+                OutputCapacity = 200,
             });
             ecb.AddBuffer<BuildingRecipe>(house); // houses have no recipes
 
@@ -61,6 +63,8 @@ namespace Groundwork.Simulation
                 BuildingType = "gatherer_hut",
                 MaxWorkers = 4,
                 RequiresWorkers = true,
+                InputCapacity = 0,
+                OutputCapacity = 200,
             });
             var ghRecipes = ecb.AddBuffer<BuildingRecipe>(gathererHut);
             ghRecipes.Add(new BuildingRecipe { RecipeId = "gather_food" });
@@ -71,6 +75,8 @@ namespace Groundwork.Simulation
                 BuildingType = "woodcutter",
                 MaxWorkers = 4,
                 RequiresWorkers = true,
+                InputCapacity = 200,
+                OutputCapacity = 200,
             });
             var wcRecipes = ecb.AddBuffer<BuildingRecipe>(woodcutter);
             wcRecipes.Add(new BuildingRecipe { RecipeId = "chop_firewood" });
