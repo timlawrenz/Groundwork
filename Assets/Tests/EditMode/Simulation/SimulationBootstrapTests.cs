@@ -33,7 +33,7 @@ namespace Groundwork.Tests.Simulation
                 .CreateEntityQuery(typeof(Building))
                 .CalculateEntityCount();
 
-            Assert.That(buildingCount, Is.EqualTo(20), "8 houses + 9 gatherer huts + 3 woodcutters");
+            Assert.That(buildingCount, Is.EqualTo(23), "8 houses + 9 gatherer huts + 3 woodcutters + 3 forester huts");
         }
 
         [Test]

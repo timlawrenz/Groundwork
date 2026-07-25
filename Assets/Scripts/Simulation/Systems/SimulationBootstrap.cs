@@ -63,6 +63,9 @@ namespace Groundwork.Simulation
             CreateBuilding(ecb, "woodcutter", new int2(40, 10), GetMaxWorkers("woodcutter"));
             CreateBuilding(ecb, "woodcutter", new int2(42, 10), GetMaxWorkers("woodcutter"));
             CreateBuilding(ecb, "woodcutter", new int2(44, 10), GetMaxWorkers("woodcutter"));
+            CreateBuilding(ecb, "forester_hut", new int2(25, 20), GetMaxWorkers("forester_hut"));
+            CreateBuilding(ecb, "forester_hut", new int2(27, 20), GetMaxWorkers("forester_hut"));
+            CreateBuilding(ecb, "forester_hut", new int2(29, 20), GetMaxWorkers("forester_hut"));
 
             bDefMap.Dispose();
 
@@ -165,8 +168,8 @@ namespace Groundwork.Simulation
             if (buildingType == "woodcutter")
                 ecb.AddBuffer<InventorySlot>(entity);
 
-            // Gatherer huts (Gathering archetype) need zone component
-            if (buildingType == "gatherer_hut")
+            // Gatherer + forester huts (Gathering archetype) need zone component
+            if (buildingType == "gatherer_hut" || buildingType == "forester_hut")
                 ecb.AddComponent(entity, new GatheringZone { Radius = 5 });
         }
 
@@ -200,6 +203,11 @@ namespace Groundwork.Simulation
                     outputInv.Add(new OutputSlot { ItemId = "food", Quantity = 0 }); // no starting stockpile
                     productionQueue.Add(new ProductionOrder { RecipeId = "gather_food", Progress = 0f });
                 }
+                else if (buildings[i].BuildingType == "forester_hut")
+                {
+                    outputInv.Add(new OutputSlot { ItemId = "logs", Quantity = 0 }); // no starting stockpile
+                    productionQueue.Add(new ProductionOrder { RecipeId = "gather_logs", Progress = 0f });
+                }
                 else if (buildings[i].BuildingType == "house")
                 {
                     outputInv.Add(new OutputSlot { ItemId = "food", Quantity = 0 }); // no starting stockpile
@@ -217,6 +225,7 @@ namespace Groundwork.Simulation
 
             var houses = new NativeList<Entity>(Allocator.Temp);
             var gathererHuts = new NativeList<Entity>(Allocator.Temp);
+            var foresterHuts = new NativeList<Entity>(Allocator.Temp);
             var woodcutters = new NativeList<Entity>(Allocator.Temp);
 
             var buildingQuery = state.GetEntityQuery(typeof(Building));
@@ -229,6 +238,8 @@ namespace Groundwork.Simulation
                     houses.Add(buildingEntities[i]);
                 else if (buildingData[i].BuildingType == "gatherer_hut")
                     gathererHuts.Add(buildingEntities[i]);
+                else if (buildingData[i].BuildingType == "forester_hut")
+                    foresterHuts.Add(buildingEntities[i]);
                 else if (buildingData[i].BuildingType == "woodcutter")
                     woodcutters.Add(buildingEntities[i]);
             }
@@ -243,10 +254,12 @@ namespace Groundwork.Simulation
                 byte sex = (byte)(i % 2); // alternate male/female for even distribution
                 var homeEntity = houses[i % houses.Length];
 
-                // Most citizens are gatherers, a few are woodcutters
+                // Most citizens are gatherers, some are woodcutters, some are foresters
                 Entity workplace;
                 if (i < 6 && woodcutters.Length > 0)
                     workplace = woodcutters[i % woodcutters.Length]; // first 6 → woodcutters
+                else if (i < 12 && foresterHuts.Length > 0)
+                    workplace = foresterHuts[i % foresterHuts.Length]; // next 6 → foresters
                 else
                     workplace = gathererHuts[i % gathererHuts.Length]; // rest → gatherers
 
@@ -303,6 +316,7 @@ namespace Groundwork.Simulation
 
             houses.Dispose();
             gathererHuts.Dispose();
+            foresterHuts.Dispose();
             woodcutters.Dispose();
             buildingEntities.Dispose();
             buildingData.Dispose();

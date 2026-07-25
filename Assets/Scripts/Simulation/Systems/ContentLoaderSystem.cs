@@ -44,6 +44,16 @@ namespace Groundwork.Simulation
             var chopOut = ecb.AddBuffer<RecipeOutput>(chopFirewood);
             chopOut.Add(new RecipeOutput { ItemId = "firewood", Quantity = 1 });
 
+            var gatherLogs = ecb.CreateEntity();
+            ecb.AddComponent(gatherLogs, new RecipeDefinitionData
+            {
+                RecipeId = "gather_logs",
+                TicksPerCycle = 1,
+            });
+            ecb.AddBuffer<RecipeInput>(gatherLogs); // no inputs
+            var logsOut = ecb.AddBuffer<RecipeOutput>(gatherLogs);
+            logsOut.Add(new RecipeOutput { ItemId = "logs", Quantity = 1 });
+
             // ─── Building definitions ───
 
             var house = ecb.CreateEntity();
@@ -72,6 +82,20 @@ namespace Groundwork.Simulation
             });
             var ghRecipes = ecb.AddBuffer<BuildingRecipe>(gathererHut);
             ghRecipes.Add(new BuildingRecipe { RecipeId = "gather_food" });
+
+            var foresterHut = ecb.CreateEntity();
+            ecb.AddComponent(foresterHut, new BuildingDefinitionData
+            {
+                BuildingType = "forester_hut",
+                MaxWorkers = 4,
+                RequiresWorkers = true,
+                InputCapacity = 0,
+                OutputCapacity = 200,
+                Archetype = ProductionArchetype.Gathering,
+                GatheringRadius = 5,
+            });
+            var fhRecipes = ecb.AddBuffer<BuildingRecipe>(foresterHut);
+            fhRecipes.Add(new BuildingRecipe { RecipeId = "gather_logs" });
 
             var woodcutter = ecb.CreateEntity();
             ecb.AddComponent(woodcutter, new BuildingDefinitionData

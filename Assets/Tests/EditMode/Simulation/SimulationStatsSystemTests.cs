@@ -35,7 +35,7 @@ namespace Groundwork.Tests.Simulation
             world.RunFullTick();
 
             var stats = world.GetStats();
-            Assert.That(stats.BuildingCount, Is.EqualTo(20));
+            Assert.That(stats.BuildingCount, Is.EqualTo(23));
         }
 
         [Test]
