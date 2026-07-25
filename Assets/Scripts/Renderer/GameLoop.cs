@@ -86,14 +86,16 @@ namespace Groundwork.Renderer
             _simGroup.AddSystemToUpdateList(contentHandle);
             _simGroup.Update();
             _simGroup.RemoveSystemFromUpdateList(contentHandle);
-            World.DestroySystem(contentHandle);
+            // NOTE: Do NOT destroy contentHandle — it may hold blob assets
+            // referenced by entities in the world.
 
             // Phase 2: Create initial world state (buildings, citizens, map, resources)
             var bootstrapHandle = World.CreateSystem<SimulationBootstrap>();
             _simGroup.AddSystemToUpdateList(bootstrapHandle);
             _simGroup.Update();
             _simGroup.RemoveSystemFromUpdateList(bootstrapHandle);
-            World.DestroySystem(bootstrapHandle);
+            // NOTE: Do NOT destroy bootstrapHandle — its blob assets (MapGridBlob)
+            // are referenced by MapGridData entities in the world.
 
             // Phase 3: Add all tick systems in pipeline order
             _tickSystems = new SystemHandle[]
@@ -128,14 +130,15 @@ namespace Groundwork.Renderer
             {
                 var stats = statsQuery.GetSingleton<SimulationStats>();
                 _population = stats.Population;
-
-                var calQuery = World.EntityManager.CreateEntityQuery(typeof(CalendarSingleton));
-                if (!calQuery.IsEmpty)
-                {
-                    _currentYear = calQuery.GetSingleton<CalendarSingleton>().Year;
-                }
             }
             statsQuery.Dispose();
+
+            var calQuery = World.EntityManager.CreateEntityQuery(typeof(CalendarSingleton));
+            if (!calQuery.IsEmpty)
+            {
+                _currentYear = calQuery.GetSingleton<CalendarSingleton>().Year;
+            }
+            calQuery.Dispose();
         }
     }
 }
