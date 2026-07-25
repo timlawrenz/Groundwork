@@ -42,8 +42,10 @@
 - [x] ContentLoaderSystem — creates definition entities at startup (2026-07-25)
 - [x] BuildingProductionSystem refactored: reads from definitions, no hardcoded recipes (2026-07-25)
 - [x] SimulationStatsSystem: building counting is type-agnostic (2026-07-25)
-- [ ] Refactor SimulationBootstrap to use BuildingDefinitionData
-- [ ] Content loader: Items.json, Buildings.json, Recipes.json from StreamingAssets
+- [x] Content loader: Items.json, Buildings.json, Recipes.json from StreamingAssets (2026-07-25)
+- [x] Buffer types moved to Buffers/ folder per architecture conventions (2026-07-25)
+- [x] SimulationBootstrap reads MaxWorkers from BuildingDefinitionData (2026-07-25)
+- [x] Pipeline comments updated to reflect full system order (2026-07-25)
 - [ ] Lua runtime integration
 - [ ] Mod API hooks: on_init, on_tick, on_season_change, on_building_complete, etc.
 - [ ] Sandbox validation: no filesystem, no network, no OS access

@@ -4,7 +4,7 @@ namespace Groundwork.Simulation
 {
     /// <summary>
     /// Custom system group for Groundwork simulation systems.
-    /// Ensures correct execution order: Tick → Calendar → Age → Needs → Pathfinding → Movement → Production → Death.
+    /// Execution order: ContentLoader → Bootstrap → Tick → Calendar → Births → Age → Needs → Pathfinding → Movement → Production → Death → Stats.
     /// </summary>
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     public partial class GroundworkSimulationGroup : ComponentSystemGroup

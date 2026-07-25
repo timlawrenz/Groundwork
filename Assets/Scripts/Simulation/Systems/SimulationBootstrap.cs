@@ -40,13 +40,25 @@ namespace Groundwork.Simulation
                 GrowingMultiplier = 0.5f,
             });
 
-            // Buildings: 8 houses, 8 gatherer huts, 2 woodcutters
+            // Buildings: 8 houses, 8 gatherer huts, 2 woodcutters — read MaxWorkers from definitions
+            var bDefQuery = state.GetEntityQuery(typeof(BuildingDefinitionData));
+            var bDefs = bDefQuery.ToComponentDataArray<BuildingDefinitionData>(Allocator.Temp);
+            var bDefMap = new NativeHashMap<FixedString32Bytes, int>(bDefs.Length, Allocator.Temp);
+            for (int i = 0; i < bDefs.Length; i++)
+                bDefMap.TryAdd(bDefs[i].BuildingType, bDefs[i].MaxWorkers);
+            bDefs.Dispose();
+
+            int GetMaxWorkers(FixedString32Bytes type) =>
+                bDefMap.TryGetValue(type, out int mw) ? mw : 0;
+
             for (int i = 0; i < 8; i++)
-                CreateBuilding(ecb, "house", new int2(10 + i, 15));
+                CreateBuilding(ecb, "house", new int2(10 + i, 15), GetMaxWorkers("house"));
             for (int i = 0; i < 8; i++)
-                CreateBuilding(ecb, "gatherer_hut", new int2(20 + i * 2, 10));
-            CreateBuilding(ecb, "woodcutter", new int2(40, 10));
-            CreateBuilding(ecb, "woodcutter", new int2(42, 10));
+                CreateBuilding(ecb, "gatherer_hut", new int2(20 + i * 2, 10), GetMaxWorkers("gatherer_hut"));
+            CreateBuilding(ecb, "woodcutter", new int2(40, 10), GetMaxWorkers("woodcutter"));
+            CreateBuilding(ecb, "woodcutter", new int2(42, 10), GetMaxWorkers("woodcutter"));
+
+            bDefMap.Dispose();
 
             ecb.Playback(state.EntityManager);
             ecb.Dispose();
@@ -80,7 +92,8 @@ namespace Groundwork.Simulation
             ecb.AddComponent(mapEntity, new MapGridData { Grid = _mapGridBlob });
         }
 
-        private static void CreateBuilding(EntityCommandBuffer ecb, FixedString32Bytes buildingType, int2 position)
+        private static void CreateBuilding(EntityCommandBuffer ecb, FixedString32Bytes buildingType,
+            int2 position, int maxWorkers)
         {
             var entity = ecb.CreateEntity();
             ecb.AddComponent(entity, new Building
@@ -88,7 +101,7 @@ namespace Groundwork.Simulation
                 BuildingType = buildingType,
                 ConstructionProgress = 1f,
                 IsOperational = true,
-                MaxWorkers = buildingType == "house" ? 6 : 4,
+                MaxWorkers = maxWorkers,
             });
             ecb.AddComponent(entity, new MapPosition { TileCoordinate = position, Rotation = 0 });
             ecb.AddBuffer<InventorySlot>(entity);
