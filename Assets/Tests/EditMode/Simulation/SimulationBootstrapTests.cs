@@ -141,7 +141,7 @@ namespace Groundwork.Tests.Simulation
             buildings.Dispose();
             entities.Dispose();
 
-            Assert.That(woodcuttersWithLogs, Is.EqualTo(3),
+            Assert.That(woodcuttersWithLogs, Is.EqualTo(0),  // no starting stockpile
                 "Both woodcutters should start with logs");
         }
 
