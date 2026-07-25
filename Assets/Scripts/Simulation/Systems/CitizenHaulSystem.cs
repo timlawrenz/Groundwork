@@ -130,14 +130,41 @@ namespace Groundwork.Simulation
                         if (srcBldg == dstBldg)
                             continue;
 
-                        var dstInv = state.EntityManager.GetBuffer<OutputSlot>(dstBldg);
-                        for (int d = 0; d < dstInv.Length; d++)
-                        {
-                            if (dstInv[d].ItemId != good)
-                                continue;
-                            if (dstInv[d].Quantity > DEFICIT_THRESHOLD)
-                                continue;
+                        // Check both OutputSlot and InventorySlot for deficit
+                        bool hasDeficit = false;
+                        int deficitQty = 0;
 
+                        // Check OutputSlot first
+                        var dstOutInv = state.EntityManager.GetBuffer<OutputSlot>(dstBldg);
+                        for (int d = 0; d < dstOutInv.Length; d++)
+                        {
+                            if (dstOutInv[d].ItemId != good)
+                                continue;
+                            if (dstOutInv[d].Quantity > DEFICIT_THRESHOLD)
+                                continue;
+                            hasDeficit = true;
+                            deficitQty = DEFICIT_THRESHOLD - dstOutInv[d].Quantity + 1;
+                            break;
+                        }
+
+                        // Also check InputInventory (for Workshop buildings that need raw materials)
+                        if (!hasDeficit && state.EntityManager.HasBuffer<InventorySlot>(dstBldg))
+                        {
+                            var dstInInv = state.EntityManager.GetBuffer<InventorySlot>(dstBldg);
+                            for (int d = 0; d < dstInInv.Length; d++)
+                            {
+                                if (dstInInv[d].ItemId != good)
+                                    continue;
+                                if (dstInInv[d].Quantity > DEFICIT_THRESHOLD)
+                                    continue;
+                                hasDeficit = true;
+                                deficitQty = DEFICIT_THRESHOLD - dstInInv[d].Quantity + 1;
+                                break;
+                            }
+                        }
+
+                        if (hasDeficit)
+                        {
                             // Found a match! Pick the closest source
                             float dist = math.distancesq(citizenPos, srcPos);
                             if (dist < bestDist)
@@ -147,10 +174,9 @@ namespace Groundwork.Simulation
                                 destBuilding = dstBldg;
                                 itemId = good;
                                 quantity = math.min(srcInv[s].Quantity - SURPLUS_THRESHOLD,
-                                    DEFICIT_THRESHOLD - dstInv[d].Quantity + 1);
+                                    deficitQty);
                                 if (quantity < 1) quantity = 1;
                             }
-                            break;
                         }
                     }
                 }

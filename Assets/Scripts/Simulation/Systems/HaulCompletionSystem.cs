@@ -68,7 +68,22 @@ namespace Groundwork.Simulation
                 else
                 {
                     // Arrived at destination — drop off goods (respect capacity)
-                    var destInv = state.EntityManager.GetBuffer<OutputSlot>(haul.ValueRO.DestinationBuilding);
+                    // Deliver to OutputSlot if it tracks this item, otherwise to InputInventory
+                    var outputInv = state.EntityManager.GetBuffer<OutputSlot>(haul.ValueRO.DestinationBuilding);
+                    bool useOutput = false;
+                    for (int io = 0; io < outputInv.Length; io++)
+                    {
+                        if (outputInv[io].ItemId == haul.ValueRO.ItemId)
+                        {
+                            useOutput = true;
+                            break;
+                        }
+                    }
+
+                    bool hasInput = !useOutput && state.EntityManager.HasBuffer<InventorySlot>(haul.ValueRO.DestinationBuilding);
+                    DynamicBuffer<InventorySlot> inputInv = default;
+                    if (hasInput)
+                        inputInv = state.EntityManager.GetBuffer<InventorySlot>(haul.ValueRO.DestinationBuilding);
 
                     bool destFull = false;
                     if (state.EntityManager.HasComponent<Building>(haul.ValueRO.DestinationBuilding))
@@ -76,13 +91,27 @@ namespace Groundwork.Simulation
                         var destBldg = state.EntityManager.GetComponentData<Building>(haul.ValueRO.DestinationBuilding);
                         if (bDefLookup.TryGetValue(destBldg.BuildingType, out int maxCapacity))
                         {
-                            if (CountItems(destInv) >= maxCapacity)
-                                destFull = true;
+                            if (useOutput)
+                            {
+                                if (CountItems(outputInv) >= maxCapacity)
+                                    destFull = true;
+                            }
+                            else if (hasInput)
+                            {
+                                if (CountItemsInput(inputInv) >= maxCapacity)
+                                    destFull = true;
+                            }
                         }
                     }
 
                     if (!destFull)
-                        AddToInventory(destInv, haul.ValueRO.ItemId, haul.ValueRO.Quantity);
+                    {
+                        if (useOutput)
+                            AddToInventory(outputInv, haul.ValueRO.ItemId, haul.ValueRO.Quantity);
+                        else if (hasInput)
+                            AddToInputInventory(inputInv, haul.ValueRO.ItemId, haul.ValueRO.Quantity);
+                        // else: nowhere to deliver — still remove task and go idle
+                    }
 
                     ecb.RemoveComponent<HaulTask>(entity);
                     task.ValueRW.TaskType = "idle";
@@ -131,6 +160,29 @@ namespace Groundwork.Simulation
             for (int i = 0; i < inventory.Length; i++)
                 total += inventory[i].Quantity;
             return total;
+        }
+
+        private static int CountItemsInput(DynamicBuffer<InventorySlot> inventory)
+        {
+            int total = 0;
+            for (int i = 0; i < inventory.Length; i++)
+                total += inventory[i].Quantity;
+            return total;
+        }
+
+        private static void AddToInputInventory(DynamicBuffer<InventorySlot> inventory, FixedString32Bytes itemId, int quantity)
+        {
+            for (int i = 0; i < inventory.Length; i++)
+            {
+                if (inventory[i].ItemId == itemId)
+                {
+                    var slot = inventory[i];
+                    slot.Quantity += quantity;
+                    inventory[i] = slot;
+                    return;
+                }
+            }
+            inventory.Add(new InventorySlot { ItemId = itemId, Quantity = quantity });
         }
     }
 }
