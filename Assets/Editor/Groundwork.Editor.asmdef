@@ -1,0 +1,19 @@
+{
+    "name": "Groundwork.Editor",
+    "rootNamespace": "Groundwork",
+    "references": [
+        "Groundwork.Simulation",
+        "UnitySkills.Editor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

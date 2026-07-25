@@ -164,6 +164,19 @@ $UNITY_PATH -runTests -batchmode -nographics \
   -projectPath /home/tim/source/activity/Groundwork
 ```
 
+### UnitySkills REST Server (Headless, Persistent)
+
+```bash
+$UNITY_PATH -batchmode -nographics \
+  -projectPath /home/tim/source/activity/Groundwork \
+  -logFile /tmp/gw-server.log \
+  -executeMethod Groundwork.Setup.UnitySkillsServerPersist.Start
+```
+
+Server starts at `http://localhost:8090` with Bypass mode (no approval prompts).
+Verify: `curl http://localhost:8090/health`
+Stop: `kill $(pgrep -f "Unity.*Groundwork")`
+
 ### Run Project (Headless Simulation)
 
 ```bash
