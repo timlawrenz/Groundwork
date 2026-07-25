@@ -87,6 +87,7 @@
     <Compile Include="Assets/Tests/EditMode/Simulation/CalendarSystemTests.cs" />
     <Compile Include="Assets/Tests/EditMode/Simulation/BuildingProductionSystemTests.cs" />
     <Compile Include="Assets/Tests/EditMode/Simulation/SimulationStatsSystemTests.cs" />
+    <Compile Include="Assets/Tests/EditMode/Simulation/BirthSystemTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets/Tests/EditMode/Groundwork.Tests.asmdef" />

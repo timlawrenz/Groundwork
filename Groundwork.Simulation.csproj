@@ -77,6 +77,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets/Scripts/Simulation/Systems/SimulationStatsSystem.cs" />
+    <Compile Include="Assets/Scripts/Simulation/Buffers/BuildingRecipe.cs" />
     <Compile Include="Assets/Scripts/Simulation/Systems/BuildingProductionSystem.cs" />
     <Compile Include="Assets/Scripts/Simulation/Components/Citizen.cs" />
     <Compile Include="Assets/Scripts/Simulation/Systems/CitizenAgeSystem.cs" />
@@ -87,16 +88,21 @@
     <Compile Include="Assets/Scripts/Simulation/Components/SimulationStats.cs" />
     <Compile Include="Assets/Scripts/Simulation/Systems/CitizenNeedSystem.cs" />
     <Compile Include="Assets/Scripts/Simulation/Components/Building.cs" />
+    <Compile Include="Assets/Scripts/Simulation/Components/ContentDefinitions.cs" />
+    <Compile Include="Assets/Scripts/Simulation/Systems/ContentLoaderSystem.cs" />
     <Compile Include="Assets/Scripts/Simulation/Components/MapGridData.cs" />
     <Compile Include="Assets/Scripts/Simulation/Tags/GameEntityTags.cs" />
     <Compile Include="Assets/Scripts/Simulation/Systems/SimulationBootstrap.cs" />
     <Compile Include="Assets/Scripts/Simulation/Components/PathRequest.cs" />
     <Compile Include="Assets/Scripts/Simulation/Systems/CitizenMovementSystem.cs" />
     <Compile Include="Assets/Scripts/Simulation/Systems/CalendarSystem.cs" />
+    <Compile Include="Assets/Scripts/Simulation/Buffers/RecipeInput.cs" />
     <Compile Include="Assets/Scripts/Simulation/Components/ItemDefinition.cs" />
     <Compile Include="Assets/Scripts/Simulation/Systems/TickDispatchSystem.cs" />
     <Compile Include="Assets/Scripts/Simulation/Components/MapPosition.cs" />
+    <Compile Include="Assets/Scripts/Simulation/Buffers/RecipeOutput.cs" />
     <Compile Include="Assets/Scripts/Simulation/Systems/GroundworkSimulationGroup.cs" />
+    <Compile Include="Assets/Scripts/Simulation/Systems/BirthSystem.cs" />
     <Compile Include="Assets/Scripts/Simulation/Systems/DeathSystem.cs" />
     <Compile Include="Assets/Scripts/Simulation/Buffers/ProductionOrder.cs" />
     <Compile Include="Assets/Scripts/Simulation/Components/CitizenTask.cs" />

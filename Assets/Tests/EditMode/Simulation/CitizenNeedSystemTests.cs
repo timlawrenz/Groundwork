@@ -33,7 +33,6 @@ namespace Groundwork.Tests.Simulation
         {
             using var world = new SimulationTestWorld();
 
-            // Set calendar to winter (season 3)
             var calQuery = world.EntityManager.CreateEntityQuery(typeof(CalendarSingleton));
             var calEntity = calQuery.GetSingletonEntity();
             var cal = world.EntityManager.GetComponentData<CalendarSingleton>(calEntity);
@@ -62,14 +61,13 @@ namespace Groundwork.Tests.Simulation
             using var world = new SimulationTestWorld();
             var citizen = world.CreateCitizen(age: 30f, health: 100f);
 
-            // Set food need to critical
             var needs = world.EntityManager.GetBuffer<CitizenNeed>(citizen);
             for (int i = 0; i < needs.Length; i++)
             {
                 if (needs[i].NeedType == "food")
                 {
                     var need = needs[i];
-                    need.Urgency = 0.9f; // critical
+                    need.Urgency = 0.9f;
                     needs[i] = need;
                 }
             }
@@ -86,9 +84,8 @@ namespace Groundwork.Tests.Simulation
         public void TagsDead_WhenHealthReachesZero()
         {
             using var world = new SimulationTestWorld();
-            var citizen = world.CreateCitizen(age: 30f, health: 0.1f); // nearly dead
+            var citizen = world.CreateCitizen(age: 30f, health: 0.1f);
 
-            // Set food need to critical
             var needs = world.EntityManager.GetBuffer<CitizenNeed>(citizen);
             for (int i = 0; i < needs.Length; i++)
             {
@@ -131,7 +128,6 @@ namespace Groundwork.Tests.Simulation
             using var world = new SimulationTestWorld();
             var citizen = world.CreateCitizen(age: 30f);
 
-            // Run many days
             for (int day = 0; day < 100; day++)
             {
                 world.SetTick(day * 24 + 24);
@@ -153,11 +149,8 @@ namespace Groundwork.Tests.Simulation
         {
             using var world = new SimulationTestWorld();
             var citizen = world.CreateCitizen(age: 30f);
-
-            // Give food to the citizen
             world.AddToInventory(citizen, "food", 5);
 
-            // Set food need to high urgency
             var needs = world.EntityManager.GetBuffer<CitizenNeed>(citizen);
             for (int i = 0; i < needs.Length; i++)
             {
@@ -169,10 +162,9 @@ namespace Groundwork.Tests.Simulation
                 }
             }
 
-            world.SetTick(24); // day boundary
+            world.SetTick(24);
             world.UpdateSystem<CitizenNeedSystem>();
 
-            // Food urgency should have decreased (they ate)
             float foodUrgency = 0f;
             needs = world.EntityManager.GetBuffer<CitizenNeed>(citizen);
             for (int i = 0; i < needs.Length; i++)
@@ -182,7 +174,6 @@ namespace Groundwork.Tests.Simulation
             Assert.That(foodUrgency, Is.LessThan(0.8f),
                 "Food urgency should decrease when citizen has food to eat");
 
-            // Food should have been consumed
             var inventory = world.EntityManager.GetBuffer<InventorySlot>(citizen);
             int foodLeft = 0;
             for (int i = 0; i < inventory.Length; i++)
@@ -200,14 +191,13 @@ namespace Groundwork.Tests.Simulation
             var citizen = world.CreateCitizen(age: 30f);
             world.AddToInventory(citizen, "food", 5);
 
-            // Low food urgency — shouldn't eat
             var needs = world.EntityManager.GetBuffer<CitizenNeed>(citizen);
             for (int i = 0; i < needs.Length; i++)
             {
                 if (needs[i].NeedType == "food")
                 {
                     var need = needs[i];
-                    need.Urgency = 0.1f;  // barely hungry
+                    need.Urgency = 0.1f;
                     needs[i] = need;
                 }
             }
@@ -215,7 +205,6 @@ namespace Groundwork.Tests.Simulation
             world.SetTick(24);
             world.UpdateSystem<CitizenNeedSystem>();
 
-            // Should not have eaten much (urgency still low, food still there)
             var inventory = world.EntityManager.GetBuffer<InventorySlot>(citizen);
             int foodLeft = 0;
             for (int i = 0; i < inventory.Length; i++)
@@ -224,6 +213,95 @@ namespace Groundwork.Tests.Simulation
 
             Assert.That(foodLeft, Is.EqualTo(5),
                 "Should not eat when food need urgency is low");
+        }
+
+        // ─── Regression: workplace food consumption ───
+
+        [Test]
+        public void ConsumesFood_FromWorkplace_WhenPersonalInventoryEmpty()
+        {
+            using var world = new SimulationTestWorld();
+
+            var hut = world.CreateBuilding("gatherer_hut", new(10, 10));
+            world.AddToInventory(hut, "food", 10);
+
+            var citizen = world.CreateCitizen(age: 30f, workplace: hut);
+
+            var needs = world.EntityManager.GetBuffer<CitizenNeed>(citizen);
+            for (int i = 0; i < needs.Length; i++)
+            {
+                if (needs[i].NeedType == "food")
+                {
+                    var need = needs[i];
+                    need.Urgency = 0.8f;
+                    needs[i] = need;
+                }
+            }
+
+            world.SetTick(24);
+            world.UpdateSystem<CitizenNeedSystem>();
+
+            needs = world.EntityManager.GetBuffer<CitizenNeed>(citizen);
+            float foodUrgency = 0f;
+            for (int i = 0; i < needs.Length; i++)
+                if (needs[i].NeedType == "food")
+                    foodUrgency = needs[i].Urgency;
+
+            Assert.That(foodUrgency, Is.LessThan(0.8f),
+                "Should reduce food urgency by eating from workplace");
+
+            var workplaceInv = world.EntityManager.GetBuffer<InventorySlot>(hut);
+            int foodAtWork = 0;
+            for (int i = 0; i < workplaceInv.Length; i++)
+                if (workplaceInv[i].ItemId == "food")
+                    foodAtWork = workplaceInv[i].Quantity;
+
+            Assert.That(foodAtWork, Is.LessThan(10),
+                "Workplace food should be consumed when citizen eats");
+        }
+
+        [Test]
+        public void PrefersPersonalFood_OverWorkplace()
+        {
+            using var world = new SimulationTestWorld();
+
+            var hut = world.CreateBuilding("gatherer_hut", new(10, 10));
+            world.AddToInventory(hut, "food", 10);
+
+            var citizen = world.CreateCitizen(age: 30f, workplace: hut);
+            world.AddToInventory(citizen, "food", 3);
+
+            var needs = world.EntityManager.GetBuffer<CitizenNeed>(citizen);
+            for (int i = 0; i < needs.Length; i++)
+            {
+                if (needs[i].NeedType == "food")
+                {
+                    var need = needs[i];
+                    need.Urgency = 0.8f;
+                    needs[i] = need;
+                }
+            }
+
+            world.SetTick(24);
+            world.UpdateSystem<CitizenNeedSystem>();
+
+            var personalInv = world.EntityManager.GetBuffer<InventorySlot>(citizen);
+            int personalFood = 0;
+            for (int i = 0; i < personalInv.Length; i++)
+                if (personalInv[i].ItemId == "food")
+                    personalFood = personalInv[i].Quantity;
+
+            Assert.That(personalFood, Is.LessThan(3),
+                "Should eat personal food first before workplace food");
+
+            var workInv = world.EntityManager.GetBuffer<InventorySlot>(hut);
+            int workFood = 0;
+            for (int i = 0; i < workInv.Length; i++)
+                if (workInv[i].ItemId == "food")
+                    workFood = workInv[i].Quantity;
+
+            Assert.That(workFood, Is.EqualTo(10),
+                "Workplace food untouched when personal food available");
         }
     }
 }
