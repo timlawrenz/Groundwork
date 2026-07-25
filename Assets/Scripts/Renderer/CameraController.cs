@@ -3,16 +3,16 @@ using UnityEngine;
 namespace Groundwork.Renderer
 {
     /// <summary>
-    /// Orthographic camera controller for the map view.
-    /// Scroll wheel to zoom, right-click drag or WASD/arrows to pan.
-    /// Clamped to map boundaries.
+    /// Orthographic camera controller for the map view. Supports both touch
+    /// (pinch-to-zoom, single-finger drag) and mouse/keyboard (scroll wheel,
+    /// right-click drag, WASD/arrows). Clamped to map boundaries.
     /// </summary>
     public class CameraController : MonoBehaviour
     {
         [Header("Pan Settings")]
         public float panSpeed = 15f;
         public float edgePanSpeed = 25f;
-        public float edgePanThreshold = 0.05f; // fraction of screen
+        public float edgePanThreshold = 0.05f;
 
         [Header("Zoom Settings")]
         public float zoomSpeed = 8f;
@@ -24,15 +24,22 @@ namespace Groundwork.Renderer
         public Vector2 mapSize = new Vector2(100f, 100f);
 
         private Camera _cam;
+
+        // Mouse state
         private Vector3 _lastMousePos;
         private bool _isDragging;
+
+        // Touch state
+        private bool _isTouchDragging;
+        private Vector2 _lastTouchPos;
+        private float _lastPinchDistance;
+        private bool _wasPinching;
 
         void Awake()
         {
             _cam = GetComponent<Camera>();
             _cam.orthographic = true;
 
-            // Position camera above center, looking straight down
             _cam.orthographicSize = 40f;
             _cam.transform.position = new Vector3(mapCenter.x, 60f, mapCenter.y);
             _cam.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
@@ -42,14 +49,99 @@ namespace Groundwork.Renderer
 
         void Update()
         {
-            HandleZoom();
-            HandleDragPan();
-            HandleEdgePan();
-            HandleKeyboardPan();
+            if (Input.touchSupported && Input.touchCount > 0)
+            {
+                HandleTouchPan();
+                HandlePinchZoom();
+            }
+            else
+            {
+                HandleScrollZoom();
+                HandleDragPan();
+                HandleEdgePan();
+                HandleKeyboardPan();
+            }
             ClampToBounds();
         }
 
-        void HandleZoom()
+        // ═══════════════════════════════════════════
+        //  Touch: single-finger drag → pan
+        // ═══════════════════════════════════════════
+
+        void HandleTouchPan()
+        {
+            // Only single-touch for pan (pinch uses 2 fingers)
+            if (Input.touchCount != 1)
+            {
+                _isTouchDragging = false;
+                return;
+            }
+
+            Touch touch = Input.GetTouch(0);
+
+            if (touch.phase == TouchPhase.Began)
+            {
+                _isTouchDragging = true;
+                _lastTouchPos = touch.position;
+                return;
+            }
+
+            if (!_isTouchDragging) return;
+
+            if (touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary)
+            {
+                Vector2 delta = touch.position - _lastTouchPos;
+                _lastTouchPos = touch.position;
+
+                float scale = _cam.orthographicSize * 2f / Screen.height;
+                Vector3 move = new Vector3(-delta.x * scale, 0, -delta.y * scale);
+                transform.Translate(move, Space.World);
+            }
+
+            if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
+            {
+                _isTouchDragging = false;
+            }
+        }
+
+        // ═══════════════════════════════════════════
+        //  Touch: two-finger pinch → zoom
+        // ═══════════════════════════════════════════
+
+        void HandlePinchZoom()
+        {
+            if (Input.touchCount != 2)
+            {
+                _wasPinching = false;
+                return;
+            }
+
+            Touch t0 = Input.GetTouch(0);
+            Touch t1 = Input.GetTouch(1);
+
+            float currentDistance = Vector2.Distance(t0.position, t1.position);
+
+            if (!_wasPinching)
+            {
+                _lastPinchDistance = currentDistance;
+                _wasPinching = true;
+                return;
+            }
+
+            float delta = _lastPinchDistance - currentDistance;
+            _lastPinchDistance = currentDistance;
+
+            // Scale zoom speed by current zoom level and screen size
+            float zoomFactor = delta / Screen.height * zoomSpeed * 2f;
+            _cam.orthographicSize += zoomFactor;
+            _cam.orthographicSize = Mathf.Clamp(_cam.orthographicSize, minZoom, maxZoom);
+        }
+
+        // ═══════════════════════════════════════════
+        //  Mouse: scroll wheel → zoom
+        // ═══════════════════════════════════════════
+
+        void HandleScrollZoom()
         {
             float scroll = Input.GetAxis("Mouse ScrollWheel");
             if (Mathf.Abs(scroll) > 0.001f)
@@ -59,9 +151,13 @@ namespace Groundwork.Renderer
             }
         }
 
+        // ═══════════════════════════════════════════
+        //  Mouse: right-click drag → pan
+        // ═══════════════════════════════════════════
+
         void HandleDragPan()
         {
-            if (Input.GetMouseButtonDown(1)) // right click
+            if (Input.GetMouseButtonDown(1))
             {
                 _isDragging = true;
                 _lastMousePos = Input.mousePosition;
@@ -76,12 +172,15 @@ namespace Groundwork.Renderer
                 Vector3 delta = Input.mousePosition - _lastMousePos;
                 _lastMousePos = Input.mousePosition;
 
-                // Scale pan speed by zoom level and screen height
                 float scale = _cam.orthographicSize * 2f / Screen.height;
                 Vector3 move = new Vector3(-delta.x * scale, 0, -delta.y * scale);
                 transform.Translate(move, Space.World);
             }
         }
+
+        // ═══════════════════════════════════════════
+        //  Mouse: edge-of-screen pan (desktop only)
+        // ═══════════════════════════════════════════
 
         void HandleEdgePan()
         {
@@ -100,6 +199,10 @@ namespace Groundwork.Renderer
             if (move != Vector3.zero)
                 transform.Translate(move, Space.World);
         }
+
+        // ═══════════════════════════════════════════
+        //  Keyboard: WASD / arrows → pan
+        // ═══════════════════════════════════════════
 
         void HandleKeyboardPan()
         {
@@ -121,7 +224,6 @@ namespace Groundwork.Renderer
 
         void ClampToBounds()
         {
-            // Calculate visible area at current zoom
             float halfHeight = _cam.orthographicSize;
             float halfWidth = halfHeight * _cam.aspect;
 
@@ -133,7 +235,6 @@ namespace Groundwork.Renderer
 
         void OnDrawGizmosSelected()
         {
-            // Draw map bounds
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireCube(
                 new Vector3(mapCenter.x, 0, mapCenter.y),
