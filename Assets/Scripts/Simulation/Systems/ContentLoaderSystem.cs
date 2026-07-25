@@ -100,6 +100,7 @@ namespace Groundwork.Simulation
                 CriticalThreshold = 0.8f,
                 HealthDecayRate = 2.0f,
                 SatisfactionReduction = 0.5f,
+                InitialUrgency = 0.2f,
             });
 
             var warmthNeed = ecb.CreateEntity();
@@ -112,6 +113,33 @@ namespace Groundwork.Simulation
                 CriticalThreshold = 0.8f,
                 HealthDecayRate = 2.0f,
                 SatisfactionReduction = 0.5f,
+                InitialUrgency = 0.1f,
+            });
+
+            var shelterNeed = ecb.CreateEntity();
+            ecb.AddComponent(shelterNeed, new NeedDefinition
+            {
+                NeedType = "shelter",
+                SatisfyingItem = "",  // condition-based, not satisfied by goods
+                UrgencyGrowthPerDay = 0.25f,
+                ColdSeasonGrowthMultiplier = 2.0f,
+                CriticalThreshold = 0.8f,
+                HealthDecayRate = 1.0f,
+                SatisfactionReduction = 0f,
+                InitialUrgency = 0f,  // starts at 0, triggered by homelessness
+            });
+
+            var healthNeed = ecb.CreateEntity();
+            ecb.AddComponent(healthNeed, new NeedDefinition
+            {
+                NeedType = "health",
+                SatisfyingItem = "",  // condition-based, not satisfied by goods
+                UrgencyGrowthPerDay = 0.05f,
+                ColdSeasonGrowthMultiplier = 1.0f,
+                CriticalThreshold = 0.8f,
+                HealthDecayRate = 0.5f,
+                SatisfactionReduction = 0f,
+                InitialUrgency = 0f,  // starts at 0, triggered by low health
             });
             ecb.Playback(state.EntityManager);
             ecb.Dispose();

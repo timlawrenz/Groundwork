@@ -120,15 +120,17 @@ namespace Groundwork.Simulation
                     needs[i] = need;
                 }
 
-                // ─── Condition-based needs (hardcoded for now) ───
+                // ─── Condition-based needs (triggered by runtime state, parameters from definitions) ───
 
-                // Shelter need — homeless citizens
-                if (citizen.ValueRO.HomeBuilding == Entity.Null)
-                    UpsertNeed(needs, "shelter", 0.25f);
+                // Shelter need — triggered by homelessness
+                if (needDefs.TryGetValue("shelter", out var shelterDef) &&
+                    citizen.ValueRO.HomeBuilding == Entity.Null)
+                    UpsertNeed(needs, "shelter", shelterDef.UrgencyGrowthPerDay);
 
-                // Health need — escalates when health is low
-                if (lb.ValueRO.Health < 30f)
-                    UpsertNeed(needs, "health", 0.05f);
+                // Health need — triggered by low health
+                if (needDefs.TryGetValue("health", out var healthDef) &&
+                    lb.ValueRO.Health < 30f)
+                    UpsertNeed(needs, "health", healthDef.UrgencyGrowthPerDay);
 
                 // ─── Health decay (data-driven critical threshold) ───
 

@@ -280,8 +280,22 @@ namespace Groundwork.Simulation
                 else if (age >= 60f) ecb.AddComponent<Elderly>(entity);
 
                 var needs = ecb.AddBuffer<CitizenNeed>(entity);
-                needs.Add(new CitizenNeed { NeedType = "food", Urgency = 0.2f });
-                needs.Add(new CitizenNeed { NeedType = "warmth", Urgency = 0.1f });
+
+                // Populate needs from NeedDefinition entities (data-driven)
+                var needDefQuery = state.GetEntityQuery(typeof(NeedDefinition));
+                var needDefs = needDefQuery.ToComponentDataArray<NeedDefinition>(Allocator.Temp);
+                for (int n = 0; n < needDefs.Length; n++)
+                {
+                    if (needDefs[n].InitialUrgency > 0f)
+                    {
+                        needs.Add(new CitizenNeed
+                        {
+                            NeedType = needDefs[n].NeedType,
+                            Urgency = needDefs[n].InitialUrgency,
+                        });
+                    }
+                }
+                needDefs.Dispose();
 
                 ecb.AddBuffer<InventorySlot>(entity);
                 ecb.AddBuffer<PathFollowing>(entity);

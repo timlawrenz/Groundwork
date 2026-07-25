@@ -106,9 +106,27 @@ namespace Groundwork.TestHelpers
                 { TaskType = "idle", TargetEntity = Entity.Null, Progress = 0f });
 
             var needs = EntityManager.GetBuffer<CitizenNeed>(entity);
-            needs.Add(new CitizenNeed { NeedType = "food", Urgency = 0.3f });
-            needs.Add(new CitizenNeed { NeedType = "warmth", Urgency = 0.1f });
 
+            // Populate needs from NeedDefinition entities (data-driven)
+            var needDefQuery = EntityManager.CreateEntityQuery(typeof(NeedDefinition));
+            if (!needDefQuery.IsEmpty)
+            {
+                var needDefs = needDefQuery.ToComponentDataArray<NeedDefinition>(Allocator.Temp);
+                for (int i = 0; i < needDefs.Length; i++)
+                {
+                    if (needDefs[i].InitialUrgency > 0f)
+                    {
+                        needs.Add(new CitizenNeed
+                        {
+                            NeedType = needDefs[i].NeedType,
+                            Urgency = needDefs[i].InitialUrgency,
+                        });
+                    }
+                }
+                needDefs.Dispose();
+            }
+
+            // Age-based tags
             if (age < 16f) EntityManager.AddComponent<Child>(entity);
             else if (age >= 60f) EntityManager.AddComponent<Elderly>(entity);
             return entity;

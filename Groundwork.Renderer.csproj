@@ -16,10 +16,10 @@
     <Configurations>Debug;Release</Configurations>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>Groundwork.Renderer</RootNamespace>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <AssemblyName>Assembly-CSharp</AssemblyName>
+    <AssemblyName>Groundwork.Renderer</AssemblyName>
     <TargetFramework>netstandard2.1</TargetFramework>
     <BaseDirectory>.</BaseDirectory>
   </PropertyGroup>
@@ -76,7 +76,11 @@
     <Analyzer Include="/home/tim/source/activity/Groundwork/Library/PackageCache/com.unity.entities@70f9a4aadeb2/Unity.Entities/SourceGenerators/Unity.Entities.Analyzer.CodeFixes.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets/Scripts/SentryStartup.cs" />
+    <Compile Include="Assets/Scripts/Renderer/GameLoop.cs" />
+    <Compile Include="Assets/Scripts/Renderer/CameraController.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets/Scripts/Renderer/Groundwork.Renderer.asmdef" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
@@ -519,6 +523,38 @@
       <HintPath>/home/tim/Unity/Hub/Editor/6000.3.20f1/Editor/Data/Managed/UnityEngine/UnityEditor.XRModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEditor.Graphs">
+      <HintPath>/home/tim/Unity/Hub/Editor/6000.3.20f1/Editor/Data/Managed/UnityEditor.Graphs.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEditor.WebGL.Extensions">
+      <HintPath>/home/tim/Unity/Hub/Editor/6000.3.20f1/Editor/Data/PlaybackEngines/WebGLSupport/UnityEditor.WebGL.Extensions.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEditor.OSXStandalone.Extensions">
+      <HintPath>/home/tim/Unity/Hub/Editor/6000.3.20f1/Editor/Data/PlaybackEngines/MacStandaloneSupport/UnityEditor.OSXStandalone.Extensions.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEditor.VisionOS.Extensions">
+      <HintPath>/home/tim/Unity/Hub/Editor/6000.3.20f1/Editor/Data/PlaybackEngines/VisionOSPlayer/UnityEditor.VisionOS.Extensions.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEditor.WindowsStandalone.Extensions">
+      <HintPath>/home/tim/Unity/Hub/Editor/6000.3.20f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEditor.Android.Extensions">
+      <HintPath>/home/tim/Unity/Hub/Editor/6000.3.20f1/Editor/Data/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEditor.iOS.Extensions">
+      <HintPath>/home/tim/Unity/Hub/Editor/6000.3.20f1/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEditor.LinuxStandalone.Extensions">
+      <HintPath>/home/tim/Unity/Hub/Editor/6000.3.20f1/Editor/Data/PlaybackEngines/LinuxStandaloneSupport/UnityEditor.LinuxStandalone.Extensions.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Sentry">
       <HintPath>Library/PackageCache/io.sentry.unity@2768f82362e9/Runtime/Sentry.dll</HintPath>
       <Private>False</Private>
@@ -531,6 +567,10 @@
       <HintPath>Library/PackageCache/com.unity.ext.nunit@ec2d0043d6fc/net40/unity-custom/nunit.framework.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Sentry.Microsoft.Extensions.FileSystemGlobbing">
+      <HintPath>Library/PackageCache/io.sentry.unity@2768f82362e9/Editor/Sentry.Microsoft.Extensions.FileSystemGlobbing.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Sentry.Microsoft.Bcl.AsyncInterfaces">
       <HintPath>Library/PackageCache/io.sentry.unity@2768f82362e9/Runtime/Sentry.Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
       <Private>False</Private>
@@ -539,8 +579,20 @@
       <HintPath>Library/PackageCache/io.sentry.unity@2768f82362e9/Runtime/Sentry.Unity.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Sentry.Mono.Cecil.Mdb">
+      <HintPath>Library/PackageCache/io.sentry.unity@2768f82362e9/Editor/Sentry.Mono.Cecil.Mdb.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Sentry.Mono.Cecil.Rocks">
+      <HintPath>Library/PackageCache/io.sentry.unity@2768f82362e9/Editor/Sentry.Mono.Cecil.Rocks.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System.IO.Hashing">
       <HintPath>Library/PackageCache/com.unity.collections@9796e5ee0d9e/Unity.Collections.Tests/System.IO.Hashing/System.IO.Hashing.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Sentry.Mono.Cecil">
+      <HintPath>Library/PackageCache/io.sentry.unity@2768f82362e9/Editor/Sentry.Mono.Cecil.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Sentry.System.Collections.Immutable">
@@ -549,6 +601,10 @@
     </Reference>
     <Reference Include="Sentry.Unity.iOS">
       <HintPath>Library/PackageCache/io.sentry.unity@2768f82362e9/Runtime/Sentry.Unity.iOS.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Sentry.Unity.Editor.iOS">
+      <HintPath>Library/PackageCache/io.sentry.unity@2768f82362e9/Editor/iOS/Sentry.Unity.Editor.iOS.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Sentry.System.Reflection.Metadata">
@@ -573,6 +629,14 @@
     </Reference>
     <Reference Include="Sentry.System.Runtime.CompilerServices.Unsafe">
       <HintPath>Library/PackageCache/io.sentry.unity@2768f82362e9/Runtime/Sentry.System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Sentry.Mono.Cecil.Pdb">
+      <HintPath>Library/PackageCache/io.sentry.unity@2768f82362e9/Editor/Sentry.Mono.Cecil.Pdb.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Sentry.Unity.Editor">
+      <HintPath>Library/PackageCache/io.sentry.unity@2768f82362e9/Editor/Sentry.Unity.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Sentry.System.Text.Encodings.Web">
@@ -1099,212 +1163,29 @@
       <HintPath>/home/tim/Unity/Hub/Editor/6000.3.20f1/Editor/Data/NetStandard/compat/2.1.0/shims/netfx/mscorlib.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Unity.Transforms">
-      <HintPath>Library/ScriptAssemblies/Unity.Transforms.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Mathematics.Extensions">
-      <HintPath>Library/ScriptAssemblies/Unity.Mathematics.Extensions.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Unity.Entities">
       <HintPath>Library/ScriptAssemblies/Unity.Entities.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.2D.Sprite.Editor">
-      <HintPath>Library/ScriptAssemblies/Unity.2D.Sprite.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEditor.UI.Analytics">
-      <HintPath>Library/ScriptAssemblies/UnityEditor.UI.Analytics.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.TextMeshPro">
-      <HintPath>Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="io.sentry.unity.runtime">
-      <HintPath>Library/ScriptAssemblies/io.sentry.unity.runtime.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.ScriptableBuildPipeline">
-      <HintPath>Library/ScriptAssemblies/Unity.ScriptableBuildPipeline.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Scenes.Editor">
-      <HintPath>Library/ScriptAssemblies/Unity.Scenes.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Entities.Editor.Properties">
-      <HintPath>Library/ScriptAssemblies/Unity.Entities.Editor.Properties.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Timeline">
-      <HintPath>Library/ScriptAssemblies/Unity.Timeline.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Addressables">
-      <HintPath>Library/ScriptAssemblies/Unity.Addressables.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.ScriptableBuildPipeline.Editor">
-      <HintPath>Library/ScriptAssemblies/Unity.ScriptableBuildPipeline.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Burst.Editor">
-      <HintPath>Library/ScriptAssemblies/Unity.Burst.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Mathematics.Editor">
-      <HintPath>Library/ScriptAssemblies/Unity.Mathematics.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Sysroot.Linux_x86_64">
-      <HintPath>Library/ScriptAssemblies/Unity.Sysroot.Linux_x86_64.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Entities.UI.Editor">
-      <HintPath>Library/ScriptAssemblies/Unity.Entities.UI.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Entities.Editor">
-      <HintPath>Library/ScriptAssemblies/Unity.Entities.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Entities.UI">
-      <HintPath>Library/ScriptAssemblies/Unity.Entities.UI.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Rider.Editor">
-      <HintPath>Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Toolchain.Linux-x86_64-Linux">
-      <HintPath>Library/ScriptAssemblies/Unity.Toolchain.Linux-x86_64-Linux.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Transforms.Hybrid">
-      <HintPath>Library/ScriptAssemblies/Unity.Transforms.Hybrid.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.TextMeshPro.Editor">
-      <HintPath>Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Scenes">
-      <HintPath>Library/ScriptAssemblies/Unity.Scenes.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.ResourceManager">
-      <HintPath>Library/ScriptAssemblies/Unity.ResourceManager.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.VisualStudio.Editor">
-      <HintPath>Library/ScriptAssemblies/Unity.VisualStudio.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="io.sentry.unity.editor">
-      <HintPath>Library/ScriptAssemblies/io.sentry.unity.editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.Collections">
       <HintPath>Library/ScriptAssemblies/Unity.Collections.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Unity.Profiling.Core">
-      <HintPath>Library/ScriptAssemblies/Unity.Profiling.Core.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.InputSystem.ForUI">
-      <HintPath>Library/ScriptAssemblies/Unity.InputSystem.ForUI.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Timeline.Editor">
-      <HintPath>Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Unity.Mathematics">
       <HintPath>Library/ScriptAssemblies/Unity.Mathematics.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Mathematics.Extensions.Hybrid">
-      <HintPath>Library/ScriptAssemblies/Unity.Mathematics.Extensions.Hybrid.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Serialization">
-      <HintPath>Library/ScriptAssemblies/Unity.Serialization.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Burst">
-      <HintPath>Library/ScriptAssemblies/Unity.Burst.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.InternalAPIEngineBridge.004">
-      <HintPath>Library/ScriptAssemblies/Unity.InternalAPIEngineBridge.004.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnitySkills.Editor">
-      <HintPath>Library/ScriptAssemblies/UnitySkills.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Entities.Hybrid">
-      <HintPath>Library/ScriptAssemblies/Unity.Entities.Hybrid.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Entities.Hybrid.HybridComponents">
-      <HintPath>Library/ScriptAssemblies/Unity.Entities.Hybrid.HybridComponents.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.SysrootPackage.Editor">
-      <HintPath>Library/ScriptAssemblies/Unity.SysrootPackage.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Entities.Build">
-      <HintPath>Library/ScriptAssemblies/Unity.Entities.Build.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Deformations">
-      <HintPath>Library/ScriptAssemblies/Unity.Deformations.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Collections.Editor">
-      <HintPath>Library/ScriptAssemblies/Unity.Collections.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Serialization.Editor">
-      <HintPath>Library/ScriptAssemblies/Unity.Serialization.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Sysroot.Linux_arm64">
-      <HintPath>Library/ScriptAssemblies/Unity.Sysroot.Linux_arm64.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.InputSystem">
-      <HintPath>Library/ScriptAssemblies/Unity.InputSystem.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Addressables.Editor">
-      <HintPath>Library/ScriptAssemblies/Unity.Addressables.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.AutoGroupGenerator.Editor">
-      <HintPath>Library/ScriptAssemblies/Unity.AutoGroupGenerator.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEditor.UI">
       <HintPath>Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Groundwork.TestHelpers.csproj" />
     <ProjectReference Include="Groundwork.Simulation.csproj" />
-    <ProjectReference Include="Groundwork.Renderer.csproj" />
-    <ProjectReference Include="Groundwork.Editor.csproj" />
   </ItemGroup>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
   <ItemGroup>

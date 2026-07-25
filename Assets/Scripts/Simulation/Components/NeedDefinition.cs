@@ -34,5 +34,10 @@ namespace Groundwork.Simulation
 
         /// <summary>How much urgency is reduced when the need is satisfied (consuming an item).</summary>
         public float SatisfactionReduction;
+
+        /// <summary>Urgency value when a citizen is first created. Commodity needs
+        /// (food, warmth) start above 0. Condition-based needs (shelter, health)
+        /// start at 0 and are triggered by runtime conditions.</summary>
+        public float InitialUrgency;
     }
 }

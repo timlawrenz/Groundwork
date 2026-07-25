@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Groundwork.Simulation", "Groundwork.Simulation.csproj", "{26CE5C3D-CC58-30DF-E57A-7836252EF2B7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Groundwork.Renderer", "Groundwork.Renderer.csproj", "{482D7D6B-3BA7-86CD-32B7-66B53AD0CA0C}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{CCCB00F3-E0B0-CEC5-4EB1-920793BFA93A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Groundwork.Editor", "Groundwork.Editor.csproj", "{A7B77C92-5645-EA68-2528-56DB919D396B}"
@@ -21,6 +23,10 @@ Global
 		{26CE5C3D-CC58-30DF-E57A-7836252EF2B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26CE5C3D-CC58-30DF-E57A-7836252EF2B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26CE5C3D-CC58-30DF-E57A-7836252EF2B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{482D7D6B-3BA7-86CD-32B7-66B53AD0CA0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{482D7D6B-3BA7-86CD-32B7-66B53AD0CA0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{482D7D6B-3BA7-86CD-32B7-66B53AD0CA0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{482D7D6B-3BA7-86CD-32B7-66B53AD0CA0C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CCCB00F3-E0B0-CEC5-4EB1-920793BFA93A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CCCB00F3-E0B0-CEC5-4EB1-920793BFA93A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCCB00F3-E0B0-CEC5-4EB1-920793BFA93A}.Release|Any CPU.ActiveCfg = Release|Any CPU
