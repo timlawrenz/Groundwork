@@ -6,15 +6,15 @@
 
 **Phase 1 — Simulation Core (MVP)** — nearly complete
 
-13|13 systems, 293 tests green. Event buffer fully integrated with CitizenBorn, CitizenDied, ProductionComplete, TileEnter/TileLeave events. Public buildings — any building on a citizen's tile can provide food and warmth. Birth tracking confirmed (94 births across 10-year sim). Re-pathing (fresh A* each step). Co-location (multiple citizens per tile). Debug visualization (100×100 event-driven ASCII grid). CSV stats output. HTML dashboard (Field Notes Dark). Production archetypes: Workshop (woodcutter, worker at tile), Gathering (forager hut, zone radius 5, overlap penalty). Goods transport: CitizenHaulSystem + HaulCompletionSystem with 14 haul tests, PathRequest conflict fixed, thresholds lowered (10/10).
+13|13 systems, 293 tests green. Event buffer, public buildings, production archetypes (Workshop/Gathering/Source/Service), goods transport (CitizenHaulSystem + HaulCompletionSystem), gathering zone overlap, needs generalization (data-driven NeedDefinition + InitialUrgency). HTML dashboard (Field Notes Dark).
 
 ## Next Action
 
-**Needs generalization** (ADR 2026-07-25 §3): Replace hardcoded need types (food, warmth, shelter, health) with configurable need definitions. Each need specifies which goods satisfy it, urgency growth rate, climate modifiers, and critical effects. This unblocks the social need DLC and makes new needs data entries, not code changes.
+**Forestry hut (log producer)** — the firewood chain is incomplete without a log source. A forestry_hut (Gathering archetype, harvests logs from forest tiles) closes the loop: forestry_hut → woodcutter → house. This also validates that the generalized need system works for new building types.
 
 ## What's blocking Phase 1 closure
 
-The 10-year sim survives but population eventually crashes (Year 10) because firewood accumulates at woodcutters (77K) but never reaches homes where citizens burn it for warmth. The public buildings ADR (step 1 implemented) lets citizens use any building on their tile, but goods transport (step 2) is needed for firewood to flow from producers to consumers. The needs generalization (step 3) makes the warmth/food distinction configurable rather than hardcoded.
+The firewood chain is incomplete: forestry_hut (log source) → woodcutter → house. A zero-stockpile 10-year run showed population crashing from 93 to 43 in one winter because no one produces logs. With needs generalization done, adding a forestry_hut is a pure data entry (new BuildingDefinition + GatheringZone) with no code changes needed.
 
 ## Headline
 
