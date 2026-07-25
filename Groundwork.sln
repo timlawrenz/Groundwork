@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Groundwork.Simulation", "Gr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{CCCB00F3-E0B0-CEC5-4EB1-920793BFA93A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Groundwork.Editor", "Groundwork.Editor.csproj", "{A7B77C92-5645-EA68-2528-56DB919D396B}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Groundwork.Tests", "Groundwork.Tests.csproj", "{6E414707-DA77-5544-F598-3CD24450A0D1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Groundwork.TestHelpers", "Groundwork.TestHelpers.csproj", "{224880A7-DC99-DFC4-EBBA-0FC1EDA6BC65}"
@@ -23,6 +25,10 @@ Global
 		{CCCB00F3-E0B0-CEC5-4EB1-920793BFA93A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCCB00F3-E0B0-CEC5-4EB1-920793BFA93A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CCCB00F3-E0B0-CEC5-4EB1-920793BFA93A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7B77C92-5645-EA68-2528-56DB919D396B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7B77C92-5645-EA68-2528-56DB919D396B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7B77C92-5645-EA68-2528-56DB919D396B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7B77C92-5645-EA68-2528-56DB919D396B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6E414707-DA77-5544-F598-3CD24450A0D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6E414707-DA77-5544-F598-3CD24450A0D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E414707-DA77-5544-F598-3CD24450A0D1}.Release|Any CPU.ActiveCfg = Release|Any CPU

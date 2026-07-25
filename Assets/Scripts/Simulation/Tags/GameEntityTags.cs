@@ -26,4 +26,9 @@ namespace Groundwork.Simulation
     /// Tag component: marks a building as under construction. Can't operate yet.
     /// </summary>
     public struct UnderConstruction : IComponentData { }
+
+    /// <summary>
+    /// Tag component: marks the singleton entity holding the SimulationEvent buffer.
+    /// </summary>
+    public struct SimulationEventSingleton : IComponentData { }
 }

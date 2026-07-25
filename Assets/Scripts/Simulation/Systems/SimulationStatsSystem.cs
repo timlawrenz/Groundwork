@@ -93,11 +93,32 @@ namespace Groundwork.Simulation
             stats.TotalLogs = totalLogs;
             stats.TotalFirewood = totalFirewood;
 
+            // Count births and deaths from the event buffer
+            if (SystemAPI.TryGetSingletonEntity<SimulationEventSingleton>(out var eventEntity))
+            {
+                var events = state.EntityManager.GetBuffer<SimulationEvent>(eventEntity);
+                for (int i = 0; i < events.Length; i++)
+                {
+                    if (events[i].Type == EventType.CitizenBorn)
+                    {
+                        stats.CumulativeBirths++;
+                        stats.BirthsThisSeason++;
+                    }
+                    else if (events[i].Type == EventType.CitizenDied)
+                    {
+                        stats.CumulativeDeaths++;
+                        stats.DeathsThisSeason++;
+                    }
+                }
+            }
+
             // Log at season boundaries — only once per season change
             int seasonId = calendar.Year * 4 + calendar.Season;
             if (seasonId != stats._lastLoggedSeason)
             {
                 stats._lastLoggedSeason = seasonId;
+                stats.BirthsThisSeason = 0;
+                stats.DeathsThisSeason = 0;
                 var seasonNames = new FixedString32Bytes[] { "Spring", "Summer", "Autumn", "Winter" };
                 var seasonName = seasonNames[calendar.Season];
                 UnityEngine.Debug.Log(
@@ -106,6 +127,7 @@ namespace Groundwork.Simulation
                     $"Health: {stats.AverageHealth:F1} Happy: {stats.AverageHappiness:F1} | " +
                     $"Food: {stats.TotalFood} Logs: {stats.TotalLogs} Firewood: {stats.TotalFirewood} | " +
                     $"Buildings: {stats.BuildingCount} | " +
+                    $"Births: {stats.BirthsThisSeason} Deaths: {stats.DeathsThisSeason} | " +
                     $"Temp: {stats.Temperature:F1}°C Tick: {stats.CurrentTick}");
             }
         }

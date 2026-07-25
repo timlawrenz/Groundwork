@@ -89,7 +89,7 @@
 
 **Alternatives considered:**
 - **Direct method calls** — simpler initially but couples UI to sim, no replay
-- **Event-driven** — more flexible but non-deterministic, harder to debug
+- **Event-driven for mutations** — more flexible but non-deterministic, harder to debug. Note: this rejection is specifically about events as a *mutation mechanism*, not events as a *notification mechanism*. See ADR 2026-07-25 for the event buffer decision.
 
 **Consequences:**
 - Easier: UI swapping, testing, replay, save/load, future networking
@@ -230,3 +230,34 @@ Assets/Tests/
 **Consequences:**
 - Easier: confident refactoring, bisectable bugs, self-documenting system behavior
 - Harder: more upfront code (tests), must design for testability, boilerplate for world setup
+
+---
+
+### 2026-07-25 — Deterministic Event Buffer for System Decoupling & Mod API
+
+**Status:** accepted
+
+**Context:** The simulation pipeline is rigidly ordered — systems must know their position relative to others to consume their outputs. As system count grows, this becomes a coupling bottleneck: adding a system that reacts to births, deaths, or building completions requires knowing which system emits those signals and placing the new system after it in the pipeline. The mod API needs event hooks (on_citizen_born, on_building_complete, etc.), and maintaining a separate "mod surface" alongside internal inter-system communication creates duplication. The previous ADR rejected "event-driven" for mutations — correctly — but events for *notification* (signaling that state changed) are different from events for *mutation* (changing state).
+
+**Decision:** Add a deterministic event buffer (ECS `DynamicBuffer<SimulationEvent>`) on a singleton entity. Systems emit events to the buffer during their tick. A dedicated `EventDispatchSystem` runs after all emitting systems, processes the buffer in emission order, invokes any Lua mod hooks, and clears the buffer for the next tick.
+
+Event types: `CitizenBorn`, `CitizenDied`, `CitizenAged`, `BuildingComplete`, `BuildingDeconstructed`, `SeasonChanged`, `DayChanged`, `ResourceDepleted`, `NeedCritical`, `PopulationMilestone`, etc.
+
+```csharp
+struct SimulationEvent : IBufferElementData {
+    EventType Type;
+    int EntityId;
+    float Data0, Data1, Data2, Data3;  // generic payload
+}
+```
+
+**Rationale:**
+- **Decoupling:** Emitting systems don't know who's listening. Adding a system that reacts to births doesn't require touching the birth system.
+- **Mod API == internal API:** Mods and internal systems subscribe to the same event stream. Every internal notification is automatically a mod hook. No separate surface to maintain.
+- **Deterministic:** Events are processed in emission order within a single-threaded dispatch phase. Same initial state + same command log → same event sequence → same outcome.
+- **Lightweight:** ~50 lines of C#, no external store, no message broker. Replay is already handled by the command log — events are derived from state, not the other way around.
+- **Complements command pattern:** Commands mutate state (PlaceBuilding, AssignWorker). Events notify that state changed (BuildingPlaced, WorkerAssigned). Two different jobs.
+
+**Consequences:**
+- **Easier:** Adding reactive systems without pipeline gymnastics, mod hooks are automatic, inter-system communication is discoverable (grep for `EventType.X`), event-driven features (achievements, quests, tutorial triggers, UI notifications) become trivial
+- **Harder:** Pipeline ordering still matters for emission timing — a system that needs to react to births must run after the system that *emits* birth events. Event type proliferation needs discipline — every new event type should justify its existence. Debugging event chains requires tracing emission → consumption across systems.

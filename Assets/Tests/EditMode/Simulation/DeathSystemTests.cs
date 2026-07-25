@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Unity.Entities;
+using Unity.Mathematics;
 using Groundwork.Simulation;
 using Groundwork.TestHelpers;
 
@@ -50,6 +51,25 @@ namespace Groundwork.Tests.Simulation
 
             Assert.That(world.EntityManager.Exists(c1), Is.False);
             Assert.That(world.EntityManager.Exists(c2), Is.False);
+        }
+
+        [Test]
+        public void EmitsCitizenDiedEvent_BeforeDestroy()
+        {
+            using var world = new SimulationTestWorld();
+            var citizen = world.CreateCitizen(age: 30f, position: new int2(7, 3));
+            world.EntityManager.AddComponent<Dead>(citizen);
+
+            world.UpdateSystem<DeathSystem>();
+
+            // Event should be in buffer even though entity is destroyed
+            var eventEntity = world.GetOrCreateEventBufferEntity();
+            var events = world.EntityManager.GetBuffer<SimulationEvent>(eventEntity);
+            Assert.That(events.Length, Is.EqualTo(1));
+            Assert.That(events[0].Type, Is.EqualTo(EventType.CitizenDied));
+            Assert.That(events[0].EntityId, Is.EqualTo(citizen.Index));
+            Assert.That(events[0].Data0, Is.EqualTo(7f));
+            Assert.That(events[0].Data1, Is.EqualTo(3f));
         }
     }
 }

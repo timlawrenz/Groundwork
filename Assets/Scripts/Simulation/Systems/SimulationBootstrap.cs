@@ -40,7 +40,12 @@ namespace Groundwork.Simulation
                 GrowingMultiplier = 0.5f,
             });
 
-            // Buildings: 8 houses, 8 gatherer huts, 2 woodcutters — read MaxWorkers from definitions
+            // Event buffer singleton
+            var eventEntity = ecb.CreateEntity();
+            ecb.AddComponent<SimulationEventSingleton>(eventEntity);
+            ecb.AddBuffer<SimulationEvent>(eventEntity);
+
+            // Buildings: 8 houses, 9 gatherer huts, 3 woodcutters — read MaxWorkers from definitions
             var bDefQuery = state.GetEntityQuery(typeof(BuildingDefinitionData));
             var bDefs = bDefQuery.ToComponentDataArray<BuildingDefinitionData>(Allocator.Temp);
             var bDefMap = new NativeHashMap<FixedString32Bytes, int>(bDefs.Length, Allocator.Temp);
@@ -53,10 +58,11 @@ namespace Groundwork.Simulation
 
             for (int i = 0; i < 8; i++)
                 CreateBuilding(ecb, "house", new int2(10 + i, 15), GetMaxWorkers("house"));
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 9; i++)
                 CreateBuilding(ecb, "gatherer_hut", new int2(20 + i * 2, 10), GetMaxWorkers("gatherer_hut"));
             CreateBuilding(ecb, "woodcutter", new int2(40, 10), GetMaxWorkers("woodcutter"));
             CreateBuilding(ecb, "woodcutter", new int2(42, 10), GetMaxWorkers("woodcutter"));
+            CreateBuilding(ecb, "woodcutter", new int2(44, 10), GetMaxWorkers("woodcutter"));
 
             bDefMap.Dispose();
 
@@ -66,12 +72,60 @@ namespace Groundwork.Simulation
             AddInitialResources(ref state);
             CreateCitizens(ref state);
             AssignInitialPaths(ref state);
+            EmitBootstrapEvents(ref state);
         }
 
         public void OnDestroy(ref SystemState state)
         {
             if (_mapGridBlob.IsCreated)
                 _mapGridBlob.Dispose();
+        }
+
+        private void EmitBootstrapEvents(ref SystemState state)
+        {
+            // Find the event buffer singleton
+            var eventQuery = state.GetEntityQuery(typeof(SimulationEventSingleton));
+            if (eventQuery.IsEmpty) return;
+            var eventEntity = eventQuery.GetSingletonEntity();
+            var eventBuffer = state.EntityManager.GetBuffer<SimulationEvent>(eventEntity);
+
+            // Emit BuildingPlaced for all buildings
+            var buildingQuery = state.GetEntityQuery(typeof(Building), typeof(MapPosition));
+            var buildings = buildingQuery.ToComponentDataArray<Building>(Allocator.Temp);
+            var entities = buildingQuery.ToEntityArray(Allocator.Temp);
+            var positions = buildingQuery.ToComponentDataArray<MapPosition>(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                eventBuffer.Add(new SimulationEvent
+                {
+                    Type = EventType.BuildingPlaced,
+                    EntityId = entities[i].Index,
+                    Data0 = positions[i].TileCoordinate.x,
+                    Data1 = positions[i].TileCoordinate.y,
+                });
+            }
+            buildings.Dispose();
+            entities.Dispose();
+            positions.Dispose();
+
+            // Emit CitizenSpawned for all citizens
+            var citizenQuery = state.GetEntityQuery(typeof(Citizen), typeof(MapPosition));
+            var citizens = citizenQuery.ToComponentDataArray<Citizen>(Allocator.Temp);
+            var cEntities = citizenQuery.ToEntityArray(Allocator.Temp);
+            var cPositions = citizenQuery.ToComponentDataArray<MapPosition>(Allocator.Temp);
+            for (int i = 0; i < cEntities.Length; i++)
+            {
+                eventBuffer.Add(new SimulationEvent
+                {
+                    Type = EventType.CitizenSpawned,
+                    EntityId = cEntities[i].Index,
+                    Data0 = cPositions[i].TileCoordinate.x,
+                    Data1 = cPositions[i].TileCoordinate.y,
+                });
+            }
+            citizens.Dispose();
+            cEntities.Dispose();
+            cPositions.Dispose();
         }
 
         private void CreateMapGrid(ref SystemState state, EntityCommandBuffer ecb)
@@ -125,7 +179,7 @@ namespace Groundwork.Simulation
 
                 if (buildings[i].BuildingType == "woodcutter")
                 {
-                    inventory.Add(new InventorySlot { ItemId = "logs", Quantity = 5000 });
+                    inventory.Add(new InventorySlot { ItemId = "logs", Quantity = 50000 });
                     productionQueue.Add(new ProductionOrder { RecipeId = "chop_firewood", Progress = 0f });
                 }
                 else if (buildings[i].BuildingType == "gatherer_hut")
@@ -212,7 +266,6 @@ namespace Groundwork.Simulation
                 var needs = ecb.AddBuffer<CitizenNeed>(entity);
                 needs.Add(new CitizenNeed { NeedType = "food", Urgency = 0.2f });
                 needs.Add(new CitizenNeed { NeedType = "warmth", Urgency = 0.1f });
-                needs.Add(new CitizenNeed { NeedType = "social", Urgency = 0.1f });
 
                 ecb.AddBuffer<InventorySlot>(entity);
                 ecb.AddBuffer<PathFollowing>(entity);

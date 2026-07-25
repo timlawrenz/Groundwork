@@ -1,98 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<test-run id="2" testcasecount="46" result="Failed(Child)" total="46" passed="45" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.7037127">
-  <test-suite type="TestSuite" id="1000" name="Groundwork" fullname="Groundwork" runstate="Runnable" testcasecount="46" result="Failed" site="Child" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.703713" total="46" passed="45" failed="1" inconclusive="0" skipped="0" asserts="0">
+<test-run id="2" testcasecount="46" result="Passed" total="46" passed="46" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.4768415">
+  <test-suite type="TestSuite" id="1000" name="Groundwork" fullname="Groundwork" runstate="Runnable" testcasecount="46" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.476842" total="46" passed="46" failed="0" inconclusive="0" skipped="0" asserts="0">
     <properties>
       <property name="platform" value="EditMode" />
     </properties>
-    <failure>
-      <message><![CDATA[One or more child tests had errors]]></message>
-    </failure>
-    <test-suite type="Assembly" id="1055" name="Groundwork.Tests.dll" fullname="/home/tim/source/activity/Groundwork/Library/ScriptAssemblies/Groundwork.Tests.dll" runstate="Runnable" testcasecount="45" result="Failed" site="Child" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.695782" total="45" passed="44" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <test-suite type="Assembly" id="1055" name="Groundwork.Tests.dll" fullname="/home/tim/source/activity/Groundwork/Library/ScriptAssemblies/Groundwork.Tests.dll" runstate="Runnable" testcasecount="45" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.470607" total="45" passed="45" failed="0" inconclusive="0" skipped="0" asserts="0">
       <properties>
-        <property name="_PID" value="1034612" />
+        <property name="_PID" value="1037176" />
         <property name="_APPDOMAIN" value="Unity Child Domain" />
         <property name="platform" value="EditMode" />
         <property name="EditorOnly" value="True" />
       </properties>
-      <failure>
-        <message><![CDATA[One or more child tests had errors]]></message>
-      </failure>
-      <test-suite type="TestSuite" id="1056" name="Groundwork" fullname="Groundwork" runstate="Runnable" testcasecount="45" result="Failed" site="Child" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.695146" total="45" passed="44" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <test-suite type="TestSuite" id="1056" name="Groundwork" fullname="Groundwork" runstate="Runnable" testcasecount="45" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.470041" total="45" passed="45" failed="0" inconclusive="0" skipped="0" asserts="0">
         <properties />
-        <failure>
-          <message><![CDATA[One or more child tests had errors]]></message>
-        </failure>
-        <test-suite type="TestSuite" id="1057" name="Tests" fullname="Groundwork.Tests" runstate="Runnable" testcasecount="45" result="Failed" site="Child" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.694632" total="45" passed="44" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <test-suite type="TestSuite" id="1057" name="Tests" fullname="Groundwork.Tests" runstate="Runnable" testcasecount="45" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.469633" total="45" passed="45" failed="0" inconclusive="0" skipped="0" asserts="0">
           <properties />
-          <failure>
-            <message><![CDATA[One or more child tests had errors]]></message>
-          </failure>
-          <test-suite type="TestSuite" id="1058" name="Simulation" fullname="Groundwork.Tests.Simulation" runstate="Runnable" testcasecount="45" result="Failed" site="Child" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.694025" total="45" passed="44" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <test-suite type="TestSuite" id="1058" name="Simulation" fullname="Groundwork.Tests.Simulation" runstate="Runnable" testcasecount="45" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.469182" total="45" passed="45" failed="0" inconclusive="0" skipped="0" asserts="0">
             <properties />
-            <failure>
-              <message><![CDATA[One or more child tests had errors]]></message>
-            </failure>
-            <test-suite type="TestFixture" id="1001" name="BuildingProductionSystemTests" fullname="Groundwork.Tests.Simulation.BuildingProductionSystemTests" classname="Groundwork.Tests.Simulation.BuildingProductionSystemTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.279196" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <test-suite type="TestFixture" id="1001" name="BuildingProductionSystemTests" fullname="Groundwork.Tests.Simulation.BuildingProductionSystemTests" classname="Groundwork.Tests.Simulation.BuildingProductionSystemTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.196415" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
               <properties />
-              <failure>
-                <message><![CDATA[One or more child tests had errors]]></message>
-              </failure>
-              <test-case id="1003" name="ChopFirewood_ConsumesLogs_ProducesFirewood" fullname="Groundwork.Tests.Simulation.BuildingProductionSystemTests.ChopFirewood_ConsumesLogs_ProducesFirewood" methodname="ChopFirewood_ConsumesLogs_ProducesFirewood" classname="Groundwork.Tests.Simulation.BuildingProductionSystemTests" runstate="Runnable" seed="812235899" result="Failed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.239405" asserts="0">
-                <properties>
-                  <property name="retryIteration" value="0" />
-                  <property name="repeatIteration" value="0" />
-                </properties>
-                <failure>
-                  <message><![CDATA[  Should consume 1 log
-  Expected: 9
-  But was:  0
-]]></message>
-                  <stack-trace><![CDATA[at Groundwork.Tests.Simulation.BuildingProductionSystemTests.ChopFirewood_ConsumesLogs_ProducesFirewood () [0x0008f] in /home/tim/source/activity/Groundwork/Assets/Tests/EditMode/Simulation/BuildingProductionSystemTests.cs:44
-]]></stack-trace>
-                </failure>
-                <output><![CDATA[Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.BuildingProductionSystem targeting Groundwork.Simulation.CitizenMovementSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.BuildingProductionSystem targeting Groundwork.Simulation.CitizenMovementSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.BuildingProductionSystem targeting Groundwork.Simulation.CitizenMovementSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.BuildingProductionSystem targeting Groundwork.Simulation.CitizenMovementSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.BuildingProductionSystem targeting Groundwork.Simulation.CitizenMovementSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.BuildingProductionSystem targeting Groundwork.Simulation.CitizenMovementSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.BuildingProductionSystem targeting Groundwork.Simulation.CitizenMovementSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.BuildingProductionSystem targeting Groundwork.Simulation.CitizenMovementSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.BuildingProductionSystem targeting Groundwork.Simulation.CitizenMovementSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.BuildingProductionSystem targeting Groundwork.Simulation.CitizenMovementSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-]]></output>
-              </test-case>
-              <test-case id="1004" name="ChopFirewood_Stalls_WhenNoLogs" fullname="Groundwork.Tests.Simulation.BuildingProductionSystemTests.ChopFirewood_Stalls_WhenNoLogs" methodname="ChopFirewood_Stalls_WhenNoLogs" classname="Groundwork.Tests.Simulation.BuildingProductionSystemTests" runstate="Runnable" seed="572805967" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.009059" asserts="0">
+              <test-case id="1003" name="ChopFirewood_ConsumesLogs_ProducesFirewood" fullname="Groundwork.Tests.Simulation.BuildingProductionSystemTests.ChopFirewood_ConsumesLogs_ProducesFirewood" methodname="ChopFirewood_ConsumesLogs_ProducesFirewood" classname="Groundwork.Tests.Simulation.BuildingProductionSystemTests" runstate="Runnable" seed="912110328" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.167070" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -139,7 +66,7 @@ Make sure that both systems are in the same system group with [UpdateInGroup(typ
 or by manually adding both systems to the same group's update list.
 ]]></output>
               </test-case>
-              <test-case id="1006" name="DoesNotOperate_UnderConstruction" fullname="Groundwork.Tests.Simulation.BuildingProductionSystemTests.DoesNotOperate_UnderConstruction" methodname="DoesNotOperate_UnderConstruction" classname="Groundwork.Tests.Simulation.BuildingProductionSystemTests" runstate="Runnable" seed="1381281495" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.009320" asserts="0">
+              <test-case id="1004" name="ChopFirewood_Stalls_WhenNoLogs" fullname="Groundwork.Tests.Simulation.BuildingProductionSystemTests.ChopFirewood_Stalls_WhenNoLogs" methodname="ChopFirewood_Stalls_WhenNoLogs" classname="Groundwork.Tests.Simulation.BuildingProductionSystemTests" runstate="Runnable" seed="1444553456" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.004877" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -186,7 +113,7 @@ Make sure that both systems are in the same system group with [UpdateInGroup(typ
 or by manually adding both systems to the same group's update list.
 ]]></output>
               </test-case>
-              <test-case id="1002" name="GatherFood_ProducesFood_WithoutInputs" fullname="Groundwork.Tests.Simulation.BuildingProductionSystemTests.GatherFood_ProducesFood_WithoutInputs" methodname="GatherFood_ProducesFood_WithoutInputs" classname="Groundwork.Tests.Simulation.BuildingProductionSystemTests" runstate="Runnable" seed="719746768" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.006371" asserts="0">
+              <test-case id="1006" name="DoesNotOperate_UnderConstruction" fullname="Groundwork.Tests.Simulation.BuildingProductionSystemTests.DoesNotOperate_UnderConstruction" methodname="DoesNotOperate_UnderConstruction" classname="Groundwork.Tests.Simulation.BuildingProductionSystemTests" runstate="Runnable" seed="718077267" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.007142" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -233,7 +160,54 @@ Make sure that both systems are in the same system group with [UpdateInGroup(typ
 or by manually adding both systems to the same group's update list.
 ]]></output>
               </test-case>
-              <test-case id="1005" name="ProductionStops_WhenAlreadyComplete" fullname="Groundwork.Tests.Simulation.BuildingProductionSystemTests.ProductionStops_WhenAlreadyComplete" methodname="ProductionStops_WhenAlreadyComplete" classname="Groundwork.Tests.Simulation.BuildingProductionSystemTests" runstate="Runnable" seed="600518380" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.002598" asserts="0">
+              <test-case id="1002" name="GatherFood_ProducesFood_WithoutInputs" fullname="Groundwork.Tests.Simulation.BuildingProductionSystemTests.GatherFood_ProducesFood_WithoutInputs" methodname="GatherFood_ProducesFood_WithoutInputs" classname="Groundwork.Tests.Simulation.BuildingProductionSystemTests" runstate="Runnable" seed="478327269" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.004711" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.BuildingProductionSystem targeting Groundwork.Simulation.CitizenMovementSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.BuildingProductionSystem targeting Groundwork.Simulation.CitizenMovementSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.BuildingProductionSystem targeting Groundwork.Simulation.CitizenMovementSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.BuildingProductionSystem targeting Groundwork.Simulation.CitizenMovementSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.BuildingProductionSystem targeting Groundwork.Simulation.CitizenMovementSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.BuildingProductionSystem targeting Groundwork.Simulation.CitizenMovementSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.BuildingProductionSystem targeting Groundwork.Simulation.CitizenMovementSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.BuildingProductionSystem targeting Groundwork.Simulation.CitizenMovementSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.BuildingProductionSystem targeting Groundwork.Simulation.CitizenMovementSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.BuildingProductionSystem targeting Groundwork.Simulation.CitizenMovementSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+]]></output>
+              </test-case>
+              <test-case id="1005" name="ProductionStops_WhenAlreadyComplete" fullname="Groundwork.Tests.Simulation.BuildingProductionSystemTests.ProductionStops_WhenAlreadyComplete" methodname="ProductionStops_WhenAlreadyComplete" classname="Groundwork.Tests.Simulation.BuildingProductionSystemTests" runstate="Runnable" seed="302946398" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.002794" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -245,9 +219,9 @@ or by manually adding both systems to the same group's update list.
 ]]></output>
               </test-case>
             </test-suite>
-            <test-suite type="TestFixture" id="1007" name="CalendarSystemTests" fullname="Groundwork.Tests.Simulation.CalendarSystemTests" classname="Groundwork.Tests.Simulation.CalendarSystemTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.160232" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <test-suite type="TestFixture" id="1007" name="CalendarSystemTests" fullname="Groundwork.Tests.Simulation.CalendarSystemTests" classname="Groundwork.Tests.Simulation.CalendarSystemTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.104246" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
               <properties />
-              <test-case id="1008" name="AdvancesDayOfSeason_WhenTickCrossesDayBoundary" fullname="Groundwork.Tests.Simulation.CalendarSystemTests.AdvancesDayOfSeason_WhenTickCrossesDayBoundary" methodname="AdvancesDayOfSeason_WhenTickCrossesDayBoundary" classname="Groundwork.Tests.Simulation.CalendarSystemTests" runstate="Runnable" seed="1642898288" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.009839" asserts="0">
+              <test-case id="1008" name="AdvancesDayOfSeason_WhenTickCrossesDayBoundary" fullname="Groundwork.Tests.Simulation.CalendarSystemTests.AdvancesDayOfSeason_WhenTickCrossesDayBoundary" methodname="AdvancesDayOfSeason_WhenTickCrossesDayBoundary" classname="Groundwork.Tests.Simulation.CalendarSystemTests" runstate="Runnable" seed="1333069295" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.003083" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -258,7 +232,7 @@ Make sure that both systems are in the same system group with [UpdateInGroup(typ
 or by manually adding both systems to the same group's update list.
 ]]></output>
               </test-case>
-              <test-case id="1009" name="DoesNotAdvance_MidDay" fullname="Groundwork.Tests.Simulation.CalendarSystemTests.DoesNotAdvance_MidDay" methodname="DoesNotAdvance_MidDay" classname="Groundwork.Tests.Simulation.CalendarSystemTests" runstate="Runnable" seed="413832228" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.001205" asserts="0">
+              <test-case id="1009" name="DoesNotAdvance_MidDay" fullname="Groundwork.Tests.Simulation.CalendarSystemTests.DoesNotAdvance_MidDay" methodname="DoesNotAdvance_MidDay" classname="Groundwork.Tests.Simulation.CalendarSystemTests" runstate="Runnable" seed="182083184" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.000915" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -269,134 +243,7 @@ Make sure that both systems are in the same system group with [UpdateInGroup(typ
 or by manually adding both systems to the same group's update list.
 ]]></output>
               </test-case>
-              <test-case id="1010" name="RollsOverSeason_AtEndOfSeason" fullname="Groundwork.Tests.Simulation.CalendarSystemTests.RollsOverSeason_AtEndOfSeason" methodname="RollsOverSeason_AtEndOfSeason" classname="Groundwork.Tests.Simulation.CalendarSystemTests" runstate="Runnable" seed="1469902381" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.019442" asserts="0">
-                <properties>
-                  <property name="retryIteration" value="0" />
-                  <property name="repeatIteration" value="0" />
-                </properties>
-                <output><![CDATA[Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-]]></output>
-              </test-case>
-              <test-case id="1011" name="RollsOverYear_WhenAllSeasonsPass" fullname="Groundwork.Tests.Simulation.CalendarSystemTests.RollsOverYear_WhenAllSeasonsPass" methodname="RollsOverYear_WhenAllSeasonsPass" classname="Groundwork.Tests.Simulation.CalendarSystemTests" runstate="Runnable" seed="1084229069" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.072256" asserts="0">
+              <test-case id="1010" name="RollsOverSeason_AtEndOfSeason" fullname="Groundwork.Tests.Simulation.CalendarSystemTests.RollsOverSeason_AtEndOfSeason" methodname="RollsOverSeason_AtEndOfSeason" classname="Groundwork.Tests.Simulation.CalendarSystemTests" runstate="Runnable" seed="1933151153" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.012722" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -521,6 +368,133 @@ Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.S
 This attribute can only order systems that are members of the same ComponentSystemGroup instance.
 Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
 or by manually adding both systems to the same group's update list.
+]]></output>
+              </test-case>
+              <test-case id="1011" name="RollsOverYear_WhenAllSeasonsPass" fullname="Groundwork.Tests.Simulation.CalendarSystemTests.RollsOverYear_WhenAllSeasonsPass" methodname="RollsOverYear_WhenAllSeasonsPass" classname="Groundwork.Tests.Simulation.CalendarSystemTests" runstate="Runnable" seed="1271071695" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.048303" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
 Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CalendarSystem targeting Groundwork.Simulation.TickDispatchSystem.
 This attribute can only order systems that are members of the same ComponentSystemGroup instance.
 Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
@@ -883,7 +857,7 @@ Make sure that both systems are in the same system group with [UpdateInGroup(typ
 or by manually adding both systems to the same group's update list.
 ]]></output>
               </test-case>
-              <test-case id="1012" name="SetsSeasonData_Correctly" fullname="Groundwork.Tests.Simulation.CalendarSystemTests.SetsSeasonData_Correctly" methodname="SetsSeasonData_Correctly" classname="Groundwork.Tests.Simulation.CalendarSystemTests" runstate="Runnable" seed="289323164" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.053245" asserts="0">
+              <test-case id="1012" name="SetsSeasonData_Correctly" fullname="Groundwork.Tests.Simulation.CalendarSystemTests.SetsSeasonData_Correctly" methodname="SetsSeasonData_Correctly" classname="Groundwork.Tests.Simulation.CalendarSystemTests" runstate="Runnable" seed="1764868261" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.037640" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -1251,9 +1225,9 @@ or by manually adding both systems to the same group's update list.
 ]]></output>
               </test-case>
             </test-suite>
-            <test-suite type="TestFixture" id="1013" name="CitizenAgeSystemTests" fullname="Groundwork.Tests.Simulation.CitizenAgeSystemTests" classname="Groundwork.Tests.Simulation.CitizenAgeSystemTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.024612" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <test-suite type="TestFixture" id="1013" name="CitizenAgeSystemTests" fullname="Groundwork.Tests.Simulation.CitizenAgeSystemTests" classname="Groundwork.Tests.Simulation.CitizenAgeSystemTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.013330" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
               <properties />
-              <test-case id="1014" name="AgesCitizen_EachDay" fullname="Groundwork.Tests.Simulation.CitizenAgeSystemTests.AgesCitizen_EachDay" methodname="AgesCitizen_EachDay" classname="Groundwork.Tests.Simulation.CitizenAgeSystemTests" runstate="Runnable" seed="227133170" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.015231" asserts="0">
+              <test-case id="1014" name="AgesCitizen_EachDay" fullname="Groundwork.Tests.Simulation.CitizenAgeSystemTests.AgesCitizen_EachDay" methodname="AgesCitizen_EachDay" classname="Groundwork.Tests.Simulation.CitizenAgeSystemTests" runstate="Runnable" seed="1003119933" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.007083" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -1264,7 +1238,7 @@ Make sure that both systems are in the same system group with [UpdateInGroup(typ
 or by manually adding both systems to the same group's update list.
 ]]></output>
               </test-case>
-              <test-case id="1015" name="DoesNotAge_MidDay" fullname="Groundwork.Tests.Simulation.CitizenAgeSystemTests.DoesNotAge_MidDay" methodname="DoesNotAge_MidDay" classname="Groundwork.Tests.Simulation.CitizenAgeSystemTests" runstate="Runnable" seed="1799451248" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.001308" asserts="0">
+              <test-case id="1015" name="DoesNotAge_MidDay" fullname="Groundwork.Tests.Simulation.CitizenAgeSystemTests.DoesNotAge_MidDay" methodname="DoesNotAge_MidDay" classname="Groundwork.Tests.Simulation.CitizenAgeSystemTests" runstate="Runnable" seed="1413425395" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.000960" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -1275,36 +1249,19 @@ Make sure that both systems are in the same system group with [UpdateInGroup(typ
 or by manually adding both systems to the same group's update list.
 ]]></output>
               </test-case>
-              <test-case id="1020" name="DoesNotTagDead_Before90" fullname="Groundwork.Tests.Simulation.CitizenAgeSystemTests.DoesNotTagDead_Before90" methodname="DoesNotTagDead_Before90" classname="Groundwork.Tests.Simulation.CitizenAgeSystemTests" runstate="Runnable" seed="217101402" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.000789" asserts="0">
+              <test-case id="1020" name="DoesNotTagDead_Before90" fullname="Groundwork.Tests.Simulation.CitizenAgeSystemTests.DoesNotTagDead_Before90" methodname="DoesNotTagDead_Before90" classname="Groundwork.Tests.Simulation.CitizenAgeSystemTests" runstate="Runnable" seed="606641383" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.000629" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
-              <test-case id="1017" name="RemovesChildTag_WhenComingOfAge" fullname="Groundwork.Tests.Simulation.CitizenAgeSystemTests.RemovesChildTag_WhenComingOfAge" methodname="RemovesChildTag_WhenComingOfAge" classname="Groundwork.Tests.Simulation.CitizenAgeSystemTests" runstate="Runnable" seed="1848176962" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.000487" asserts="0">
+              <test-case id="1017" name="RemovesChildTag_WhenComingOfAge" fullname="Groundwork.Tests.Simulation.CitizenAgeSystemTests.RemovesChildTag_WhenComingOfAge" methodname="RemovesChildTag_WhenComingOfAge" classname="Groundwork.Tests.Simulation.CitizenAgeSystemTests" runstate="Runnable" seed="1072495357" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.000434" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
-              <test-case id="1021" name="SkipsDeadCitizens" fullname="Groundwork.Tests.Simulation.CitizenAgeSystemTests.SkipsDeadCitizens" methodname="SkipsDeadCitizens" classname="Groundwork.Tests.Simulation.CitizenAgeSystemTests" runstate="Runnable" seed="1435321645" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.001100" asserts="0">
-                <properties>
-                  <property name="retryIteration" value="0" />
-                  <property name="repeatIteration" value="0" />
-                </properties>
-                <output><![CDATA[Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CitizenAgeSystem targeting Groundwork.Simulation.CalendarSystem.
-This attribute can only order systems that are members of the same ComponentSystemGroup instance.
-Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
-or by manually adding both systems to the same group's update list.
-]]></output>
-              </test-case>
-              <test-case id="1016" name="TagsChildren_Under16" fullname="Groundwork.Tests.Simulation.CitizenAgeSystemTests.TagsChildren_Under16" methodname="TagsChildren_Under16" classname="Groundwork.Tests.Simulation.CitizenAgeSystemTests" runstate="Runnable" seed="1760392175" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.000731" asserts="0">
-                <properties>
-                  <property name="retryIteration" value="0" />
-                  <property name="repeatIteration" value="0" />
-                </properties>
-              </test-case>
-              <test-case id="1019" name="TagsDead_At90" fullname="Groundwork.Tests.Simulation.CitizenAgeSystemTests.TagsDead_At90" methodname="TagsDead_At90" classname="Groundwork.Tests.Simulation.CitizenAgeSystemTests" runstate="Runnable" seed="495323730" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.002458" asserts="0">
+              <test-case id="1021" name="SkipsDeadCitizens" fullname="Groundwork.Tests.Simulation.CitizenAgeSystemTests.SkipsDeadCitizens" methodname="SkipsDeadCitizens" classname="Groundwork.Tests.Simulation.CitizenAgeSystemTests" runstate="Runnable" seed="1696685223" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.000922" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -1315,16 +1272,33 @@ Make sure that both systems are in the same system group with [UpdateInGroup(typ
 or by manually adding both systems to the same group's update list.
 ]]></output>
               </test-case>
-              <test-case id="1018" name="TagsElderly_At60" fullname="Groundwork.Tests.Simulation.CitizenAgeSystemTests.TagsElderly_At60" methodname="TagsElderly_At60" classname="Groundwork.Tests.Simulation.CitizenAgeSystemTests" runstate="Runnable" seed="1424068698" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.000509" asserts="0">
+              <test-case id="1016" name="TagsChildren_Under16" fullname="Groundwork.Tests.Simulation.CitizenAgeSystemTests.TagsChildren_Under16" methodname="TagsChildren_Under16" classname="Groundwork.Tests.Simulation.CitizenAgeSystemTests" runstate="Runnable" seed="1445529019" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.000561" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1019" name="TagsDead_At90" fullname="Groundwork.Tests.Simulation.CitizenAgeSystemTests.TagsDead_At90" methodname="TagsDead_At90" classname="Groundwork.Tests.Simulation.CitizenAgeSystemTests" runstate="Runnable" seed="896140177" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.000898" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Groundwork.Simulation.CitizenAgeSystem targeting Groundwork.Simulation.CalendarSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Groundwork.Simulation.GroundworkSimulationGroup))],
+or by manually adding both systems to the same group's update list.
+]]></output>
+              </test-case>
+              <test-case id="1018" name="TagsElderly_At60" fullname="Groundwork.Tests.Simulation.CitizenAgeSystemTests.TagsElderly_At60" methodname="TagsElderly_At60" classname="Groundwork.Tests.Simulation.CitizenAgeSystemTests" runstate="Runnable" seed="999995940" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.000453" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
             </test-suite>
-            <test-suite type="TestFixture" id="1022" name="CitizenNeedSystemTests" fullname="Groundwork.Tests.Simulation.CitizenNeedSystemTests" classname="Groundwork.Tests.Simulation.CitizenNeedSystemTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.073160" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <test-suite type="TestFixture" id="1022" name="CitizenNeedSystemTests" fullname="Groundwork.Tests.Simulation.CitizenNeedSystemTests" classname="Groundwork.Tests.Simulation.CitizenNeedSystemTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.051058" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
               <properties />
-              <test-case id="1028" name="CapsUrgency_AtOne" fullname="Groundwork.Tests.Simulation.CitizenNeedSystemTests.CapsUrgency_AtOne" methodname="CapsUrgency_AtOne" classname="Groundwork.Tests.Simulation.CitizenNeedSystemTests" runstate="Runnable" seed="338553562" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.063441" asserts="0">
+              <test-case id="1028" name="CapsUrgency_AtOne" fullname="Groundwork.Tests.Simulation.CitizenNeedSystemTests.CapsUrgency_AtOne" methodname="CapsUrgency_AtOne" classname="Groundwork.Tests.Simulation.CitizenNeedSystemTests" runstate="Runnable" seed="877735851" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.042764" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -1731,7 +1705,7 @@ Make sure that both systems are in the same system group with [UpdateInGroup(typ
 or by manually adding both systems to the same group's update list.
 ]]></output>
               </test-case>
-              <test-case id="1025" name="DecaysHealth_WhenCriticalNeedUnmet" fullname="Groundwork.Tests.Simulation.CitizenNeedSystemTests.DecaysHealth_WhenCriticalNeedUnmet" methodname="DecaysHealth_WhenCriticalNeedUnmet" classname="Groundwork.Tests.Simulation.CitizenNeedSystemTests" runstate="Runnable" seed="805403475" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.001488" asserts="0">
+              <test-case id="1025" name="DecaysHealth_WhenCriticalNeedUnmet" fullname="Groundwork.Tests.Simulation.CitizenNeedSystemTests.DecaysHealth_WhenCriticalNeedUnmet" methodname="DecaysHealth_WhenCriticalNeedUnmet" classname="Groundwork.Tests.Simulation.CitizenNeedSystemTests" runstate="Runnable" seed="316850660" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.001285" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -1742,7 +1716,7 @@ Make sure that both systems are in the same system group with [UpdateInGroup(typ
 or by manually adding both systems to the same group's update list.
 ]]></output>
               </test-case>
-              <test-case id="1023" name="GeneratesFoodNeed_Daily" fullname="Groundwork.Tests.Simulation.CitizenNeedSystemTests.GeneratesFoodNeed_Daily" methodname="GeneratesFoodNeed_Daily" classname="Groundwork.Tests.Simulation.CitizenNeedSystemTests" runstate="Runnable" seed="2054863221" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.001215" asserts="0">
+              <test-case id="1023" name="GeneratesFoodNeed_Daily" fullname="Groundwork.Tests.Simulation.CitizenNeedSystemTests.GeneratesFoodNeed_Daily" methodname="GeneratesFoodNeed_Daily" classname="Groundwork.Tests.Simulation.CitizenNeedSystemTests" runstate="Runnable" seed="997100631" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.000940" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -1753,7 +1727,7 @@ Make sure that both systems are in the same system group with [UpdateInGroup(typ
 or by manually adding both systems to the same group's update list.
 ]]></output>
               </test-case>
-              <test-case id="1027" name="GeneratesShelterNeed_WhenHomeless" fullname="Groundwork.Tests.Simulation.CitizenNeedSystemTests.GeneratesShelterNeed_WhenHomeless" methodname="GeneratesShelterNeed_WhenHomeless" classname="Groundwork.Tests.Simulation.CitizenNeedSystemTests" runstate="Runnable" seed="1045011742" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.001041" asserts="0">
+              <test-case id="1027" name="GeneratesShelterNeed_WhenHomeless" fullname="Groundwork.Tests.Simulation.CitizenNeedSystemTests.GeneratesShelterNeed_WhenHomeless" methodname="GeneratesShelterNeed_WhenHomeless" classname="Groundwork.Tests.Simulation.CitizenNeedSystemTests" runstate="Runnable" seed="1673932936" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.000873" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -1764,7 +1738,7 @@ Make sure that both systems are in the same system group with [UpdateInGroup(typ
 or by manually adding both systems to the same group's update list.
 ]]></output>
               </test-case>
-              <test-case id="1024" name="GeneratesWarmthNeed_HigherInWinter" fullname="Groundwork.Tests.Simulation.CitizenNeedSystemTests.GeneratesWarmthNeed_HigherInWinter" methodname="GeneratesWarmthNeed_HigherInWinter" classname="Groundwork.Tests.Simulation.CitizenNeedSystemTests" runstate="Runnable" seed="208019951" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.002755" asserts="0">
+              <test-case id="1024" name="GeneratesWarmthNeed_HigherInWinter" fullname="Groundwork.Tests.Simulation.CitizenNeedSystemTests.GeneratesWarmthNeed_HigherInWinter" methodname="GeneratesWarmthNeed_HigherInWinter" classname="Groundwork.Tests.Simulation.CitizenNeedSystemTests" runstate="Runnable" seed="634704854" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.002924" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -1775,7 +1749,7 @@ Make sure that both systems are in the same system group with [UpdateInGroup(typ
 or by manually adding both systems to the same group's update list.
 ]]></output>
               </test-case>
-              <test-case id="1026" name="TagsDead_WhenHealthReachesZero" fullname="Groundwork.Tests.Simulation.CitizenNeedSystemTests.TagsDead_WhenHealthReachesZero" methodname="TagsDead_WhenHealthReachesZero" classname="Groundwork.Tests.Simulation.CitizenNeedSystemTests" runstate="Runnable" seed="136714389" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.001124" asserts="0">
+              <test-case id="1026" name="TagsDead_WhenHealthReachesZero" fullname="Groundwork.Tests.Simulation.CitizenNeedSystemTests.TagsDead_WhenHealthReachesZero" methodname="TagsDead_WhenHealthReachesZero" classname="Groundwork.Tests.Simulation.CitizenNeedSystemTests" runstate="Runnable" seed="1472837294" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.001100" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -1787,9 +1761,9 @@ or by manually adding both systems to the same group's update list.
 ]]></output>
               </test-case>
             </test-suite>
-            <test-suite type="TestFixture" id="1029" name="DeathSystemTests" fullname="Groundwork.Tests.Simulation.DeathSystemTests" classname="Groundwork.Tests.Simulation.DeathSystemTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.008305" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <test-suite type="TestFixture" id="1029" name="DeathSystemTests" fullname="Groundwork.Tests.Simulation.DeathSystemTests" classname="Groundwork.Tests.Simulation.DeathSystemTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.004743" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
               <properties />
-              <test-case id="1030" name="DestroysDeadCitizens" fullname="Groundwork.Tests.Simulation.DeathSystemTests.DestroysDeadCitizens" methodname="DestroysDeadCitizens" classname="Groundwork.Tests.Simulation.DeathSystemTests" runstate="Runnable" seed="653799912" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.004564" asserts="0">
+              <test-case id="1030" name="DestroysDeadCitizens" fullname="Groundwork.Tests.Simulation.DeathSystemTests.DestroysDeadCitizens" methodname="DestroysDeadCitizens" classname="Groundwork.Tests.Simulation.DeathSystemTests" runstate="Runnable" seed="6076396" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.002122" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -1800,7 +1774,7 @@ Make sure that both systems are in the same system group with [UpdateInGroup(typ
 or by manually adding both systems to the same group's update list.
 ]]></output>
               </test-case>
-              <test-case id="1032" name="DestroysMultipleDeadCitizens" fullname="Groundwork.Tests.Simulation.DeathSystemTests.DestroysMultipleDeadCitizens" methodname="DestroysMultipleDeadCitizens" classname="Groundwork.Tests.Simulation.DeathSystemTests" runstate="Runnable" seed="200265235" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.001431" asserts="0">
+              <test-case id="1032" name="DestroysMultipleDeadCitizens" fullname="Groundwork.Tests.Simulation.DeathSystemTests.DestroysMultipleDeadCitizens" methodname="DestroysMultipleDeadCitizens" classname="Groundwork.Tests.Simulation.DeathSystemTests" runstate="Runnable" seed="1505935977" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.000914" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -1811,7 +1785,7 @@ Make sure that both systems are in the same system group with [UpdateInGroup(typ
 or by manually adding both systems to the same group's update list.
 ]]></output>
               </test-case>
-              <test-case id="1031" name="DoesNotDestroy_LivingCitizens" fullname="Groundwork.Tests.Simulation.DeathSystemTests.DoesNotDestroy_LivingCitizens" methodname="DoesNotDestroy_LivingCitizens" classname="Groundwork.Tests.Simulation.DeathSystemTests" runstate="Runnable" seed="270964505" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.001191" asserts="0">
+              <test-case id="1031" name="DoesNotDestroy_LivingCitizens" fullname="Groundwork.Tests.Simulation.DeathSystemTests.DoesNotDestroy_LivingCitizens" methodname="DoesNotDestroy_LivingCitizens" classname="Groundwork.Tests.Simulation.DeathSystemTests" runstate="Runnable" seed="897648416" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.000840" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -1823,24 +1797,24 @@ or by manually adding both systems to the same group's update list.
 ]]></output>
               </test-case>
             </test-suite>
-            <test-suite type="TestFixture" id="1033" name="InventoryDiagnosticTests" fullname="Groundwork.Tests.Simulation.InventoryDiagnosticTests" classname="Groundwork.Tests.Simulation.InventoryDiagnosticTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.002284" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <test-suite type="TestFixture" id="1033" name="InventoryDiagnosticTests" fullname="Groundwork.Tests.Simulation.InventoryDiagnosticTests" classname="Groundwork.Tests.Simulation.InventoryDiagnosticTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.001671" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
               <properties />
-              <test-case id="1034" name="AddAndRead_InventoryBuffer" fullname="Groundwork.Tests.Simulation.InventoryDiagnosticTests.AddAndRead_InventoryBuffer" methodname="AddAndRead_InventoryBuffer" classname="Groundwork.Tests.Simulation.InventoryDiagnosticTests" runstate="Runnable" seed="628160646" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.000771" asserts="0">
+              <test-case id="1034" name="AddAndRead_InventoryBuffer" fullname="Groundwork.Tests.Simulation.InventoryDiagnosticTests.AddAndRead_InventoryBuffer" methodname="AddAndRead_InventoryBuffer" classname="Groundwork.Tests.Simulation.InventoryDiagnosticTests" runstate="Runnable" seed="1924886632" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.000675" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
-              <test-case id="1035" name="Remove_ModifiesBufferCorrectly" fullname="Groundwork.Tests.Simulation.InventoryDiagnosticTests.Remove_ModifiesBufferCorrectly" methodname="Remove_ModifiesBufferCorrectly" classname="Groundwork.Tests.Simulation.InventoryDiagnosticTests" runstate="Runnable" seed="1249515801" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.000557" asserts="0">
+              <test-case id="1035" name="Remove_ModifiesBufferCorrectly" fullname="Groundwork.Tests.Simulation.InventoryDiagnosticTests.Remove_ModifiesBufferCorrectly" methodname="Remove_ModifiesBufferCorrectly" classname="Groundwork.Tests.Simulation.InventoryDiagnosticTests" runstate="Runnable" seed="2138885063" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.000492" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
                 </properties>
               </test-case>
             </test-suite>
-            <test-suite type="TestFixture" id="1036" name="PathfindingSystemTests" fullname="Groundwork.Tests.Simulation.PathfindingSystemTests" classname="Groundwork.Tests.Simulation.PathfindingSystemTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.021211" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <test-suite type="TestFixture" id="1036" name="PathfindingSystemTests" fullname="Groundwork.Tests.Simulation.PathfindingSystemTests" classname="Groundwork.Tests.Simulation.PathfindingSystemTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.007929" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
               <properties />
-              <test-case id="1037" name="ComputesPath_BetweenTwoTiles" fullname="Groundwork.Tests.Simulation.PathfindingSystemTests.ComputesPath_BetweenTwoTiles" methodname="ComputesPath_BetweenTwoTiles" classname="Groundwork.Tests.Simulation.PathfindingSystemTests" runstate="Runnable" seed="1839832750" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.014544" asserts="0">
+              <test-case id="1037" name="ComputesPath_BetweenTwoTiles" fullname="Groundwork.Tests.Simulation.PathfindingSystemTests.ComputesPath_BetweenTwoTiles" methodname="ComputesPath_BetweenTwoTiles" classname="Groundwork.Tests.Simulation.PathfindingSystemTests" runstate="Runnable" seed="392893911" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.004048" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -1851,7 +1825,7 @@ Make sure that both systems are in the same system group with [UpdateInGroup(typ
 or by manually adding both systems to the same group's update list.
 ]]></output>
               </test-case>
-              <test-case id="1038" name="ComputesPath_Diagonal" fullname="Groundwork.Tests.Simulation.PathfindingSystemTests.ComputesPath_Diagonal" methodname="ComputesPath_Diagonal" classname="Groundwork.Tests.Simulation.PathfindingSystemTests" runstate="Runnable" seed="1638815764" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.001371" asserts="0">
+              <test-case id="1038" name="ComputesPath_Diagonal" fullname="Groundwork.Tests.Simulation.PathfindingSystemTests.ComputesPath_Diagonal" methodname="ComputesPath_Diagonal" classname="Groundwork.Tests.Simulation.PathfindingSystemTests" runstate="Runnable" seed="1895415878" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.000978" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -1862,7 +1836,7 @@ Make sure that both systems are in the same system group with [UpdateInGroup(typ
 or by manually adding both systems to the same group's update list.
 ]]></output>
               </test-case>
-              <test-case id="1040" name="Handles_MultipleCitizens" fullname="Groundwork.Tests.Simulation.PathfindingSystemTests.Handles_MultipleCitizens" methodname="Handles_MultipleCitizens" classname="Groundwork.Tests.Simulation.PathfindingSystemTests" runstate="Runnable" seed="1113815585" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.001696" asserts="0">
+              <test-case id="1040" name="Handles_MultipleCitizens" fullname="Groundwork.Tests.Simulation.PathfindingSystemTests.Handles_MultipleCitizens" methodname="Handles_MultipleCitizens" classname="Groundwork.Tests.Simulation.PathfindingSystemTests" runstate="Runnable" seed="40740357" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.001263" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -1873,7 +1847,7 @@ Make sure that both systems are in the same system group with [UpdateInGroup(typ
 or by manually adding both systems to the same group's update list.
 ]]></output>
               </test-case>
-              <test-case id="1039" name="ReturnsEmptyPath_WhenSameTile" fullname="Groundwork.Tests.Simulation.PathfindingSystemTests.ReturnsEmptyPath_WhenSameTile" methodname="ReturnsEmptyPath_WhenSameTile" classname="Groundwork.Tests.Simulation.PathfindingSystemTests" runstate="Runnable" seed="66246290" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.001182" asserts="0">
+              <test-case id="1039" name="ReturnsEmptyPath_WhenSameTile" fullname="Groundwork.Tests.Simulation.PathfindingSystemTests.ReturnsEmptyPath_WhenSameTile" methodname="ReturnsEmptyPath_WhenSameTile" classname="Groundwork.Tests.Simulation.PathfindingSystemTests" runstate="Runnable" seed="107776354" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.000940" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -1885,9 +1859,9 @@ or by manually adding both systems to the same group's update list.
 ]]></output>
               </test-case>
             </test-suite>
-            <test-suite type="TestFixture" id="1041" name="SimulationBootstrapTests" fullname="Groundwork.Tests.Simulation.SimulationBootstrapTests" classname="Groundwork.Tests.Simulation.SimulationBootstrapTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.114906" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <test-suite type="TestFixture" id="1041" name="SimulationBootstrapTests" fullname="Groundwork.Tests.Simulation.SimulationBootstrapTests" classname="Groundwork.Tests.Simulation.SimulationBootstrapTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.083443" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
               <properties />
-              <test-case id="1047" name="CitizensHaveNeeds" fullname="Groundwork.Tests.Simulation.SimulationBootstrapTests.CitizensHaveNeeds" methodname="CitizensHaveNeeds" classname="Groundwork.Tests.Simulation.SimulationBootstrapTests" runstate="Runnable" seed="2028138249" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.017251" asserts="0">
+              <test-case id="1047" name="CitizensHaveNeeds" fullname="Groundwork.Tests.Simulation.SimulationBootstrapTests.CitizensHaveNeeds" methodname="CitizensHaveNeeds" classname="Groundwork.Tests.Simulation.SimulationBootstrapTests" runstate="Runnable" seed="874896129" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.017358" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -1895,7 +1869,7 @@ or by manually adding both systems to the same group's update list.
                 <output><![CDATA['Groundwork.Simulation.SimulationBootstrap' creates a query during OnUpdate. Please create queries in OnCreate and store them in the system for use in OnUpdate instead. This is significantly faster.
 ]]></output>
               </test-case>
-              <test-case id="1048" name="CitizensHavePathBuffers" fullname="Groundwork.Tests.Simulation.SimulationBootstrapTests.CitizensHavePathBuffers" methodname="CitizensHavePathBuffers" classname="Groundwork.Tests.Simulation.SimulationBootstrapTests" runstate="Runnable" seed="1523100642" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.002557" asserts="0">
+              <test-case id="1048" name="CitizensHavePathBuffers" fullname="Groundwork.Tests.Simulation.SimulationBootstrapTests.CitizensHavePathBuffers" methodname="CitizensHavePathBuffers" classname="Groundwork.Tests.Simulation.SimulationBootstrapTests" runstate="Runnable" seed="703382604" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.001343" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -1903,7 +1877,7 @@ or by manually adding both systems to the same group's update list.
                 <output><![CDATA['Groundwork.Simulation.SimulationBootstrap' creates a query during OnUpdate. Please create queries in OnCreate and store them in the system for use in OnUpdate instead. This is significantly faster.
 ]]></output>
               </test-case>
-              <test-case id="1044" name="CreatesCalendarSingleton" fullname="Groundwork.Tests.Simulation.SimulationBootstrapTests.CreatesCalendarSingleton" methodname="CreatesCalendarSingleton" classname="Groundwork.Tests.Simulation.SimulationBootstrapTests" runstate="Runnable" seed="1356284912" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.001993" asserts="0">
+              <test-case id="1044" name="CreatesCalendarSingleton" fullname="Groundwork.Tests.Simulation.SimulationBootstrapTests.CreatesCalendarSingleton" methodname="CreatesCalendarSingleton" classname="Groundwork.Tests.Simulation.SimulationBootstrapTests" runstate="Runnable" seed="1959176781" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.001295" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -1911,7 +1885,7 @@ or by manually adding both systems to the same group's update list.
                 <output><![CDATA['Groundwork.Simulation.SimulationBootstrap' creates a query during OnUpdate. Please create queries in OnCreate and store them in the system for use in OnUpdate instead. This is significantly faster.
 ]]></output>
               </test-case>
-              <test-case id="1043" name="CreatesCorrectNumberOfBuildings" fullname="Groundwork.Tests.Simulation.SimulationBootstrapTests.CreatesCorrectNumberOfBuildings" methodname="CreatesCorrectNumberOfBuildings" classname="Groundwork.Tests.Simulation.SimulationBootstrapTests" runstate="Runnable" seed="1002333912" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.001930" asserts="0">
+              <test-case id="1043" name="CreatesCorrectNumberOfBuildings" fullname="Groundwork.Tests.Simulation.SimulationBootstrapTests.CreatesCorrectNumberOfBuildings" methodname="CreatesCorrectNumberOfBuildings" classname="Groundwork.Tests.Simulation.SimulationBootstrapTests" runstate="Runnable" seed="1682777158" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.001302" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -1919,7 +1893,7 @@ or by manually adding both systems to the same group's update list.
                 <output><![CDATA['Groundwork.Simulation.SimulationBootstrap' creates a query during OnUpdate. Please create queries in OnCreate and store them in the system for use in OnUpdate instead. This is significantly faster.
 ]]></output>
               </test-case>
-              <test-case id="1042" name="CreatesCorrectNumberOfCitizens" fullname="Groundwork.Tests.Simulation.SimulationBootstrapTests.CreatesCorrectNumberOfCitizens" methodname="CreatesCorrectNumberOfCitizens" classname="Groundwork.Tests.Simulation.SimulationBootstrapTests" runstate="Runnable" seed="12783807" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.001846" asserts="0">
+              <test-case id="1042" name="CreatesCorrectNumberOfCitizens" fullname="Groundwork.Tests.Simulation.SimulationBootstrapTests.CreatesCorrectNumberOfCitizens" methodname="CreatesCorrectNumberOfCitizens" classname="Groundwork.Tests.Simulation.SimulationBootstrapTests" runstate="Runnable" seed="1114493213" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.001253" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -1927,7 +1901,7 @@ or by manually adding both systems to the same group's update list.
                 <output><![CDATA['Groundwork.Simulation.SimulationBootstrap' creates a query during OnUpdate. Please create queries in OnCreate and store them in the system for use in OnUpdate instead. This is significantly faster.
 ]]></output>
               </test-case>
-              <test-case id="1046" name="CreatesMapGrid" fullname="Groundwork.Tests.Simulation.SimulationBootstrapTests.CreatesMapGrid" methodname="CreatesMapGrid" classname="Groundwork.Tests.Simulation.SimulationBootstrapTests" runstate="Runnable" seed="573412899" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.001640" asserts="0">
+              <test-case id="1046" name="CreatesMapGrid" fullname="Groundwork.Tests.Simulation.SimulationBootstrapTests.CreatesMapGrid" methodname="CreatesMapGrid" classname="Groundwork.Tests.Simulation.SimulationBootstrapTests" runstate="Runnable" seed="872272307" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.001847" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -1935,7 +1909,7 @@ or by manually adding both systems to the same group's update list.
                 <output><![CDATA['Groundwork.Simulation.SimulationBootstrap' creates a query during OnUpdate. Please create queries in OnCreate and store them in the system for use in OnUpdate instead. This is significantly faster.
 ]]></output>
               </test-case>
-              <test-case id="1045" name="CreatesSimulationConfig" fullname="Groundwork.Tests.Simulation.SimulationBootstrapTests.CreatesSimulationConfig" methodname="CreatesSimulationConfig" classname="Groundwork.Tests.Simulation.SimulationBootstrapTests" runstate="Runnable" seed="1710808575" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.002555" asserts="0">
+              <test-case id="1045" name="CreatesSimulationConfig" fullname="Groundwork.Tests.Simulation.SimulationBootstrapTests.CreatesSimulationConfig" methodname="CreatesSimulationConfig" classname="Groundwork.Tests.Simulation.SimulationBootstrapTests" runstate="Runnable" seed="1869630306" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.001773" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -1943,7 +1917,7 @@ or by manually adding both systems to the same group's update list.
                 <output><![CDATA['Groundwork.Simulation.SimulationBootstrap' creates a query during OnUpdate. Please create queries in OnCreate and store them in the system for use in OnUpdate instead. This is significantly faster.
 ]]></output>
               </test-case>
-              <test-case id="1050" name="SimulationRuns_WithoutErrors" fullname="Groundwork.Tests.Simulation.SimulationBootstrapTests.SimulationRuns_WithoutErrors" methodname="SimulationRuns_WithoutErrors" classname="Groundwork.Tests.Simulation.SimulationBootstrapTests" runstate="Runnable" seed="1642738711" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.078355" asserts="0">
+              <test-case id="1050" name="SimulationRuns_WithoutErrors" fullname="Groundwork.Tests.Simulation.SimulationBootstrapTests.SimulationRuns_WithoutErrors" methodname="SimulationRuns_WithoutErrors" classname="Groundwork.Tests.Simulation.SimulationBootstrapTests" runstate="Runnable" seed="355355931" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.053723" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -2271,7 +2245,7 @@ Make sure that both systems are in the same system group with [UpdateInGroup(typ
 or by manually adding both systems to the same group's update list.
 ]]></output>
               </test-case>
-              <test-case id="1049" name="WoodcuttersStartWithLogs" fullname="Groundwork.Tests.Simulation.SimulationBootstrapTests.WoodcuttersStartWithLogs" methodname="WoodcuttersStartWithLogs" classname="Groundwork.Tests.Simulation.SimulationBootstrapTests" runstate="Runnable" seed="742852791" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.003016" asserts="0">
+              <test-case id="1049" name="WoodcuttersStartWithLogs" fullname="Groundwork.Tests.Simulation.SimulationBootstrapTests.WoodcuttersStartWithLogs" methodname="WoodcuttersStartWithLogs" classname="Groundwork.Tests.Simulation.SimulationBootstrapTests" runstate="Runnable" seed="420647011" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.002048" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -2280,9 +2254,9 @@ or by manually adding both systems to the same group's update list.
 ]]></output>
               </test-case>
             </test-suite>
-            <test-suite type="TestFixture" id="1051" name="TickDispatchSystemTests" fullname="Groundwork.Tests.Simulation.TickDispatchSystemTests" classname="Groundwork.Tests.Simulation.TickDispatchSystemTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.006588" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <test-suite type="TestFixture" id="1051" name="TickDispatchSystemTests" fullname="Groundwork.Tests.Simulation.TickDispatchSystemTests" classname="Groundwork.Tests.Simulation.TickDispatchSystemTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.004542" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
               <properties />
-              <test-case id="1052" name="AdvancesCurrentTick_EachUpdate" fullname="Groundwork.Tests.Simulation.TickDispatchSystemTests.AdvancesCurrentTick_EachUpdate" methodname="AdvancesCurrentTick_EachUpdate" classname="Groundwork.Tests.Simulation.TickDispatchSystemTests" runstate="Runnable" seed="1703533405" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.001624" asserts="0">
+              <test-case id="1052" name="AdvancesCurrentTick_EachUpdate" fullname="Groundwork.Tests.Simulation.TickDispatchSystemTests.AdvancesCurrentTick_EachUpdate" methodname="AdvancesCurrentTick_EachUpdate" classname="Groundwork.Tests.Simulation.TickDispatchSystemTests" runstate="Runnable" seed="726498318" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.001373" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -2293,7 +2267,7 @@ Make sure that both systems are in the same system group with [UpdateInGroup(typ
 or by manually adding both systems to the same group's update list.
 ]]></output>
               </test-case>
-              <test-case id="1054" name="AdvancesMultipleTicks" fullname="Groundwork.Tests.Simulation.TickDispatchSystemTests.AdvancesMultipleTicks" methodname="AdvancesMultipleTicks" classname="Groundwork.Tests.Simulation.TickDispatchSystemTests" runstate="Runnable" seed="1665827568" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.001392" asserts="0">
+              <test-case id="1054" name="AdvancesMultipleTicks" fullname="Groundwork.Tests.Simulation.TickDispatchSystemTests.AdvancesMultipleTicks" methodname="AdvancesMultipleTicks" classname="Groundwork.Tests.Simulation.TickDispatchSystemTests" runstate="Runnable" seed="973797007" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.000981" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -2304,7 +2278,7 @@ Make sure that both systems are in the same system group with [UpdateInGroup(typ
 or by manually adding both systems to the same group's update list.
 ]]></output>
               </test-case>
-              <test-case id="1053" name="DoesNotAdvance_WhenPaused" fullname="Groundwork.Tests.Simulation.TickDispatchSystemTests.DoesNotAdvance_WhenPaused" methodname="DoesNotAdvance_WhenPaused" classname="Groundwork.Tests.Simulation.TickDispatchSystemTests" runstate="Runnable" seed="401546069" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.001710" asserts="0">
+              <test-case id="1053" name="DoesNotAdvance_WhenPaused" fullname="Groundwork.Tests.Simulation.TickDispatchSystemTests.DoesNotAdvance_WhenPaused" methodname="DoesNotAdvance_WhenPaused" classname="Groundwork.Tests.Simulation.TickDispatchSystemTests" runstate="Runnable" seed="174918782" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.001206" asserts="0">
                 <properties>
                   <property name="retryIteration" value="0" />
                   <property name="repeatIteration" value="0" />
@@ -2320,20 +2294,20 @@ or by manually adding both systems to the same group's update list.
         </test-suite>
       </test-suite>
     </test-suite>
-    <test-suite type="Assembly" id="1061" name="Unity.Addressables.DocExampleCode.Editor.Tests.dll" fullname="/home/tim/source/activity/Groundwork/Library/ScriptAssemblies/Unity.Addressables.DocExampleCode.Editor.Tests.dll" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.002087" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <test-suite type="Assembly" id="1061" name="Unity.Addressables.DocExampleCode.Editor.Tests.dll" fullname="/home/tim/source/activity/Groundwork/Library/ScriptAssemblies/Unity.Addressables.DocExampleCode.Editor.Tests.dll" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.000924" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
       <properties>
-        <property name="_PID" value="1034612" />
+        <property name="_PID" value="1037176" />
         <property name="_APPDOMAIN" value="Unity Child Domain" />
         <property name="platform" value="EditMode" />
         <property name="EditorOnly" value="True" />
       </properties>
-      <test-suite type="TestSuite" id="1062" name="AddressableAssets" fullname="AddressableAssets" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.001855" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <test-suite type="TestSuite" id="1062" name="AddressableAssets" fullname="AddressableAssets" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.000766" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
         <properties />
-        <test-suite type="TestSuite" id="1063" name="DocExampleCode" fullname="AddressableAssets.DocExampleCode" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.001631" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <test-suite type="TestSuite" id="1063" name="DocExampleCode" fullname="AddressableAssets.DocExampleCode" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.000646" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
           <properties />
-          <test-suite type="TestFixture" id="1059" name="TestStub" fullname="AddressableAssets.DocExampleCode.TestStub" classname="AddressableAssets.DocExampleCode.TestStub" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.001353" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <test-suite type="TestFixture" id="1059" name="TestStub" fullname="AddressableAssets.DocExampleCode.TestStub" classname="AddressableAssets.DocExampleCode.TestStub" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.000515" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
             <properties />
-            <test-case id="1060" name="RequiredTest" fullname="AddressableAssets.DocExampleCode.TestStub.RequiredTest" methodname="RequiredTest" classname="AddressableAssets.DocExampleCode.TestStub" runstate="Runnable" seed="1174955371" result="Passed" start-time="2026-07-24 15:52:32Z" end-time="2026-07-24 15:52:32Z" duration="0.000183" asserts="0">
+            <test-case id="1060" name="RequiredTest" fullname="AddressableAssets.DocExampleCode.TestStub.RequiredTest" methodname="RequiredTest" classname="AddressableAssets.DocExampleCode.TestStub" runstate="Runnable" seed="899378287" result="Passed" start-time="2026-07-24 15:53:33Z" end-time="2026-07-24 15:53:33Z" duration="0.000072" asserts="0">
               <properties>
                 <property name="retryIteration" value="0" />
                 <property name="repeatIteration" value="0" />

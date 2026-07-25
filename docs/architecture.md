@@ -115,8 +115,12 @@ Every tick (configurable, e.g., 1 game-hour = 1 tick at 1x speed):
 3. **Building tick** — for each building: consume inputs → progress production → output goods → worker attendance check
 4. **Resource tick** — spoilage check on stored items, crop growth on farm tiles
 5. **Trade tick** — advance trade routes, check arrivals, deliver shipments
-6. **Event tick** — fire mod hooks (on_tick), check scheduled events (disasters, festivals)
+6. **Event dispatch** — process SimulationEvent buffer: invoke Lua mod hooks for subscribed event types, clear buffer for next tick
 7. **Death & birth** — check health thresholds, age limits, population reproduction
+
+### Event Buffer
+
+Systems emit `SimulationEvent` entries into a singleton `DynamicBuffer<SimulationEvent>` during their update. `EventDispatchSystem` runs late in the pipeline, processes all events in emission order, and clears the buffer. This is the mechanism behind mod hooks — internal systems and mods subscribe to the same event stream. See ADR 2026-07-25.
 
 ## Mod API Architecture
 

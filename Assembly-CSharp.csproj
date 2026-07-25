@@ -83,6 +83,10 @@
       <HintPath>/home/tim/Unity/Hub/Editor/6000.3.20f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.AnimationModule">
+      <HintPath>/home/tim/Unity/Hub/Editor/6000.3.20f1/Editor/Data/Managed/UnityEngine/UnityEngine.AnimationModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEngine.AssetBundleModule">
       <HintPath>/home/tim/Unity/Hub/Editor/6000.3.20f1/Editor/Data/Managed/UnityEngine/UnityEngine.AssetBundleModule.dll</HintPath>
       <Private>False</Private>
@@ -113,6 +117,10 @@
     </Reference>
     <Reference Include="UnityEngine.DSPGraphModule">
       <HintPath>/home/tim/Unity/Hub/Editor/6000.3.20f1/Editor/Data/Managed/UnityEngine/UnityEngine.DSPGraphModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.DirectorModule">
+      <HintPath>/home/tim/Unity/Hub/Editor/6000.3.20f1/Editor/Data/Managed/UnityEngine/UnityEngine.DirectorModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.GIModule">
@@ -177,6 +185,10 @@
     </Reference>
     <Reference Include="UnityEngine.MultiplayerModule">
       <HintPath>/home/tim/Unity/Hub/Editor/6000.3.20f1/Editor/Data/Managed/UnityEngine/UnityEngine.MultiplayerModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.ParticleSystemModule">
+      <HintPath>/home/tim/Unity/Hub/Editor/6000.3.20f1/Editor/Data/Managed/UnityEngine/UnityEngine.ParticleSystemModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.PerformanceReportingModule">
@@ -541,6 +553,10 @@
     </Reference>
     <Reference Include="Sentry.System.Reflection.Metadata">
       <HintPath>Library/PackageCache/io.sentry.unity@2768f82362e9/Runtime/Sentry.System.Reflection.Metadata.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Library/PackageCache/com.unity.nuget.newtonsoft-json@4dfd81071c64/Runtime/Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Mono.Cecil">
@@ -1123,6 +1139,10 @@
       <HintPath>Library/ScriptAssemblies/Unity.Entities.Editor.Properties.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Unity.Timeline">
+      <HintPath>Library/ScriptAssemblies/Unity.Timeline.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Unity.Addressables">
       <HintPath>Library/ScriptAssemblies/Unity.Addressables.dll</HintPath>
       <Private>False</Private>
@@ -1199,6 +1219,10 @@
       <HintPath>Library/ScriptAssemblies/Unity.InputSystem.ForUI.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Unity.Timeline.Editor">
+      <HintPath>Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Unity.Mathematics">
       <HintPath>Library/ScriptAssemblies/Unity.Mathematics.dll</HintPath>
       <Private>False</Private>
@@ -1223,6 +1247,10 @@
       <HintPath>Library/ScriptAssemblies/Unity.InternalAPIEngineBridge.004.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnitySkills.Editor">
+      <HintPath>Library/ScriptAssemblies/UnitySkills.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Unity.Entities.Hybrid">
       <HintPath>Library/ScriptAssemblies/Unity.Entities.Hybrid.dll</HintPath>
       <Private>False</Private>
@@ -1239,10 +1267,6 @@
       <HintPath>Library/ScriptAssemblies/Unity.Entities.Build.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Unity.Sysroot.Linux_arm64">
-      <HintPath>Library/ScriptAssemblies/Unity.Sysroot.Linux_arm64.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Unity.Deformations">
       <HintPath>Library/ScriptAssemblies/Unity.Deformations.dll</HintPath>
       <Private>False</Private>
@@ -1253,6 +1277,10 @@
     </Reference>
     <Reference Include="Unity.Serialization.Editor">
       <HintPath>Library/ScriptAssemblies/Unity.Serialization.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.Sysroot.Linux_arm64">
+      <HintPath>Library/ScriptAssemblies/Unity.Sysroot.Linux_arm64.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.InputSystem">
@@ -1275,6 +1303,7 @@
   <ItemGroup>
     <ProjectReference Include="Groundwork.TestHelpers.csproj" />
     <ProjectReference Include="Groundwork.Simulation.csproj" />
+    <ProjectReference Include="Groundwork.Editor.csproj" />
   </ItemGroup>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
   <ItemGroup>

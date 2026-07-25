@@ -4,7 +4,7 @@ namespace Groundwork.Simulation
 {
     /// <summary>
     /// Custom system group for Groundwork simulation systems.
-    /// Execution order: ContentLoader → Bootstrap → Tick → Calendar → Births → Age → Needs → Pathfinding → Movement → Production → Death → Stats.
+    /// Execution order: ContentLoader → Bootstrap → Tick → Calendar → Births → Age → Needs → Pathfinding → Movement → Production → Death → DebugViz → Stats → EventDispatch.
     /// </summary>
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     public partial class GroundworkSimulationGroup : ComponentSystemGroup
@@ -59,5 +59,13 @@ namespace Groundwork.Simulation
 
     [UpdateInGroup(typeof(GroundworkSimulationGroup))]
     [UpdateAfter(typeof(DeathSystem))]
+    public partial struct DebugVizSystem { }
+
+    [UpdateInGroup(typeof(GroundworkSimulationGroup))]
+    [UpdateAfter(typeof(DebugVizSystem))]
     public partial struct SimulationStatsSystem { }
+
+    [UpdateInGroup(typeof(GroundworkSimulationGroup))]
+    [UpdateAfter(typeof(SimulationStatsSystem))]
+    public partial struct EventDispatchSystem { }
 }

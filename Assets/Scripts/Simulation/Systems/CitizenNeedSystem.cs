@@ -150,7 +150,8 @@ namespace Groundwork.Simulation
                     UpsertNeed(needs, "health", 0.05f);
 
                 // Social need
-                UpsertNeed(needs, "social", 0.01f);
+                // Social need reserved for future DLC
+                // UpsertNeed(needs, "social", 0.01f);
 
                 // Apply critical needs → health decay
                 for (int i = 0; i < needs.Length; i++)

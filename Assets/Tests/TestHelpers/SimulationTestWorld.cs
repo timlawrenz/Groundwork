@@ -59,6 +59,11 @@ namespace Groundwork.TestHelpers
             });
 
             CreateMapGrid();
+
+            // Event buffer singleton
+            var eventEntity = EntityManager.CreateEntity(
+                typeof(SimulationEventSingleton));
+            EntityManager.AddBuffer<SimulationEvent>(eventEntity);
         }
 
         private void CreateMapGrid()
@@ -157,6 +162,19 @@ namespace Groundwork.TestHelpers
             return query.GetSingleton<CalendarSingleton>();
         }
 
+        /// <summary>Get or create the singleton entity holding the SimulationEvent buffer.</summary>
+        public Entity GetOrCreateEventBufferEntity()
+        {
+            var query = EntityManager.CreateEntityQuery(
+                typeof(SimulationEventSingleton));
+            if (!query.IsEmpty)
+                return query.GetSingletonEntity();
+
+            var entity = EntityManager.CreateEntity(typeof(SimulationEventSingleton));
+            EntityManager.AddBuffer<SimulationEvent>(entity);
+            return entity;
+        }
+
         /// <summary>Get the entity that carries the CalendarSingleton.</summary>
         public Entity GetCalendarSingletonEntity()
         {
@@ -204,7 +222,9 @@ namespace Groundwork.TestHelpers
             UpdateSystem<CitizenMovementSystem>();
             UpdateSystem<BuildingProductionSystem>();
             UpdateSystem<DeathSystem>();
+            UpdateSystem<DebugVizSystem>();
             UpdateSystem<SimulationStatsSystem>();
+            UpdateSystem<EventDispatchSystem>();
         }
 
         /// <summary>
@@ -228,6 +248,8 @@ namespace Groundwork.TestHelpers
                 World.CreateSystem<CitizenMovementSystem>(),
                 World.CreateSystem<BuildingProductionSystem>(),
                 World.CreateSystem<DeathSystem>(),
+                World.CreateSystem<DebugVizSystem>(),
+                World.CreateSystem<EventDispatchSystem>(),
                 World.CreateSystem<SimulationStatsSystem>(),
             };
 
@@ -262,12 +284,15 @@ namespace Groundwork.TestHelpers
             var calQuery = EntityManager.CreateEntityQuery(typeof(CalendarSingleton));
             var mapQuery = EntityManager.CreateEntityQuery(typeof(MapGridData));
             var statsQuery = EntityManager.CreateEntityQuery(typeof(SimulationStats));
+            var eventQuery = EntityManager.CreateEntityQuery(typeof(SimulationEventSingleton));
 
             EntityManager.DestroyEntity(configQuery);
             EntityManager.DestroyEntity(calQuery);
             EntityManager.DestroyEntity(mapQuery);
             if (!statsQuery.IsEmpty)
                 EntityManager.DestroyEntity(statsQuery);
+            if (!eventQuery.IsEmpty)
+                EntityManager.DestroyEntity(eventQuery);
 
             if (_mapGridBlob.IsCreated)
             {

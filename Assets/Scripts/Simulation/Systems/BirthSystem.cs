@@ -20,6 +20,11 @@ namespace Groundwork.Simulation
             var calendar = SystemAPI.GetSingleton<CalendarSingleton>();
             var ecb = new EntityCommandBuffer(Allocator.Temp);
 
+            // Get event buffer for emitting birth events
+            if (!SystemAPI.TryGetSingletonEntity<SimulationEventSingleton>(out var eventEntity))
+                return;
+            var eventBuffer = state.EntityManager.GetBuffer<SimulationEvent>(eventEntity);
+
             foreach (var (citizen, position, entity) in
                      SystemAPI.Query<RefRW<Citizen>, RefRO<MapPosition>>()
                          .WithNone<Dead, Child>()
@@ -66,6 +71,15 @@ namespace Groundwork.Simulation
 
                 // Update mother's LastBirthYear
                 citizen.ValueRW.LastBirthYear = calendar.Year;
+
+                // Emit birth event
+                eventBuffer.Add(new SimulationEvent
+                {
+                    Type = EventType.CitizenBorn,
+                    EntityId = child.Index,
+                    Data0 = position.ValueRO.TileCoordinate.x,
+                    Data1 = position.ValueRO.TileCoordinate.y,
+                });
             }
 
             ecb.Playback(state.EntityManager);

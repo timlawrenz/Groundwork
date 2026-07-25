@@ -7,8 +7,10 @@ namespace Groundwork.Simulation
 {
     /// <summary>
     /// Moves citizens along their PathFollowing buffer. Each tick, the citizen moves one
-    /// waypoint closer to their destination. When the buffer is empty, the citizen
-    /// has arrived and their task is set to idle.
+    /// waypoint closer to their destination. After each step, remaining waypoints are
+    /// cleared and a fresh PathRequest is issued — ensuring the path is always optimal
+    /// from the current position. When the buffer is empty and no PathRequest exists,
+    /// the citizen has arrived and their task is set to idle.
     /// </summary>
     [BurstCompile]
     public partial struct CitizenMovementSystem : ISystem
@@ -18,6 +20,11 @@ namespace Groundwork.Simulation
         {
             var ecb = new EntityCommandBuffer(Allocator.Temp);
 
+            // Get the event buffer singleton for emitting tile events
+            if (!SystemAPI.TryGetSingletonEntity<SimulationEventSingleton>(out var eventEntity))
+                return;
+            var eventBuffer = state.EntityManager.GetBuffer<SimulationEvent>(eventEntity);
+
             foreach (var (position, task, pathBuffer, entity) in
                      SystemAPI.Query<RefRW<MapPosition>, RefRW<CitizenTask>, DynamicBuffer<PathFollowing>>()
                          .WithAll<Citizen>()
@@ -26,7 +33,6 @@ namespace Groundwork.Simulation
             {
                 if (pathBuffer.Length == 0)
                 {
-                    // Arrived — clear task
                     if (task.ValueRO.TaskType == "walking")
                     {
                         task.ValueRW.TaskType = "idle";
@@ -35,20 +41,48 @@ namespace Groundwork.Simulation
                     continue;
                 }
 
-                // Move to next waypoint
+                // Remember old position for tile events
+                int2 oldPos = position.ValueRO.TileCoordinate;
                 int2 nextTile = pathBuffer[0].TileCoordinate;
+
+                // Move to next waypoint
                 position.ValueRW.TileCoordinate = nextTile;
-                pathBuffer.RemoveAt(0);
+
+                // Emit tile transition events
+                eventBuffer.Add(new SimulationEvent
+                {
+                    Type = EventType.TileLeave,
+                    EntityId = entity.Index,
+                    Data0 = oldPos.x,
+                    Data1 = oldPos.y,
+                });
+                eventBuffer.Add(new SimulationEvent
+                {
+                    Type = EventType.TileEnter,
+                    EntityId = entity.Index,
+                    Data0 = nextTile.x,
+                    Data1 = nextTile.y,
+                });
 
                 // Update task
                 task.ValueRW.TaskType = "walking";
                 task.ValueRW.Progress = 0f;
 
-                // If this was the last waypoint, we've arrived
+                // Consume the waypoint we just moved to
+                pathBuffer.RemoveAt(0);
+
                 if (pathBuffer.Length == 0)
                 {
+                    // Arrived at destination
                     task.ValueRW.TaskType = "idle";
                     task.ValueRW.TargetEntity = Entity.Null;
+                }
+                else
+                {
+                    // Re-path: clear remaining stale waypoints and request fresh A* path
+                    int2 destination = pathBuffer[pathBuffer.Length - 1].TileCoordinate;
+                    pathBuffer.Clear();
+                    ecb.AddComponent(entity, new PathRequest { Destination = destination });
                 }
             }
 

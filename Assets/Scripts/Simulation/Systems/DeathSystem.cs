@@ -17,11 +17,23 @@ namespace Groundwork.Simulation
         {
             var ecb = new EntityCommandBuffer(Allocator.Temp);
 
+            // Get event buffer for death events
+            if (!SystemAPI.TryGetSingletonEntity<SimulationEventSingleton>(out var eventEntity))
+                return;
+            var eventBuffer = state.EntityManager.GetBuffer<SimulationEvent>(eventEntity);
+
             // Destroy dead citizens
-            foreach (var (_, entity) in SystemAPI.Query<RefRO<Dead>>()
+            foreach (var (_, position, entity) in SystemAPI.Query<RefRO<Dead>, RefRO<MapPosition>>()
                          .WithAll<Citizen>()
                          .WithEntityAccess())
             {
+                eventBuffer.Add(new SimulationEvent
+                {
+                    Type = EventType.CitizenDied,
+                    EntityId = entity.Index,
+                    Data0 = position.ValueRO.TileCoordinate.x,
+                    Data1 = position.ValueRO.TileCoordinate.y,
+                });
                 ecb.DestroyEntity(entity);
             }
 

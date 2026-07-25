@@ -26,7 +26,7 @@ namespace Groundwork.Simulation
             ecb.AddComponent(gatherFood, new RecipeDefinitionData
             {
                 RecipeId = "gather_food",
-                TicksPerCycle = 10,
+                TicksPerCycle = 1,
             });
             // No inputs
             ecb.AddBuffer<RecipeInput>(gatherFood);
@@ -37,7 +37,7 @@ namespace Groundwork.Simulation
             ecb.AddComponent(chopFirewood, new RecipeDefinitionData
             {
                 RecipeId = "chop_firewood",
-                TicksPerCycle = 10,
+                TicksPerCycle = 1,
             });
             var chopIn = ecb.AddBuffer<RecipeInput>(chopFirewood);
             chopIn.Add(new RecipeInput { ItemId = "logs", Quantity = 1 });

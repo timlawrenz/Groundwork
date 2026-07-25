@@ -31,7 +31,7 @@
 - [x] Fix: citizens consume food from inventory to reduce food need (2026-07-24)
 - [x] Birth system — eligible females produce 1 child/year (2026-07-24)
 - [x] Firewood consumption — citizens burn firewood from home for warmth (2026-07-24)
-- [x] Abundance bootstrap — 8 houses, 8 gatherer huts, 1 woodcutter, generous supplies (2026-07-24)
+- [x] Abundance bootstrap — 8 houses, 9 gatherer huts, 3 woodcutters, generous supplies (2026-07-24)
 - [x] 66 tests all green (2026-07-24)
 - [ ] Headless test harness: tick 100 years, verify population stability (30-50 citizens)
 - [ ] Success criterion met: stable population for 100 game-years
@@ -47,5 +47,6 @@
 - [x] SimulationBootstrap reads MaxWorkers from BuildingDefinitionData (2026-07-25)
 - [x] Pipeline comments updated to reflect full system order (2026-07-25)
 - [ ] Lua runtime integration
+- [x] Event buffer: SimulationEvent + EventDispatchSystem (per ADR 2026-07-25) (2026-07-25)
 - [ ] Mod API hooks: on_init, on_tick, on_season_change, on_building_complete, etc.
 - [ ] Sandbox validation: no filesystem, no network, no OS access

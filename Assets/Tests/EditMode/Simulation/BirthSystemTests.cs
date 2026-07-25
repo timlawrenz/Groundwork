@@ -194,5 +194,36 @@ namespace Groundwork.Tests.Simulation
 
             Assert.That(after, Is.EqualTo(before), "Children under 16 should not give birth");
         }
+
+        [Test]
+        public void EmitsCitizenBornEvent()
+        {
+            using var world = new SimulationTestWorld();
+            var house = world.CreateBuilding("house", new(10, 10), maxWorkers: 0);
+
+            var mother = world.CreateCitizen(age: 25f, home: house);
+            var c = world.EntityManager.GetComponentData<Citizen>(mother);
+            c.Sex = 1;
+            c.Health = 80f;
+            c.LastBirthYear = 0;
+            world.EntityManager.SetComponentData(mother, c);
+
+            var cal = world.GetCalendarSingletonEntity();
+            var calData = world.EntityManager.GetComponentData<CalendarSingleton>(cal);
+            calData.Year = 2;
+            calData.DayOfSeason = 0;
+            world.EntityManager.SetComponentData(cal, calData);
+            world.SetTick(24);
+
+            world.UpdateSystem<BirthSystem>();
+
+            // Verify CitizenBorn event was emitted
+            var eventEntity = world.GetOrCreateEventBufferEntity();
+            var events = world.EntityManager.GetBuffer<SimulationEvent>(eventEntity);
+            Assert.That(events.Length, Is.EqualTo(1));
+            Assert.That(events[0].Type, Is.EqualTo(EventType.CitizenBorn));
+            Assert.That(events[0].Data0, Is.EqualTo(0f)); // mother's x
+            Assert.That(events[0].Data1, Is.EqualTo(0f)); // mother's y (default position)
+        }
     }
 }

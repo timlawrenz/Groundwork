@@ -87,6 +87,7 @@
     <Compile Include="Assets/Scripts/Simulation/Components/SimulationConfig.cs" />
     <Compile Include="Assets/Scripts/Simulation/Components/SimulationStats.cs" />
     <Compile Include="Assets/Scripts/Simulation/Systems/CitizenNeedSystem.cs" />
+    <Compile Include="Assets/Scripts/Simulation/Buffers/SimulationEvent.cs" />
     <Compile Include="Assets/Scripts/Simulation/Components/Building.cs" />
     <Compile Include="Assets/Scripts/Simulation/Components/ContentDefinitions.cs" />
     <Compile Include="Assets/Scripts/Simulation/Systems/ContentLoaderSystem.cs" />
@@ -104,9 +105,12 @@
     <Compile Include="Assets/Scripts/Simulation/Systems/GroundworkSimulationGroup.cs" />
     <Compile Include="Assets/Scripts/Simulation/Systems/BirthSystem.cs" />
     <Compile Include="Assets/Scripts/Simulation/Systems/DeathSystem.cs" />
+    <Compile Include="Assets/Scripts/Simulation/Systems/DebugVizSystem.cs" />
+    <Compile Include="Assets/Scripts/Simulation/Systems/HeadlessRunner.cs" />
     <Compile Include="Assets/Scripts/Simulation/Buffers/ProductionOrder.cs" />
     <Compile Include="Assets/Scripts/Simulation/Components/CitizenTask.cs" />
     <Compile Include="Assets/Scripts/Simulation/Buffers/CitizenNeed.cs" />
+    <Compile Include="Assets/Scripts/Simulation/Systems/EventDispatchSystem.cs" />
     <Compile Include="Assets/Scripts/Simulation/Buffers/InventorySlot.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -115,6 +119,10 @@
   <ItemGroup>
     <Reference Include="UnityEngine">
       <HintPath>/home/tim/Unity/Hub/Editor/6000.3.20f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.AnimationModule">
+      <HintPath>/home/tim/Unity/Hub/Editor/6000.3.20f1/Editor/Data/Managed/UnityEngine/UnityEngine.AnimationModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AssetBundleModule">
@@ -147,6 +155,10 @@
     </Reference>
     <Reference Include="UnityEngine.DSPGraphModule">
       <HintPath>/home/tim/Unity/Hub/Editor/6000.3.20f1/Editor/Data/Managed/UnityEngine/UnityEngine.DSPGraphModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.DirectorModule">
+      <HintPath>/home/tim/Unity/Hub/Editor/6000.3.20f1/Editor/Data/Managed/UnityEngine/UnityEngine.DirectorModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.GIModule">
@@ -211,6 +223,10 @@
     </Reference>
     <Reference Include="UnityEngine.MultiplayerModule">
       <HintPath>/home/tim/Unity/Hub/Editor/6000.3.20f1/Editor/Data/Managed/UnityEngine/UnityEngine.MultiplayerModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.ParticleSystemModule">
+      <HintPath>/home/tim/Unity/Hub/Editor/6000.3.20f1/Editor/Data/Managed/UnityEngine/UnityEngine.ParticleSystemModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.PerformanceReportingModule">
@@ -627,6 +643,10 @@
     </Reference>
     <Reference Include="Sentry.System.Reflection.Metadata">
       <HintPath>Library/PackageCache/io.sentry.unity@2768f82362e9/Runtime/Sentry.System.Reflection.Metadata.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Library/PackageCache/com.unity.nuget.newtonsoft-json@4dfd81071c64/Runtime/Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Mono.Cecil">

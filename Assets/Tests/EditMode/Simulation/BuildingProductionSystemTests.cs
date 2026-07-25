@@ -174,6 +174,24 @@ namespace Groundwork.Tests.Simulation
                 "Autonomous buildings (MaxWorkers=0) should produce without workers");
         }
 
+        [Test]
+        public void EmitsProductionCompleteEvent()
+        {
+            using var world = new SimulationTestWorld();
+            var hut = world.CreateBuilding("gatherer_hut", new(10, 10), maxWorkers: 0);
+            world.AddProductionOrder(hut, "gather_food");
+
+            // Run enough ticks to complete one cycle (10 ticks at 0.1/tick = 1.0)
+            for (int i = 0; i < 10; i++)
+                world.UpdateSystem<BuildingProductionSystem>();
+
+            var eventEntity = world.GetOrCreateEventBufferEntity();
+            var events = world.EntityManager.GetBuffer<SimulationEvent>(eventEntity);
+            Assert.That(events.Length, Is.EqualTo(1));
+            Assert.That(events[0].Type, Is.EqualTo(EventType.ProductionComplete));
+            Assert.That(events[0].EntityId, Is.EqualTo(hut.Index));
+        }
+
         private static int GetItemCount(DynamicBuffer<InventorySlot> inventory, FixedString32Bytes itemId)
         {
             for (int i = 0; i < inventory.Length; i++)

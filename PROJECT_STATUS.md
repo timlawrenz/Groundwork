@@ -6,24 +6,19 @@
 
 **Phase 1 — Simulation Core (MVP)** — nearly complete
 
-11 systems, 66 tests green. All core mechanics operational: births, aging, needs (food/warmth/shelter/social/health), food production, food consumption (personal→workplace→home), firewood production, firewood consumption, worker requirements, seasonal logging. Abundance bootstrap with 8 houses, 8 gatherer huts, 1 woodcutter.
+12 systems, 78 tests green. Event buffer fully integrated: TileEnter/TileLeave from movement, CitizenBorn from births, CitizenDied from deaths, ProductionComplete from production. All core mechanics operational: births, aging, needs (food/warmth/shelter/social/health), food production, food consumption (personal→workplace→home), firewood production, firewood consumption, worker requirements, seasonal logging. Abundance bootstrap with 8 houses, 9 gatherer huts, 3 woodcutters.
 
 ## Next Action
 
-**Phase 2 — Content system:** Replace hardcoded buildings/recipes with data files (`Buildings.json`, `Recipes.json`). This unblocks economic tuning for the 100-year stability test, which currently hits a firewood supply bottleneck that can't be resolved without configurable production rates.
+**Implement the event buffer** (ADR 2026-07-25): Add `SimulationEvent` buffer component + `EventDispatchSystem` to the pipeline. This is a pre-requisite for the Lua mod API and unblocks reactive features (achievements, quests, UI notifications). Lightweight (~50 lines of C#), test-driven, fits between Death and Stats in the pipeline. After this, the 100-year stability test can close out Phase 1.
 
 ## What's blocking Phase 1 closure
 
-The 100-year stability test shows population growth (50→73→96 in 2 years via births) but crashes by Year 3 because firewood production (0.1/tick, 1 woodcutter) can't keep up with consumption (~30-40 firewood/citizen/year). Fixing this requires either:
-
-1. **Tweak hardcoded values** — set `chop_firewood` to 0.5/tick and give 50,000 logs. Simple but wrong layer for this decision.
-2. **Content system (Phase 2)** — move production rates to `Recipes.json`, where balancing becomes a data entry task.
-
-**Recommendation: #2.** The mechanics work. The bottleneck is a content-tuning problem, not an engineering one.
+The 100-year stability test shows population growth (50→73→96 in 2 years via births) but crashes by Year 3 because firewood production (0.1/tick, 1 woodcutter) can't keep up with consumption (~30-40 firewood/citizen/year). The content system (Phase 2) is now in place — production rates live in `Recipes.json`. Tuning firewood production is a data entry task, and the event buffer ADR (2026-07-25) establishes the pattern for mod hooks.
 
 ## Headline
 
-11 systems running. 66 tests green. Births work. Food loop works. Firewood loop works. Worker requirements work. Stability blocked by firewood production rate — content system next.
+12 systems running. 78 tests green. Event buffer: births, deaths, production, tile transitions all emit events. Births work. Citizens walk. Food loop works. Firewood loop works. Worker requirements work. Stability blocked by firewood production rate — content system (Recipes.json) unblocks tuning; event buffer unblocks reactive features.
 
 ## Phase History
 

@@ -43,6 +43,11 @@ namespace Groundwork.Simulation
             var buildings = _buildingQuery.ToComponentDataArray<Building>(Allocator.Temp);
             var entities = _buildingQuery.ToEntityArray(Allocator.Temp);
 
+            // Get event buffer for production events
+            if (!SystemAPI.TryGetSingletonEntity<SimulationEventSingleton>(out var eventEntity))
+                return;
+            var eventBuffer = state.EntityManager.GetBuffer<SimulationEvent>(eventEntity);
+
             // Build recipe lookup: recipe ID → entity
             var recipeEntities = _recipeQuery.ToEntityArray(Allocator.Temp);
             var recipeDefs = _recipeQuery.ToComponentDataArray<RecipeDefinitionData>(Allocator.Temp);
@@ -151,6 +156,14 @@ namespace Groundwork.Simulation
                         // Produce outputs
                         for (int k = 0; k < recipeOutputs.Length; k++)
                             AddToInventory(inventory, recipeOutputs[k].ItemId, recipeOutputs[k].Quantity);
+
+                        // Emit production complete event
+                        eventBuffer.Add(new SimulationEvent
+                        {
+                            Type = EventType.ProductionComplete,
+                            EntityId = entities[i].Index,
+                        });
+
                         order.Progress = 0f;
                     }
 

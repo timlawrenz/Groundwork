@@ -16,10 +16,10 @@
     <Configurations>Debug;Release</Configurations>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <RootNamespace>Groundwork.TestHelpers</RootNamespace>
+    <RootNamespace>Groundwork</RootNamespace>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <AssemblyName>Groundwork.TestHelpers</AssemblyName>
+    <AssemblyName>Groundwork.Editor</AssemblyName>
     <TargetFramework>netstandard2.1</TargetFramework>
     <BaseDirectory>.</BaseDirectory>
   </PropertyGroup>
@@ -32,7 +32,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>0169;USG0001</NoWarn>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -41,7 +41,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>0169;USG0001</NoWarn>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <NoStandardLibraries>true</NoStandardLibraries>
@@ -54,7 +54,7 @@
     <UnityProjectGenerator>Package</UnityProjectGenerator>
     <UnityProjectGeneratorVersion>2.0.22</UnityProjectGeneratorVersion>
     <UnityProjectGeneratorStyle>SDK</UnityProjectGeneratorStyle>
-    <UnityProjectType>Game:1</UnityProjectType>
+    <UnityProjectType>Editor:5</UnityProjectType>
     <UnityBuildTarget>StandaloneLinux64:24</UnityBuildTarget>
     <UnityVersion>6000.3.20f1</UnityVersion>
   </PropertyGroup>
@@ -76,10 +76,12 @@
     <Analyzer Include="/home/tim/source/activity/Groundwork/Library/PackageCache/com.unity.entities@70f9a4aadeb2/Unity.Entities/SourceGenerators/Unity.Entities.Analyzer.CodeFixes.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets/Tests/TestHelpers/SimulationTestWorld.cs" />
+    <Compile Include="Assets/Editor/GroundworkSetup/UnitySkillsServerPersist.cs" />
+    <Compile Include="Assets/Editor/GroundworkSetup/UnitySkillsSetup.cs" />
+    <Compile Include="Assets/Editor/GroundworkSetup/UnitySkillsServerStart.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets/Tests/TestHelpers/Groundwork.TestHelpers.asmdef" />
+    <None Include="Assets/Editor/Groundwork.Editor.asmdef" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
@@ -1278,16 +1280,8 @@
       <HintPath>/home/tim/Unity/Hub/Editor/6000.3.20f1/Editor/Data/UnityReferenceAssemblies/unity-4.8-api/Facades/netstandard.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Unity.Entities">
-      <HintPath>Library/ScriptAssemblies/Unity.Entities.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Collections">
-      <HintPath>Library/ScriptAssemblies/Unity.Collections.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Mathematics">
-      <HintPath>Library/ScriptAssemblies/Unity.Mathematics.dll</HintPath>
+    <Reference Include="UnitySkills.Editor">
+      <HintPath>Library/ScriptAssemblies/UnitySkills.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEditor.UI">
