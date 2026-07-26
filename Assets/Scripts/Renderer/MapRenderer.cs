@@ -133,6 +133,23 @@ namespace Groundwork.Renderer
             UpdateInfoPanel();
         }
 
+        void OnGUI()
+        {
+            if (!_initialized) return;
+            var style = new GUIStyle(GUI.skin.label);
+            style.fontSize = 18;
+            style.normal.textColor = Color.white;
+            int activeBuildings = 0;
+            foreach (var v in _buildingVisuals) if (v.Root.activeSelf) activeBuildings++;
+            int activeCitizens = 0;
+            foreach (var v in _citizenVisuals) if (v.Root.activeSelf) activeCitizens++;
+            
+            GUI.Label(new Rect(10, Screen.height - 80, 400, 70),
+                $"Buildings: {activeBuildings} drawn / {_buildingQuery.CalculateEntityCount()} ECS\n" +
+                $"Citizens: {activeCitizens} drawn / {_citizenQuery.CalculateEntityCount()} ECS\n" +
+                $"Camera: {(_mainCamera != null ? _mainCamera.transform.position.ToString() : "null")}");
+        }
+
         void OnDestroy()
         {
             if (_gameLoop?.World != null && _gameLoop.World.IsCreated)

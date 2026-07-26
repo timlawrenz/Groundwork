@@ -20,7 +20,7 @@ namespace Groundwork.Renderer
         public float maxZoom = 80f;
 
         [Header("Map Bounds")]
-        public Vector2 mapCenter = new Vector2(50f, 50f);
+        public Vector2 mapCenter = new Vector2(35f, 20f); // centered on building cluster
         public Vector2 mapSize = new Vector2(100f, 100f);
 
         private Camera _cam;
