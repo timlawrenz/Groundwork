@@ -14,8 +14,8 @@
 - [x] Scaffold Unity project with ECS packages (2026-07-23)
 - [x] Minimum ECS components — Citizen, Building, Item, Map, Calendar (2026-07-23)
 - [x] Push to GitHub — [timlawrenz/Groundwork](https://github.com/timlawrenz/Groundwork) (2026-07-24)
-- [ ] Verify Unity project opens and builds to all 4 targets
-- [ ] Make repo public
+- [x] Verify Unity project opens and builds to all 4 targets — Android APK built (74MB, 2026-07-25)
+- [x] Make repo public — [timlawrenz/Groundwork](https://github.com/timlawrenz/Groundwork) (2026-07-26)
 
 ## Phase 1 — Simulation Core (MVP)
 
