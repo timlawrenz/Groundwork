@@ -10,7 +10,9 @@
 
 ## Next Action
 
-**JSON content files** — move hardcoded definitions from `ContentLoaderSystem` to `Assets/StreamingAssets/` as `Items.json`, `Buildings.json`, `Recipes.json`, `Needs.json`. Loaded at startup, making content moddable without recompilation.
+**Phase 2 complete** — JSON content files, Lua runtime (MoonSharp), mod API hooks, sandbox validation all done. 293 tests green. The project is feature-complete for Phase 2.
+
+Next: **Phase 3** — Renderer + UI, or proceed to flesh out content (more buildings, recipes, items).
 
 ## What's blocking Phase 2
 

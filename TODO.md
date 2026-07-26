@@ -57,7 +57,7 @@
 - [x] Buffer types moved to Buffers/ folder per architecture conventions (2026-07-25)
 - [x] SimulationBootstrap reads MaxWorkers from BuildingDefinitionData (2026-07-25)
 - [x] Pipeline comments updated to reflect full system order (2026-07-25)
-- [ ] JSON content files (Items.json, Buildings.json, Recipes.json) — currently hardcoded in ContentLoaderSystem
-- [ ] Lua runtime integration
-- [ ] Mod API hooks: on_init, on_tick, on_season_change, on_building_complete, etc.
-- [ ] Sandbox validation: no filesystem, no network, no OS access
+- [x] JSON content files (Items.json, Buildings.json, Recipes.json) — currently hardcoded in ContentLoaderSystem (2026-07-26)
+- [x] Lua runtime integration: MoonSharp embedded, mods loaded from StreamingAssets/Mods (2026-07-26)
+- [x] Mod API hooks: on_init, on_tick, on_season_change, on_event dispatched from EventDispatchSystem (2026-07-26)
+- [x] Sandbox validation: Preset_SoftSandbox, no io/os/debug, exception-safe (2026-07-26)
