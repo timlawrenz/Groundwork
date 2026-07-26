@@ -1,0 +1,42 @@
+{"needs": [
+  {
+    "type": "food",
+    "satisfyingItem": "food",
+    "urgencyGrowthPerDay": 0.15,
+    "coldSeasonGrowthMultiplier": 1.0,
+    "criticalThreshold": 0.8,
+    "healthDecayRate": 2.0,
+    "satisfactionReduction": 0.5,
+    "initialUrgency": 0.2
+  },
+  {
+    "type": "warmth",
+    "satisfyingItem": "firewood",
+    "urgencyGrowthPerDay": 0.01,
+    "coldSeasonGrowthMultiplier": 10.0,
+    "criticalThreshold": 0.8,
+    "healthDecayRate": 2.0,
+    "satisfactionReduction": 0.5,
+    "initialUrgency": 0.1
+  },
+  {
+    "type": "shelter",
+    "satisfyingItem": "",
+    "urgencyGrowthPerDay": 0.25,
+    "coldSeasonGrowthMultiplier": 2.0,
+    "criticalThreshold": 0.8,
+    "healthDecayRate": 1.0,
+    "satisfactionReduction": 0.0,
+    "initialUrgency": 0.0
+  },
+  {
+    "type": "health",
+    "satisfyingItem": "",
+    "urgencyGrowthPerDay": 0.05,
+    "coldSeasonGrowthMultiplier": 1.0,
+    "criticalThreshold": 0.8,
+    "healthDecayRate": 0.5,
+    "satisfactionReduction": 0.0,
+    "initialUrgency": 0.0
+  }
+]}

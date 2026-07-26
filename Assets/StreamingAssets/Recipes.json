@@ -1,0 +1,20 @@
+{"recipes": [
+  {
+    "id": "gather_food",
+    "ticksPerCycle": 1,
+    "inputs": [],
+    "outputs": [{"itemId": "food", "quantity": 1}]
+  },
+  {
+    "id": "chop_firewood",
+    "ticksPerCycle": 1,
+    "inputs": [{"itemId": "logs", "quantity": 1}],
+    "outputs": [{"itemId": "firewood", "quantity": 1}]
+  },
+  {
+    "id": "gather_logs",
+    "ticksPerCycle": 1,
+    "inputs": [],
+    "outputs": [{"itemId": "logs", "quantity": 1}]
+  }
+]}

@@ -1,0 +1,42 @@
+{"buildings": [
+  {
+    "type": "house",
+    "maxWorkers": 0,
+    "requiresWorkers": false,
+    "inputCapacity": 0,
+    "outputCapacity": 200,
+    "archetype": "Service",
+    "gatheringRadius": 0,
+    "recipes": []
+  },
+  {
+    "type": "gatherer_hut",
+    "maxWorkers": 4,
+    "requiresWorkers": true,
+    "inputCapacity": 0,
+    "outputCapacity": 200,
+    "archetype": "Gathering",
+    "gatheringRadius": 5,
+    "recipes": ["gather_food"]
+  },
+  {
+    "type": "forester_hut",
+    "maxWorkers": 4,
+    "requiresWorkers": true,
+    "inputCapacity": 0,
+    "outputCapacity": 200,
+    "archetype": "Gathering",
+    "gatheringRadius": 5,
+    "recipes": ["gather_logs"]
+  },
+  {
+    "type": "woodcutter",
+    "maxWorkers": 4,
+    "requiresWorkers": true,
+    "inputCapacity": 200,
+    "outputCapacity": 200,
+    "archetype": "Workshop",
+    "gatheringRadius": 0,
+    "recipes": ["chop_firewood"]
+  }
+]}

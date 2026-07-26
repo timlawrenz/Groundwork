@@ -42,6 +42,7 @@ namespace Groundwork.Renderer
                     $"({new System.IO.FileInfo(report.summary.outputPath).Length / 1024 / 1024} MB)");
             else
                 Debug.LogError($"[GroundworkBuilder] Build FAILED: {report.summary.result} — {report.summary.totalErrors} errors");
+        }
 
         // ── WebGL Build ──────────────────────────
 

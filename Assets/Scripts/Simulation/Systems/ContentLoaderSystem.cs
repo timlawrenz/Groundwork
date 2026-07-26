@@ -1,16 +1,65 @@
 using Unity.Entities;
 using Unity.Collections;
+using UnityEngine;
+using System.IO;
 
 namespace Groundwork.Simulation
 {
     /// <summary>
-    /// Creates recipe and building definition entities at startup.
-    /// All game content is registered here — no other system hardcodes
-    /// recipe logic or building types. Runs once before SimulationBootstrap.
+    /// Creates recipe, building, and need definition entities at startup
+    /// from JSON files in StreamingAssets. No hardcoded content — all game
+    /// data is moddable without recompilation.
+    /// Runs once before SimulationBootstrap.
     /// </summary>
     public partial struct ContentLoaderSystem : ISystem
     {
         private bool _initialized;
+
+        // JSON wrapper types for Unity's JsonUtility (can't deserialize top-level arrays)
+        [System.Serializable]
+        private struct RecipeListWrapper { public RecipeJson[] recipes; }
+        [System.Serializable]
+        private struct RecipeJson
+        {
+            public string id;
+            public int ticksPerCycle;
+            public RecipeInputJson[] inputs;
+            public RecipeOutputJson[] outputs;
+        }
+        [System.Serializable]
+        private struct RecipeInputJson { public string itemId; public int quantity; }
+        [System.Serializable]
+        private struct RecipeOutputJson { public string itemId; public int quantity; }
+
+        [System.Serializable]
+        private struct BuildingListWrapper { public BuildingJson[] buildings; }
+        [System.Serializable]
+        private struct BuildingJson
+        {
+            public string type;
+            public int maxWorkers;
+            public bool requiresWorkers;
+            public int inputCapacity;
+            public int outputCapacity;
+            public string archetype;
+            public int gatheringRadius;
+            public string[] recipes;
+        }
+
+        [System.Serializable]
+        private struct NeedListWrapper { public NeedJson[] needs; }
+        [System.Serializable]
+        private struct NeedJson
+        {
+            public string type;
+            public string satisfyingItem;
+            public float urgencyGrowthPerDay;
+            public float coldSeasonGrowthMultiplier;
+            public float criticalThreshold;
+            public float healthDecayRate;
+            public float satisfactionReduction;
+            public float initialUrgency;
+        }
 
         public void OnUpdate(ref SystemState state)
         {
@@ -19,154 +68,109 @@ namespace Groundwork.Simulation
             _initialized = true;
 
             var ecb = new EntityCommandBuffer(Allocator.Temp);
+            var basePath = GetStreamingAssetsPath();
 
-            // ─── Recipe definitions ───
-
-            var gatherFood = ecb.CreateEntity();
-            ecb.AddComponent(gatherFood, new RecipeDefinitionData
+            // ─── Load recipe definitions ───
+            var recipeJson = LoadJson<RecipeListWrapper>(basePath, "Recipes.json");
+            if (recipeJson.recipes != null)
             {
-                RecipeId = "gather_food",
-                TicksPerCycle = 1,
-            });
-            // No inputs
-            ecb.AddBuffer<RecipeInput>(gatherFood);
-            var gatherOut = ecb.AddBuffer<RecipeOutput>(gatherFood);
-            gatherOut.Add(new RecipeOutput { ItemId = "food", Quantity = 1 });
+                foreach (var r in recipeJson.recipes)
+                {
+                    var entity = ecb.CreateEntity();
+                    ecb.AddComponent(entity, new RecipeDefinitionData
+                    {
+                        RecipeId = r.id,
+                        TicksPerCycle = r.ticksPerCycle,
+                    });
+                    var inputs = ecb.AddBuffer<RecipeInput>(entity);
+                    if (r.inputs != null)
+                        foreach (var inp in r.inputs)
+                            inputs.Add(new RecipeInput { ItemId = inp.itemId, Quantity = inp.quantity });
+                    var outputs = ecb.AddBuffer<RecipeOutput>(entity);
+                    if (r.outputs != null)
+                        foreach (var outp in r.outputs)
+                            outputs.Add(new RecipeOutput { ItemId = outp.itemId, Quantity = outp.quantity });
+                }
+            }
 
-            var chopFirewood = ecb.CreateEntity();
-            ecb.AddComponent(chopFirewood, new RecipeDefinitionData
+            // ─── Load building definitions ───
+            var buildingJson = LoadJson<BuildingListWrapper>(basePath, "Buildings.json");
+            if (buildingJson.buildings != null)
             {
-                RecipeId = "chop_firewood",
-                TicksPerCycle = 1,
-            });
-            var chopIn = ecb.AddBuffer<RecipeInput>(chopFirewood);
-            chopIn.Add(new RecipeInput { ItemId = "logs", Quantity = 1 });
-            var chopOut = ecb.AddBuffer<RecipeOutput>(chopFirewood);
-            chopOut.Add(new RecipeOutput { ItemId = "firewood", Quantity = 1 });
+                foreach (var b in buildingJson.buildings)
+                {
+                    var entity = ecb.CreateEntity();
+                    ecb.AddComponent(entity, new BuildingDefinitionData
+                    {
+                        BuildingType = b.type,
+                        MaxWorkers = b.maxWorkers,
+                        RequiresWorkers = b.requiresWorkers,
+                        InputCapacity = b.inputCapacity,
+                        OutputCapacity = b.outputCapacity,
+                        Archetype = ParseArchetype(b.archetype),
+                        GatheringRadius = b.gatheringRadius,
+                    });
+                    var recipes = ecb.AddBuffer<BuildingRecipe>(entity);
+                    if (b.recipes != null)
+                        foreach (var r in b.recipes)
+                            recipes.Add(new BuildingRecipe { RecipeId = r });
+                }
+            }
 
-            var gatherLogs = ecb.CreateEntity();
-            ecb.AddComponent(gatherLogs, new RecipeDefinitionData
+            // ─── Load need definitions ───
+            var needJson = LoadJson<NeedListWrapper>(basePath, "Needs.json");
+            if (needJson.needs != null)
             {
-                RecipeId = "gather_logs",
-                TicksPerCycle = 1,
-            });
-            ecb.AddBuffer<RecipeInput>(gatherLogs); // no inputs
-            var logsOut = ecb.AddBuffer<RecipeOutput>(gatherLogs);
-            logsOut.Add(new RecipeOutput { ItemId = "logs", Quantity = 1 });
+                foreach (var n in needJson.needs)
+                {
+                    var entity = ecb.CreateEntity();
+                    ecb.AddComponent(entity, new NeedDefinition
+                    {
+                        NeedType = n.type,
+                        SatisfyingItem = n.satisfyingItem,
+                        UrgencyGrowthPerDay = n.urgencyGrowthPerDay,
+                        ColdSeasonGrowthMultiplier = n.coldSeasonGrowthMultiplier,
+                        CriticalThreshold = n.criticalThreshold,
+                        HealthDecayRate = n.healthDecayRate,
+                        SatisfactionReduction = n.satisfactionReduction,
+                        InitialUrgency = n.initialUrgency,
+                    });
+                }
+            }
 
-            // ─── Building definitions ───
-
-            var house = ecb.CreateEntity();
-            ecb.AddComponent(house, new BuildingDefinitionData
-            {
-                BuildingType = "house",
-                MaxWorkers = 0,
-                RequiresWorkers = false,
-                InputCapacity = 0,
-                OutputCapacity = 200,
-                Archetype = ProductionArchetype.Service,
-                GatheringRadius = 0,
-            });
-            ecb.AddBuffer<BuildingRecipe>(house); // houses have no recipes
-
-            var gathererHut = ecb.CreateEntity();
-            ecb.AddComponent(gathererHut, new BuildingDefinitionData
-            {
-                BuildingType = "gatherer_hut",
-                MaxWorkers = 4,
-                RequiresWorkers = true,
-                InputCapacity = 0,
-                OutputCapacity = 200,
-                Archetype = ProductionArchetype.Gathering,
-                GatheringRadius = 5,
-            });
-            var ghRecipes = ecb.AddBuffer<BuildingRecipe>(gathererHut);
-            ghRecipes.Add(new BuildingRecipe { RecipeId = "gather_food" });
-
-            var foresterHut = ecb.CreateEntity();
-            ecb.AddComponent(foresterHut, new BuildingDefinitionData
-            {
-                BuildingType = "forester_hut",
-                MaxWorkers = 4,
-                RequiresWorkers = true,
-                InputCapacity = 0,
-                OutputCapacity = 200,
-                Archetype = ProductionArchetype.Gathering,
-                GatheringRadius = 5,
-            });
-            var fhRecipes = ecb.AddBuffer<BuildingRecipe>(foresterHut);
-            fhRecipes.Add(new BuildingRecipe { RecipeId = "gather_logs" });
-
-            var woodcutter = ecb.CreateEntity();
-            ecb.AddComponent(woodcutter, new BuildingDefinitionData
-            {
-                BuildingType = "woodcutter",
-                MaxWorkers = 4,
-                RequiresWorkers = true,
-                InputCapacity = 200,
-                OutputCapacity = 200,
-                Archetype = ProductionArchetype.Workshop,
-                GatheringRadius = 0,
-            });
-            var wcRecipes = ecb.AddBuffer<BuildingRecipe>(woodcutter);
-            wcRecipes.Add(new BuildingRecipe { RecipeId = "chop_firewood" });
-
-            
-            // ─── Need definitions (ADR 2026-07-25 §3 — Needs Generalization) ───
-
-            var foodNeed = ecb.CreateEntity();
-            ecb.AddComponent(foodNeed, new NeedDefinition
-            {
-                NeedType = "food",
-                SatisfyingItem = "food",
-                UrgencyGrowthPerDay = 0.15f,
-                ColdSeasonGrowthMultiplier = 1.0f,
-                CriticalThreshold = 0.8f,
-                HealthDecayRate = 2.0f,
-                SatisfactionReduction = 0.5f,
-                InitialUrgency = 0.2f,
-            });
-
-            var warmthNeed = ecb.CreateEntity();
-            ecb.AddComponent(warmthNeed, new NeedDefinition
-            {
-                NeedType = "warmth",
-                SatisfyingItem = "firewood",
-                UrgencyGrowthPerDay = 0.01f,
-                ColdSeasonGrowthMultiplier = 10.0f,
-                CriticalThreshold = 0.8f,
-                HealthDecayRate = 2.0f,
-                SatisfactionReduction = 0.5f,
-                InitialUrgency = 0.1f,
-            });
-
-            var shelterNeed = ecb.CreateEntity();
-            ecb.AddComponent(shelterNeed, new NeedDefinition
-            {
-                NeedType = "shelter",
-                SatisfyingItem = "",  // condition-based, not satisfied by goods
-                UrgencyGrowthPerDay = 0.25f,
-                ColdSeasonGrowthMultiplier = 2.0f,
-                CriticalThreshold = 0.8f,
-                HealthDecayRate = 1.0f,
-                SatisfactionReduction = 0f,
-                InitialUrgency = 0f,  // starts at 0, triggered by homelessness
-            });
-
-            var healthNeed = ecb.CreateEntity();
-            ecb.AddComponent(healthNeed, new NeedDefinition
-            {
-                NeedType = "health",
-                SatisfyingItem = "",  // condition-based, not satisfied by goods
-                UrgencyGrowthPerDay = 0.05f,
-                ColdSeasonGrowthMultiplier = 1.0f,
-                CriticalThreshold = 0.8f,
-                HealthDecayRate = 0.5f,
-                SatisfactionReduction = 0f,
-                InitialUrgency = 0f,  // starts at 0, triggered by low health
-            });
             ecb.Playback(state.EntityManager);
             ecb.Dispose();
+        }
+
+        private static string GetStreamingAssetsPath()
+        {
+            // In the Unity Editor (including EditMode tests), streamingAssetsPath
+            // points to <project>/Assets/StreamingAssets
+            return Application.streamingAssetsPath;
+        }
+
+        private static T LoadJson<T>(string basePath, string filename)
+        {
+            var path = Path.Combine(basePath, filename);
+            if (!File.Exists(path))
+            {
+                Debug.LogWarning($"[ContentLoader] JSON file not found: {path}");
+                return default;
+            }
+            var json = File.ReadAllText(path);
+            return JsonUtility.FromJson<T>(json);
+        }
+
+        private static ProductionArchetype ParseArchetype(string archetype)
+        {
+            switch (archetype)
+            {
+                case "Workshop": return ProductionArchetype.Workshop;
+                case "Gathering": return ProductionArchetype.Gathering;
+                case "Source": return ProductionArchetype.Source;
+                case "Service": return ProductionArchetype.Service;
+                default: return ProductionArchetype.Service;
+            }
         }
     }
 }
