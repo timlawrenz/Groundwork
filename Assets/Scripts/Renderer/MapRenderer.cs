@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using Unity.Entities;
 using Unity.Collections;
 using Unity.Mathematics;
@@ -8,35 +9,46 @@ using System.Collections.Generic;
 namespace Groundwork.Renderer
 {
     /// <summary>
-    /// Renders the simulation state: ground grid, buildings (colored quads),
-    /// and citizens (small dots). Manages pools of visual GameObjects for
-    /// buildings and citizens, updating their positions each frame from the
-    /// ECS simulation world.
-    ///
-    /// Architecture: stateless renderer — reads simulation state via EntityManager
-    /// queries. The simulation never touches rendering code.
+    /// Proper renderer: 3D building meshes (cube walls + roof), citizen sprites
+    /// with direction indicators, click-to-select buildings with info panel.
+    /// Architecture: stateless renderer reads ECS world each frame.
     /// </summary>
     public class MapRenderer : MonoBehaviour
     {
-        [Header("Grid Settings")]
+        [Header("Grid")]
         public float tileSize = 1f;
-        public Color groundColor = new Color(0.28f, 0.22f, 0.15f);
-        public Color gridLineColor = new Color(0.15f, 0.11f, 0.06f);
+        public Color groundColor = new Color(0.28f, 0.30f, 0.18f);
+        public Color gridLineColor = new Color(0.12f, 0.10f, 0.05f);
 
-        [Header("Entity Visuals")]
-        public float buildingScale = 0.85f;
-        public float buildingHeight = 0.02f;
-        public float citizenScale = 0.3f;
-        public float citizenHeight = 0.05f;
+        [Header("Buildings")]
+        public float buildingFootprintScale = 0.9f;
+        public float wallHeight = 0.4f;
+        public float roofHeight = 0.15f;
+        public float roofOverhang = 0.1f;
+
+        [Header("Citizens")]
+        public float citizenScale = 0.25f;
         public Color citizenColor = new Color(0.2f, 0.5f, 0.9f);
+        public Color haulerColor = new Color(0.9f, 0.7f, 0.1f);
 
-        // Building type → color palette
-        private static readonly Dictionary<string, Color> BuildingColors = new Dictionary<string, Color>
+        [Header("Selection")]
+        public Color selectedTint = new Color(0.3f, 0.6f, 1f);
+        public Color hoverTint = new Color(0.5f, 0.5f, 0.5f);
+
+        // Building type → visual config
+        private struct BuildingVisualConfig
         {
-            { "house",         new Color(0.85f, 0.65f, 0.35f) }, // warm brown/yellow
-            { "gatherer_hut",  new Color(0.25f, 0.60f, 0.25f) }, // green
-            { "forester_hut",  new Color(0.15f, 0.45f, 0.15f) }, // dark green
-            { "woodcutter",    new Color(0.55f, 0.35f, 0.20f) }, // dark brown
+            public Color WallColor;
+            public Color RoofColor;
+            public bool HasPeakedRoof;
+        }
+
+        private static readonly Dictionary<string, BuildingVisualConfig> BuildingConfigs = new()
+        {
+            ["house"] = new() { WallColor = new Color(0.75f, 0.55f, 0.28f), RoofColor = new Color(0.55f, 0.20f, 0.10f), HasPeakedRoof = true },
+            ["gatherer_hut"] = new() { WallColor = new Color(0.45f, 0.60f, 0.30f), RoofColor = new Color(0.30f, 0.40f, 0.18f), HasPeakedRoof = false },
+            ["forester_hut"] = new() { WallColor = new Color(0.22f, 0.50f, 0.20f), RoofColor = new Color(0.12f, 0.30f, 0.12f), HasPeakedRoof = false },
+            ["woodcutter"] = new() { WallColor = new Color(0.60f, 0.35f, 0.18f), RoofColor = new Color(0.40f, 0.20f, 0.10f), HasPeakedRoof = true },
         };
 
         private GameLoop _gameLoop;
@@ -46,45 +58,60 @@ namespace Groundwork.Renderer
         private GameObject _groundObject;
         private Material _groundMat;
 
-        // Entity queries (cached)
+        // Entity queries
         private EntityQuery _buildingQuery;
         private EntityQuery _citizenQuery;
 
-        // Visual pools
+        // Visual containers
         private GameObject _buildingContainer;
         private GameObject _citizenContainer;
-        private List<GameObject> _buildingVisuals = new List<GameObject>();
-        private List<GameObject> _citizenVisuals = new List<GameObject>();
-        private Mesh _quadMesh;
-        private Material _visualMat;
+        private List<BuildingVisual> _buildingVisuals = new();
+        private List<CitizenVisual> _citizenVisuals = new();
 
-        // Map dimensions (read from sim)
+        // Selection
+        private Entity _selectedBuilding = Entity.Null;
+        private BuildingVisual _selectedVisual;
+        private Camera _mainCamera;
+
+        // Info panel
+        private Canvas _infoCanvas;
+        private GameObject _infoPanel;
+        private Text _infoText;
+
+        // Map dimensions
         private int _mapWidth = 100;
         private int _mapHeight = 100;
+
+        // Mesh templates
+        private Mesh _cubeMesh;
+        private Mesh _peakRoofMesh;
+        private Mesh _flatRoofMesh;
+        private Mesh _citizenMesh;
+
+        public class BuildingVisual
+        {
+            public GameObject Root;
+            public MeshRenderer WallRenderer;
+            public MeshRenderer RoofRenderer;
+            public Entity BuildingEntity;
+            public int2 TilePos;
+        }
+
+        public class CitizenVisual
+        {
+            public GameObject Root;
+            public MeshRenderer Renderer;
+            public int2 LastPos;
+        }
 
         void Start()
         {
             _gameLoop = GetComponent<GameLoop>();
-            _quadMesh = CreateQuadMesh();
-
-            // Find an unlit shader — built-in RP uses "Unlit/Color".
-            // Fallback chain for different render pipelines.
-            var shader = Shader.Find("Unlit/Color");
-            if (shader == null) shader = Shader.Find("Sprites/Default");
-            if (shader == null) shader = Shader.Find("Hidden/Internal-Colored");
-            _visualMat = new Material(shader);
-
-            _groundMat = new Material(shader);
-            _groundMat.color = groundColor;
-
-            _buildingContainer = new GameObject("Buildings");
-            _buildingContainer.transform.SetParent(transform);
-
-            _citizenContainer = new GameObject("Citizens");
-            _citizenContainer.transform.SetParent(transform);
-
-            // Initial creation of ground (dimensions may be refined after bootstrap)
+            _mainCamera = Camera.main;
+            CreateMeshTemplates();
             CreateGround();
+            CreateContainers();
+            CreateInfoPanel();
         }
 
         void LateUpdate()
@@ -95,13 +122,15 @@ namespace Groundwork.Renderer
             if (!_initialized)
             {
                 InitializeEntityQueries();
-                // Re-read actual map dimensions
                 ReadMapDimensions();
                 CreateGround(); // Recreate with correct dimensions
                 _initialized = true;
             }
 
-            UpdateEntityVisuals();
+            HandleInput();
+            UpdateBuildingVisuals();
+            UpdateCitizenVisuals();
+            UpdateInfoPanel();
         }
 
         void OnDestroy()
@@ -111,133 +140,309 @@ namespace Groundwork.Renderer
                 _buildingQuery.Dispose();
                 _citizenQuery.Dispose();
             }
-            if (_visualMat != null) Destroy(_visualMat);
-            if (_groundMat != null) Destroy(_groundMat);
-            if (_quadMesh != null) Destroy(_quadMesh);
+            CleanupMeshes();
         }
 
-        /// <summary>
-        /// Draw grid lines via immediate-mode GL. Called by Unity's rendering pipeline.
-        /// </summary>
-        void OnRenderObject()
+        // ═══════════════════════════════════════════
+        //  Mesh Templates
+        // ═══════════════════════════════════════════
+
+        private void CreateMeshTemplates()
         {
-            if (!_initialized || _groundMat == null) return;
-
-            _groundMat.SetPass(0);
-            GL.PushMatrix();
-            GL.Begin(GL.LINES);
-            GL.Color(gridLineColor);
-
-            float y = 0.003f; // just above the ground plane
-
-            // Vertical lines (along X)
-            for (int x = 0; x <= _mapWidth; x++)
-            {
-                GL.Vertex3(x * tileSize, y, 0);
-                GL.Vertex3(x * tileSize, y, _mapHeight * tileSize);
-            }
-
-            // Horizontal lines (along Z)
-            for (int z = 0; z <= _mapHeight; z++)
-            {
-                GL.Vertex3(0, y, z * tileSize);
-                GL.Vertex3(_mapWidth * tileSize, y, z * tileSize);
-            }
-
-            GL.End();
-            GL.PopMatrix();
+            _cubeMesh = CreateCubeMesh();
+            _peakRoofMesh = CreatePeakRoofMesh();
+            _flatRoofMesh = CreateFlatRoofMesh();
+            _citizenMesh = CreateCitizenMesh();
         }
 
-        // ──────────────────────────────────────────────
-        //  Ground mesh
-        // ──────────────────────────────────────────────
+        private void CleanupMeshes()
+        {
+            if (_cubeMesh != null) Destroy(_cubeMesh);
+            if (_peakRoofMesh != null) Destroy(_peakRoofMesh);
+            if (_flatRoofMesh != null) Destroy(_flatRoofMesh);
+            if (_citizenMesh != null) Destroy(_citizenMesh);
+        }
+
+        private static Mesh CreateCubeMesh()
+        {
+            return CreatePrimitiveMesh(PrimitiveType.Cube);
+        }
+
+        private static Mesh CreatePrimitiveMesh(PrimitiveType type)
+        {
+            var go = GameObject.CreatePrimitive(type);
+            var mesh = go.GetComponent<MeshFilter>().sharedMesh;
+            var copy = Instantiate(mesh);
+            copy.name = type.ToString();
+            Destroy(go);
+            return copy;
+        }
+
+        private Mesh CreatePeakRoofMesh()
+        {
+            // Triangle prism shape — like a gable roof
+            var mesh = new Mesh { name = "PeakRoof" };
+            float hw = 0.5f + roofOverhang * 0.3f;
+            float hd = 0.5f + roofOverhang;
+            float hh = roofHeight * 0.5f;
+            Vector3[] verts = new Vector3[]
+            {
+                new(-hw, 0, -hd), new(hw, 0, -hd), new(0, hh, 0), // front triangle
+                new(-hw, 0,  hd), new(hw, 0,  hd), new(0, hh, 0), // back triangle
+            };
+            int[] tris = new int[]
+            {
+                0,1,2, 3,5,4, // triangles
+                0,3,1, 1,3,4, // sides
+            };
+            mesh.vertices = verts;
+            mesh.triangles = tris;
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
+            return mesh;
+        }
+
+        private Mesh CreateFlatRoofMesh()
+        {
+            // Flat slab slightly wider than the building
+            var mesh = new Mesh { name = "FlatRoof" };
+            float hw = 0.5f + roofOverhang * 0.3f;
+            float hd = 0.5f + roofOverhang;
+            float h = roofHeight * 0.4f;
+            Vector3[] verts = new Vector3[]
+            {
+                new(-hw, 0, -hd), new(hw, 0, -hd), new(-hw, 0, hd), new(hw, 0, hd),
+                new(-hw, h, -hd), new(hw, h, -hd), new(-hw, h, hd), new(hw, h, hd),
+            };
+            int[] tris = new int[]
+            {
+                0,2,1, 1,2,3, // bottom
+                4,5,6, 5,7,6, // top
+                0,1,4, 1,5,4, // front
+                2,6,3, 3,6,7, // back
+                0,4,2, 2,4,6, // left
+                1,3,5, 3,7,5, // right
+            };
+            mesh.vertices = verts;
+            mesh.triangles = tris;
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
+            return mesh;
+        }
+
+        private Mesh CreateCitizenMesh()
+        {
+            // Small upwards-pointing triangle (arrow shape) to show direction
+            // Actually a small cylinder is more visible
+            var go = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            var mesh = go.GetComponent<MeshFilter>().sharedMesh;
+            var copy = Instantiate(mesh);
+            copy.name = "CitizenCylinder";
+            Destroy(go);
+            return copy;
+        }
+
+        // ═══════════════════════════════════════════
+        //  Ground + Containers
+        // ═══════════════════════════════════════════
 
         private void CreateGround()
         {
             if (_groundObject != null)
                 Destroy(_groundObject);
 
+            var shader = Shader.Find("Unlit/Color");
+            if (shader == null) shader = Shader.Find("Sprites/Default");
+            _groundMat = new Material(shader) { color = groundColor };
+
             _groundObject = new GameObject("Ground");
             _groundObject.transform.SetParent(transform);
-
             var mf = _groundObject.AddComponent<MeshFilter>();
             var mr = _groundObject.AddComponent<MeshRenderer>();
-
             mf.mesh = CreateGroundMesh();
             mr.material = _groundMat;
         }
 
         private Mesh CreateGroundMesh()
         {
-            var mesh = new Mesh();
-            mesh.name = "GroundMesh";
-
+            var mesh = new Mesh { name = "Ground" };
             float w = _mapWidth * tileSize;
             float h = _mapHeight * tileSize;
-
-            Vector3[] vertices = new Vector3[4];
-            vertices[0] = new Vector3(0, 0, 0);
-            vertices[1] = new Vector3(w, 0, 0);
-            vertices[2] = new Vector3(0, 0, h);
-            vertices[3] = new Vector3(w, 0, h);
-
-            int[] triangles = new int[] { 0, 2, 1, 2, 3, 1 };
-
-            Vector2[] uv = new Vector2[4];
-            uv[0] = new Vector2(0, 0);
-            uv[1] = new Vector2(1, 0);
-            uv[2] = new Vector2(0, 1);
-            uv[3] = new Vector2(1, 1);
-
-            mesh.vertices = vertices;
-            mesh.triangles = triangles;
-            mesh.uv = uv;
+            mesh.vertices = new[] { new Vector3(0,0,0), new Vector3(w,0,0), new Vector3(0,0,h), new Vector3(w,0,h) };
+            mesh.triangles = new[] { 0,2,1, 2,3,1 };
             mesh.RecalculateNormals();
             mesh.RecalculateBounds();
-
             return mesh;
         }
 
-        private Mesh CreateQuadMesh()
+        private void CreateContainers()
         {
-            var mesh = new Mesh();
-            mesh.name = "QuadMesh";
-
-            Vector3[] vertices = new Vector3[4];
-            vertices[0] = new Vector3(-0.5f, 0, -0.5f);
-            vertices[1] = new Vector3( 0.5f, 0, -0.5f);
-            vertices[2] = new Vector3(-0.5f, 0,  0.5f);
-            vertices[3] = new Vector3( 0.5f, 0,  0.5f);
-
-            // Face up (Y)
-            int[] triangles = new int[] { 0, 2, 1, 2, 3, 1 };
-
-            Vector2[] uv = new Vector2[4];
-            uv[0] = new Vector2(0, 0);
-            uv[1] = new Vector2(1, 0);
-            uv[2] = new Vector2(0, 1);
-            uv[3] = new Vector2(1, 1);
-
-            mesh.vertices = vertices;
-            mesh.triangles = triangles;
-            mesh.uv = uv;
-            mesh.RecalculateNormals();
-            mesh.RecalculateBounds();
-
-            return mesh;
+            _buildingContainer = new GameObject("Buildings");
+            _buildingContainer.transform.SetParent(transform);
+            _citizenContainer = new GameObject("Citizens");
+            _citizenContainer.transform.SetParent(transform);
         }
 
-        // ──────────────────────────────────────────────
-        //  Entity queries
-        // ──────────────────────────────────────────────
+        // ═══════════════════════════════════════════
+        //  Info Panel (click-to-select)
+        // ═══════════════════════════════════════════
+
+        private void CreateInfoPanel()
+        {
+            // Find or create canvas for overlay
+            var existingCanvas = FindAnyObjectByType<Canvas>();
+            if (existingCanvas != null)
+            {
+                _infoCanvas = existingCanvas;
+            }
+            else
+            {
+                var canvasGo = new GameObject("InfoCanvas");
+                _infoCanvas = canvasGo.AddComponent<Canvas>();
+                _infoCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                canvasGo.AddComponent<CanvasScaler>();
+                canvasGo.AddComponent<GraphicRaycaster>();
+            }
+
+            _infoPanel = new GameObject("InfoPanel");
+            _infoPanel.transform.SetParent(_infoCanvas.transform, false);
+
+            var bg = _infoPanel.AddComponent<Image>();
+            bg.color = new Color(0, 0, 0, 0.75f);
+
+            var rt = _infoPanel.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(1, 0.5f);
+            rt.anchorMax = new Vector2(1, 0.5f);
+            rt.pivot = new Vector2(1, 0.5f);
+            rt.anchoredPosition = new Vector2(-16, 0);
+            rt.sizeDelta = new Vector2(260, 180);
+
+            var textGo = new GameObject("InfoText");
+            textGo.transform.SetParent(_infoPanel.transform, false);
+            _infoText = textGo.AddComponent<Text>();
+            _infoText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            _infoText.fontSize = 14;
+            _infoText.color = Color.white;
+            var trt = _infoText.GetComponent<RectTransform>();
+            trt.anchorMin = Vector2.zero;
+            trt.anchorMax = Vector2.one;
+            trt.offsetMin = new Vector2(8, 8);
+            trt.offsetMax = new Vector2(-8, -8);
+
+            _infoPanel.SetActive(false);
+        }
+
+        // ═══════════════════════════════════════════
+        //  Input Handling
+        // ═══════════════════════════════════════════
+
+        private void HandleInput()
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
+                if (Physics.Raycast(ray, out var hit, 200f))
+                {
+                    var wrapper = hit.collider.GetComponentInParent<BuildingVisualWrapper>();
+                    if (wrapper != null && wrapper.Visual != null)
+                    {
+                        SelectBuilding(wrapper.Visual.BuildingEntity);
+                    }
+                    else
+                    {
+                        DeselectBuilding();
+                    }
+                }
+                else
+                {
+                    DeselectBuilding();
+                }
+            }
+        }
+
+        private void SelectBuilding(Entity entity)
+        {
+            // Deselect previous
+            if (_selectedVisual != null)
+            {
+                _selectedVisual.WallRenderer.material.color = GetBuildingConfig(_selectedVisual.BuildingEntity).WallColor;
+            }
+
+            _selectedBuilding = entity;
+            _selectedVisual = FindBuildingVisual(entity);
+            if (_selectedVisual != null)
+            {
+                _selectedVisual.WallRenderer.material.color = selectedTint;
+                _infoPanel.SetActive(true);
+            }
+        }
+
+        private void DeselectBuilding()
+        {
+            if (_selectedVisual != null)
+            {
+                _selectedVisual.WallRenderer.material.color = GetBuildingConfig(_selectedVisual.BuildingEntity).WallColor;
+            }
+            _selectedBuilding = Entity.Null;
+            _selectedVisual = null;
+            _infoPanel.SetActive(false);
+        }
+
+        private BuildingVisual FindBuildingVisual(Entity entity)
+        {
+            foreach (var v in _buildingVisuals)
+                if (v.BuildingEntity == entity)
+                    return v;
+            return null;
+        }
+
+        private void UpdateInfoPanel()
+        {
+            if (!_infoPanel.activeSelf || _selectedBuilding == Entity.Null || _gameLoop?.World == null)
+                return;
+
+            var em = _gameLoop.World.EntityManager;
+            if (!em.Exists(_selectedBuilding))
+            {
+                DeselectBuilding();
+                return;
+            }
+
+            var bldg = em.GetComponentData<Building>(_selectedBuilding);
+            var outputInv = em.GetBuffer<OutputSlot>(_selectedBuilding);
+            string invStr = "";
+            for (int i = 0; i < outputInv.Length; i++)
+                invStr += $"{outputInv[i].ItemId}: {outputInv[i].Quantity}\n";
+
+            int workers = 0;
+            if (bldg.MaxWorkers > 0)
+            {
+                var citizenQuery = em.CreateEntityQuery(typeof(Citizen));
+                var citizens = citizenQuery.ToComponentDataArray<Citizen>(Allocator.Temp);
+                for (int i = 0; i < citizens.Length; i++)
+                    if (citizens[i].WorkplaceBuilding == _selectedBuilding)
+                        workers++;
+                citizens.Dispose();
+                citizenQuery.Dispose();
+            }
+
+            var pos = em.GetComponentData<MapPosition>(_selectedBuilding);
+            _infoText.text = $"<b>{bldg.BuildingType}</b>\n" +
+                $"[{pos.TileCoordinate.x}, {pos.TileCoordinate.y}]\n\n" +
+                $"Workers: {workers}/{bldg.MaxWorkers}\n" +
+                $"Size: {bldg.FootprintSize}x{bldg.FootprintSize}\n\n" +
+                $"Inventory:\n{invStr}";
+        }
+
+        // ═══════════════════════════════════════════
+        //  Entity Queries
+        // ═══════════════════════════════════════════
 
         private void InitializeEntityQueries()
         {
             var em = _gameLoop.World.EntityManager;
-            _buildingQuery = em.CreateEntityQuery(
-                typeof(Building), typeof(MapPosition));
-            _citizenQuery = em.CreateEntityQuery(
-                typeof(Citizen), typeof(MapPosition));
+            _buildingQuery = em.CreateEntityQuery(typeof(Building), typeof(MapPosition));
+            _citizenQuery = em.CreateEntityQuery(typeof(Citizen), typeof(MapPosition));
         }
 
         private void ReadMapDimensions()
@@ -256,18 +461,28 @@ namespace Groundwork.Renderer
                     }
                 }
             }
-            catch { /* MapGridData may not be created yet */ }
+            catch { }
             finally { mapQuery.Dispose(); }
         }
 
-        // ──────────────────────────────────────────────
-        //  Entity visuals update
-        // ──────────────────────────────────────────────
+        // ═══════════════════════════════════════════
+        //  Building Visuals
+        // ═══════════════════════════════════════════
 
-        private void UpdateEntityVisuals()
+        private static BuildingVisualConfig GetBuildingConfig(Entity entity)
         {
-            UpdateBuildingVisuals();
-            UpdateCitizenVisuals();
+            // This is accessed from BuildingVisual via the entity reference;
+            // we need the BuildingType but don't have it here.
+            // The config is set at creation time — just return default.
+            return new BuildingVisualConfig { WallColor = Color.gray, RoofColor = Color.gray };
+        }
+
+        private BuildingVisualConfig GetBuildingConfig(string buildingType)
+        {
+            var typeStr = buildingType.ToString();
+            if (BuildingConfigs.TryGetValue(typeStr, out var cfg))
+                return cfg;
+            return new BuildingVisualConfig { WallColor = Color.gray, RoofColor = Color.gray };
         }
 
         private void UpdateBuildingVisuals()
@@ -275,37 +490,96 @@ namespace Groundwork.Renderer
             if (!_initialized) return;
 
             var buildings = _buildingQuery.ToComponentDataArray<Building>(Allocator.Temp);
+            var entities = _buildingQuery.ToEntityArray(Allocator.Temp);
             var positions = _buildingQuery.ToComponentDataArray<MapPosition>(Allocator.Temp);
 
-            EnsureVisualPool(ref _buildingVisuals, buildings.Length, _buildingContainer,
-                "Building", buildingScale);
+            // Grow or shrink visual pool
+            while (_buildingVisuals.Count < buildings.Length)
+                _buildingVisuals.Add(CreateBuildingVisual());
+            while (_buildingVisuals.Count > buildings.Length)
+            {
+                var last = _buildingVisuals[_buildingVisuals.Count - 1];
+                if (last == _selectedVisual) _selectedVisual = null;
+                Destroy(last.Root);
+                _buildingVisuals.RemoveAt(_buildingVisuals.Count - 1);
+            }
 
             for (int i = 0; i < buildings.Length; i++)
             {
                 var visual = _buildingVisuals[i];
-                visual.SetActive(true);
+                visual.Root.SetActive(true);
+                visual.BuildingEntity = entities[i];
 
                 var pos = positions[i].TileCoordinate;
+                visual.TilePos = pos;
                 var footSize = buildings[i].FootprintSize > 0 ? buildings[i].FootprintSize : (byte)1;
-                float size = buildingScale * footSize;
-                
-                visual.transform.position = new Vector3(
-                    pos.x * tileSize + tileSize * footSize * 0.5f,
-                    buildingHeight,
-                    pos.y * tileSize + tileSize * footSize * 0.5f);
-                visual.transform.localScale = new Vector3(size, 1f, size);
+                float size = buildingFootprintScale * footSize;
+                float cx = pos.x * tileSize + tileSize * footSize * 0.5f;
+                float cz = pos.y * tileSize + tileSize * footSize * 0.5f;
 
-                var renderer = visual.GetComponent<MeshRenderer>();
-                renderer.material.color = GetBuildingColor(buildings[i].BuildingType);
+                visual.Root.transform.position = new Vector3(cx, 0, cz);
+                visual.Root.transform.localScale = new Vector3(size, 1f, size);
+
+                // Set wall height by adjusting the child wall object
+                var wallTransform = visual.WallRenderer.transform;
+                wallTransform.localScale = new Vector3(1f, wallHeight, 1f);
+                wallTransform.localPosition = new Vector3(0, wallHeight * 0.5f, 0);
+
+                var roofTransform = visual.RoofRenderer.transform;
+                roofTransform.localPosition = new Vector3(0, wallHeight, 0);
+
+                var cfg = GetBuildingConfig(buildings[i].BuildingType.ToString());
+                visual.WallRenderer.material.color = entities[i] == _selectedBuilding ? selectedTint : cfg.WallColor;
+                visual.RoofRenderer.material.color = cfg.RoofColor;
             }
 
-            // Hide unused
-            for (int i = buildings.Length; i < _buildingVisuals.Count; i++)
-                _buildingVisuals[i].SetActive(false);
-
             buildings.Dispose();
+            entities.Dispose();
             positions.Dispose();
         }
+
+        private BuildingVisual CreateBuildingVisual()
+        {
+            var root = new GameObject("Building");
+            root.transform.SetParent(_buildingContainer.transform);
+
+            // Add a collider for click detection
+            var boxCollider = root.AddComponent<BoxCollider>();
+            boxCollider.size = new Vector3(1, wallHeight + roofHeight, 1);
+            boxCollider.center = new Vector3(0, (wallHeight + roofHeight) * 0.5f, 0);
+
+            // Wall (cube)
+            var wallGo = new GameObject("Wall");
+            wallGo.transform.SetParent(root.transform);
+            var wallMf = wallGo.AddComponent<MeshFilter>();
+            wallMf.sharedMesh = _cubeMesh;
+            var wallMr = wallGo.AddComponent<MeshRenderer>();
+            wallMr.material = new Material(_groundMat);
+
+            // Roof
+            var roofGo = new GameObject("Roof");
+            roofGo.transform.SetParent(root.transform);
+            var roofMf = roofGo.AddComponent<MeshFilter>();
+            roofMf.sharedMesh = _flatRoofMesh; // default
+            var roofMr = roofGo.AddComponent<MeshRenderer>();
+            roofMr.material = new Material(_groundMat);
+
+            // Attach a wrapper MonoBehaviour for raycast lookup
+            var wrapper = root.AddComponent<BuildingVisualWrapper>();
+            var visual = new BuildingVisual
+            {
+                Root = root,
+                WallRenderer = wallMr,
+                RoofRenderer = roofMr,
+            };
+            wrapper.Visual = visual;
+
+            return visual;
+        }
+
+        // ═══════════════════════════════════════════
+        //  Citizen Visuals
+        // ═══════════════════════════════════════════
 
         private void UpdateCitizenVisuals()
         {
@@ -314,60 +588,93 @@ namespace Groundwork.Renderer
             var citizens = _citizenQuery.ToComponentDataArray<Citizen>(Allocator.Temp);
             var positions = _citizenQuery.ToComponentDataArray<MapPosition>(Allocator.Temp);
 
-            EnsureVisualPool(ref _citizenVisuals, citizens.Length, _citizenContainer,
-                "Citizen", citizenScale);
+            while (_citizenVisuals.Count < citizens.Length)
+                _citizenVisuals.Add(CreateCitizenVisual());
+            while (_citizenVisuals.Count > citizens.Length)
+            {
+                var last = _citizenVisuals[_citizenVisuals.Count - 1];
+                Destroy(last.Root);
+                _citizenVisuals.RemoveAt(_citizenVisuals.Count - 1);
+            }
 
             for (int i = 0; i < citizens.Length; i++)
             {
                 var visual = _citizenVisuals[i];
-                visual.SetActive(true);
+                visual.Root.SetActive(true);
 
                 var pos = positions[i].TileCoordinate;
-                visual.transform.position = new Vector3(
-                    pos.x * tileSize + tileSize * 0.5f,
-                    citizenHeight,
-                    pos.y * tileSize + tileSize * 0.5f);
+                float cx = pos.x * tileSize + tileSize * 0.5f;
+                float cz = pos.y * tileSize + tileSize * 0.5f;
 
-                var renderer = visual.GetComponent<MeshRenderer>();
-                renderer.material.color = citizenColor;
+                // Compute direction from last position
+                float angle = 0f;
+                if (visual.LastPos.x != pos.x || visual.LastPos.y != pos.y)
+                {
+                    int2 dir = pos - visual.LastPos;
+                    angle = Mathf.Atan2(dir.x, dir.y) * Mathf.Rad2Deg;
+                }
+                visual.LastPos = pos;
+
+                visual.Root.transform.position = new Vector3(cx, wallHeight * 0.1f, cz);
+                visual.Root.transform.localScale = new Vector3(citizenScale, citizenScale * 0.3f, citizenScale);
+                visual.Root.transform.rotation = Quaternion.Euler(0, angle, 0);
+
+                bool isHauler = citizens[i].WorkplaceBuilding == Entity.Null;
+                visual.Renderer.material.color = isHauler ? haulerColor : citizenColor;
             }
-
-            for (int i = citizens.Length; i < _citizenVisuals.Count; i++)
-                _citizenVisuals[i].SetActive(false);
 
             citizens.Dispose();
             positions.Dispose();
         }
 
-        // ──────────────────────────────────────────────
-        //  Visual pool management
-        // ──────────────────────────────────────────────
-
-        private void EnsureVisualPool(ref List<GameObject> pool, int needed,
-            GameObject parent, string prefix, float scale)
+        private CitizenVisual CreateCitizenVisual()
         {
-            while (pool.Count < needed)
+            var root = new GameObject("Citizen");
+            root.transform.SetParent(_citizenContainer.transform);
+            var mf = root.AddComponent<MeshFilter>();
+            mf.sharedMesh = _citizenMesh;
+            var mr = root.AddComponent<MeshRenderer>();
+            mr.material = new Material(_groundMat);
+            var visual = new CitizenVisual
             {
-                var go = new GameObject($"{prefix}_{pool.Count}");
-                go.transform.SetParent(parent.transform);
-
-                var mf = go.AddComponent<MeshFilter>();
-                mf.mesh = _quadMesh;
-
-                var mr = go.AddComponent<MeshRenderer>();
-                mr.material = new Material(_visualMat);
-
-                go.transform.localScale = new Vector3(scale, 1f, scale);
-                pool.Add(go);
-            }
+                Root = root,
+                Renderer = mr,
+            };
+            return visual;
         }
 
-        private static Color GetBuildingColor(FixedString32Bytes buildingType)
+        // ═══════════════════════════════════════════
+        //  Grid Lines (GL)
+        // ═══════════════════════════════════════════
+
+        void OnRenderObject()
         {
-            var key = buildingType.ToString();
-            if (BuildingColors.TryGetValue(key, out var color))
-                return color;
-            return Color.gray; // unknown building type
+            if (!_initialized || _groundMat == null) return;
+            _groundMat.SetPass(0);
+            GL.PushMatrix();
+            GL.Begin(GL.LINES);
+            GL.Color(gridLineColor);
+            float y = 0.005f;
+            for (int x = 0; x <= _mapWidth; x++)
+            {
+                GL.Vertex3(x * tileSize, y, 0);
+                GL.Vertex3(x * tileSize, y, _mapHeight * tileSize);
+            }
+            for (int z = 0; z <= _mapHeight; z++)
+            {
+                GL.Vertex3(0, y, z * tileSize);
+                GL.Vertex3(_mapWidth * tileSize, y, z * tileSize);
+            }
+            GL.End();
+            GL.PopMatrix();
         }
+    }
+
+    /// <summary>
+    /// MonoBehaviour wrapper so BuildingVisual can be found via GetComponent in raycast.
+    /// </summary>
+    public class BuildingVisualWrapper : MonoBehaviour
+    {
+        public MapRenderer.BuildingVisual Visual;
     }
 }
