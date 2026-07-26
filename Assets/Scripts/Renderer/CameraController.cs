@@ -15,9 +15,9 @@ namespace Groundwork.Renderer
         public float edgePanThreshold = 0.05f;
 
         [Header("Zoom Settings")]
-        public float zoomSpeed = 8f;
-        public float minZoom = 5f;
-        public float maxZoom = 80f;
+        public float zoomSpeed = 12f;         // higher = faster pinch zoom
+        public float minZoom = 3f;
+        public float maxZoom = 120f;
 
         [Header("Map Bounds")]
         public Vector2 mapCenter = new Vector2(35f, 20f); // centered on building cluster
@@ -131,8 +131,8 @@ namespace Groundwork.Renderer
             float delta = _lastPinchDistance - currentDistance;
             _lastPinchDistance = currentDistance;
 
-            // Scale zoom speed by current zoom level and screen size
-            float zoomFactor = delta / Screen.height * zoomSpeed * 2f;
+            // Scale zoom relative to current zoom level — fast response at any zoom
+            float zoomFactor = (delta / Screen.height) * zoomSpeed * _cam.orthographicSize;
             _cam.orthographicSize += zoomFactor;
             _cam.orthographicSize = Mathf.Clamp(_cam.orthographicSize, minZoom, maxZoom);
         }
@@ -184,6 +184,7 @@ namespace Groundwork.Renderer
 
         void HandleEdgePan()
         {
+            if (Input.touchSupported) return; // desktop only — avoids ghost scrolling on touch
             Vector3 mouse = Input.mousePosition;
             Vector3 move = Vector3.zero;
 

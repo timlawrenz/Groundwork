@@ -137,7 +137,7 @@ namespace Groundwork.Renderer
         {
             if (!_initialized) return;
             var style = new GUIStyle(GUI.skin.label);
-            style.fontSize = 18;
+            style.fontSize = 24;
             style.normal.textColor = Color.white;
             int activeBuildings = 0;
             foreach (var v in _buildingVisuals) if (v.Root.activeSelf) activeBuildings++;
@@ -339,7 +339,7 @@ namespace Groundwork.Renderer
             textGo.transform.SetParent(_infoPanel.transform, false);
             _infoText = textGo.AddComponent<Text>();
             _infoText.font = Font.CreateDynamicFontFromOSFont("Arial", 14);
-            _infoText.fontSize = 14;
+            _infoText.fontSize = 22;
             _infoText.color = Color.white;
             var trt = _infoText.GetComponent<RectTransform>();
             trt.anchorMin = Vector2.zero;

@@ -50,7 +50,7 @@ namespace Groundwork.Renderer
 
             // Use built-in font
             _statsText.font = Font.CreateDynamicFontFromOSFont("Arial", 16);
-            _statsText.fontSize = 16;
+            _statsText.fontSize = 26;
             _statsText.color = new Color(1f, 1f, 1f, 0.9f);
             _statsText.alignment = TextAnchor.UpperLeft;
 
