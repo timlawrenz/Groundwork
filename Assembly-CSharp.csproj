@@ -79,6 +79,9 @@
     <Compile Include="Assets/Scripts/SentryStartup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets/Shaders/GroundworkUnlitColor.shader" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="UnityEngine">
       <HintPath>/home/tim/Unity/Hub/Editor/6000.3.20f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
       <Private>False</Private>

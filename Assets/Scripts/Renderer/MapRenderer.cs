@@ -17,8 +17,8 @@ namespace Groundwork.Renderer
     {
         [Header("Grid")]
         public float tileSize = 1f;
-        public Color groundColor = new Color(0.28f, 0.30f, 0.18f);
-        public Color gridLineColor = new Color(0.12f, 0.10f, 0.05f);
+        public Color groundColor = new Color(0.35f, 0.40f, 0.22f); // lighter olive for contrast
+        public Color gridLineColor = new Color(0.10f, 0.08f, 0.03f);
 
         [Header("Buildings")]
         public float buildingFootprintScale = 0.9f;
@@ -45,10 +45,10 @@ namespace Groundwork.Renderer
 
         private static readonly Dictionary<string, BuildingVisualConfig> BuildingConfigs = new()
         {
-            ["house"] = new() { WallColor = new Color(0.75f, 0.55f, 0.28f), RoofColor = new Color(0.55f, 0.20f, 0.10f), HasPeakedRoof = true },
-            ["gatherer_hut"] = new() { WallColor = new Color(0.45f, 0.60f, 0.30f), RoofColor = new Color(0.30f, 0.40f, 0.18f), HasPeakedRoof = false },
-            ["forester_hut"] = new() { WallColor = new Color(0.22f, 0.50f, 0.20f), RoofColor = new Color(0.12f, 0.30f, 0.12f), HasPeakedRoof = false },
-            ["woodcutter"] = new() { WallColor = new Color(0.60f, 0.35f, 0.18f), RoofColor = new Color(0.40f, 0.20f, 0.10f), HasPeakedRoof = true },
+            ["house"] = new() { WallColor = new Color(0.85f, 0.70f, 0.45f), RoofColor = new Color(0.65f, 0.30f, 0.15f), HasPeakedRoof = true },
+            ["gatherer_hut"] = new() { WallColor = new Color(0.55f, 0.80f, 0.40f), RoofColor = new Color(0.35f, 0.55f, 0.25f), HasPeakedRoof = false },
+            ["forester_hut"] = new() { WallColor = new Color(0.35f, 0.70f, 0.30f), RoofColor = new Color(0.18f, 0.45f, 0.15f), HasPeakedRoof = false },
+            ["woodcutter"] = new() { WallColor = new Color(0.75f, 0.50f, 0.30f), RoofColor = new Color(0.55f, 0.30f, 0.15f), HasPeakedRoof = true },
         };
 
         private GameLoop _gameLoop;
@@ -251,7 +251,8 @@ namespace Groundwork.Renderer
             if (_groundObject != null)
                 Destroy(_groundObject);
 
-            var shader = Shader.Find("Sprites/Default");
+            var shader = Shader.Find("Groundwork/UnlitColor");
+            if (shader == null) shader = Shader.Find("Sprites/Default");
             if (shader == null) shader = Shader.Find("Unlit/Color");
             _groundMat = new Material(shader) { color = groundColor };
 
