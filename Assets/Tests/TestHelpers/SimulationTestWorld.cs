@@ -268,6 +268,7 @@ namespace Groundwork.TestHelpers
             UpdateSystem<DebugVizSystem>();
             UpdateSystem<SimulationStatsSystem>();
             UpdateSystem<EventDispatchSystem>();
+            UpdateSystem<LuaModSystem>();
         }
 
         /// <summary>
@@ -295,6 +296,7 @@ namespace Groundwork.TestHelpers
                 World.CreateSystem<DeathSystem>(),
                 World.CreateSystem<DebugVizSystem>(),
                 World.CreateSystem<EventDispatchSystem>(),
+                World.CreateSystem<LuaModSystem>(),
                 World.CreateSystem<SimulationStatsSystem>(),
             };
 

@@ -87,10 +87,12 @@
     <Compile Include="Assets/Scripts/Simulation/Systems/CitizenHaulSystem.cs" />
     <Compile Include="Assets/Scripts/Simulation/Components/SimulationConfig.cs" />
     <Compile Include="Assets/Scripts/Simulation/Components/SimulationStats.cs" />
+    <Compile Include="Assets/Scripts/Simulation/Systems/LuaModSystem.cs" />
     <Compile Include="Assets/Scripts/Simulation/Components/OutputSlot.cs" />
     <Compile Include="Assets/Scripts/Simulation/Buffers/SimulationEvent.cs" />
     <Compile Include="Assets/Scripts/Simulation/Components/Building.cs" />
     <Compile Include="Assets/Scripts/Simulation/Components/ContentDefinitions.cs" />
+    <Compile Include="Assets/Scripts/Simulation/Systems/LuaRuntime.cs" />
     <Compile Include="Assets/Scripts/Simulation/Systems/ContentLoaderSystem.cs" />
     <Compile Include="Assets/Scripts/Simulation/Components/MapGridData.cs" />
     <Compile Include="Assets/Scripts/Simulation/Tags/GameEntityTags.cs" />
@@ -626,6 +628,10 @@
     </Reference>
     <Reference Include="System.IO.Hashing">
       <HintPath>Library/PackageCache/com.unity.collections@9796e5ee0d9e/Unity.Collections.Tests/System.IO.Hashing/System.IO.Hashing.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="MoonSharp.Interpreter">
+      <HintPath>Assets/Plugins/MoonSharp.Interpreter.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Sentry.Mono.Cecil">

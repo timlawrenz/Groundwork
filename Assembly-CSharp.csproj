@@ -539,6 +539,10 @@
       <HintPath>Library/PackageCache/com.unity.collections@9796e5ee0d9e/Unity.Collections.Tests/System.IO.Hashing/System.IO.Hashing.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="MoonSharp.Interpreter">
+      <HintPath>Assets/Plugins/MoonSharp.Interpreter.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Sentry.System.Collections.Immutable">
       <HintPath>Library/PackageCache/io.sentry.unity@2768f82362e9/Runtime/Sentry.System.Collections.Immutable.dll</HintPath>
       <Private>False</Private>

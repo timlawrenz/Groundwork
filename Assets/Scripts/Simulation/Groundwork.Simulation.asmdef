@@ -5,7 +5,8 @@
         "Unity.Entities",
         "Unity.Collections",
         "Unity.Mathematics",
-        "Unity.Burst"
+        "Unity.Burst",
+        "MoonSharp.Interpreter"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

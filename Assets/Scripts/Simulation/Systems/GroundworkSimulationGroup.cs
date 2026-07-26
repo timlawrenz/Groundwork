@@ -75,4 +75,8 @@ namespace Groundwork.Simulation
     [UpdateInGroup(typeof(GroundworkSimulationGroup))]
     [UpdateAfter(typeof(SimulationStatsSystem))]
     public partial struct EventDispatchSystem { }
+
+    [UpdateInGroup(typeof(GroundworkSimulationGroup))]
+    [UpdateAfter(typeof(EventDispatchSystem))]
+    public partial struct LuaModSystem { }
 }
