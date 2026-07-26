@@ -31,6 +31,7 @@ namespace Groundwork.Renderer
             var go = new GameObject("Groundwork Renderer");
             go.AddComponent<GameLoop>();
             go.AddComponent<MapRenderer>();
+            go.AddComponent<GameHUD>();
 
             Debug.Log("[SceneBootstrapper] Created Groundwork Renderer.");
         }

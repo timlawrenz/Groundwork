@@ -114,6 +114,7 @@ namespace Groundwork.Renderer
                 World.CreateSystem<DebugVizSystem>(),
                 World.CreateSystem<SimulationStatsSystem>(),
                 World.CreateSystem<EventDispatchSystem>(),
+                World.CreateSystem<LuaModSystem>(),
             };
 
             foreach (var handle in _tickSystems)

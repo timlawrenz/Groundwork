@@ -35,6 +35,7 @@ namespace Groundwork.Renderer
         {
             { "house",         new Color(0.85f, 0.65f, 0.35f) }, // warm brown/yellow
             { "gatherer_hut",  new Color(0.25f, 0.60f, 0.25f) }, // green
+            { "forester_hut",  new Color(0.15f, 0.45f, 0.15f) }, // dark green
             { "woodcutter",    new Color(0.55f, 0.35f, 0.20f) }, // dark brown
         };
 
@@ -285,10 +286,14 @@ namespace Groundwork.Renderer
                 visual.SetActive(true);
 
                 var pos = positions[i].TileCoordinate;
+                var footSize = buildings[i].FootprintSize > 0 ? buildings[i].FootprintSize : (byte)1;
+                float size = buildingScale * footSize;
+                
                 visual.transform.position = new Vector3(
-                    pos.x * tileSize + tileSize * 0.5f,
+                    pos.x * tileSize + tileSize * footSize * 0.5f,
                     buildingHeight,
-                    pos.y * tileSize + tileSize * 0.5f);
+                    pos.y * tileSize + tileSize * footSize * 0.5f);
+                visual.transform.localScale = new Vector3(size, 1f, size);
 
                 var renderer = visual.GetComponent<MeshRenderer>();
                 renderer.material.color = GetBuildingColor(buildings[i].BuildingType);

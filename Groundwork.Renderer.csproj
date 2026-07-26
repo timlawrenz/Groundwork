@@ -78,6 +78,7 @@
   <ItemGroup>
     <Compile Include="Assets/Scripts/Renderer/MapRenderer.cs" />
     <Compile Include="Assets/Scripts/Renderer/GameLoop.cs" />
+    <Compile Include="Assets/Scripts/Renderer/GameHUD.cs" />
     <Compile Include="Assets/Scripts/Renderer/CameraController.cs" />
     <Compile Include="Assets/Scripts/Renderer/SceneBootstrapper.cs" />
     <Compile Include="Assets/Scripts/Renderer/GroundworkBuilder.cs" />
