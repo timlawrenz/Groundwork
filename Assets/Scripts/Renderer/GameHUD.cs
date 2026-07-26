@@ -49,7 +49,7 @@ namespace Groundwork.Renderer
             _statsText = textGo.AddComponent<Text>();
 
             // Use built-in font
-            _statsText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            _statsText.font = Font.CreateDynamicFontFromOSFont("Arial", 16);
             _statsText.fontSize = 16;
             _statsText.color = new Color(1f, 1f, 1f, 0.9f);
             _statsText.alignment = TextAnchor.UpperLeft;

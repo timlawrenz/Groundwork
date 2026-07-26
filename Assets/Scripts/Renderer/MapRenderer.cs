@@ -22,9 +22,9 @@ namespace Groundwork.Renderer
 
         [Header("Buildings")]
         public float buildingFootprintScale = 0.9f;
-        public float wallHeight = 0.4f;
-        public float roofHeight = 0.15f;
-        public float roofOverhang = 0.1f;
+        public float wallHeight = 1.5f;     // was 0.4 — increased for top-down visibility
+        public float roofHeight = 0.5f;     // was 0.15
+        public float roofOverhang = 0.15f;
 
         [Header("Citizens")]
         public float citizenScale = 0.25f;
@@ -251,8 +251,8 @@ namespace Groundwork.Renderer
             if (_groundObject != null)
                 Destroy(_groundObject);
 
-            var shader = Shader.Find("Unlit/Color");
-            if (shader == null) shader = Shader.Find("Sprites/Default");
+            var shader = Shader.Find("Sprites/Default");
+            if (shader == null) shader = Shader.Find("Unlit/Color");
             _groundMat = new Material(shader) { color = groundColor };
 
             _groundObject = new GameObject("Ground");
@@ -320,7 +320,7 @@ namespace Groundwork.Renderer
             var textGo = new GameObject("InfoText");
             textGo.transform.SetParent(_infoPanel.transform, false);
             _infoText = textGo.AddComponent<Text>();
-            _infoText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            _infoText.font = Font.CreateDynamicFontFromOSFont("Arial", 14);
             _infoText.fontSize = 14;
             _infoText.color = Color.white;
             var trt = _infoText.GetComponent<RectTransform>();
