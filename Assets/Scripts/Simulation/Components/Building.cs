@@ -12,5 +12,6 @@ namespace Groundwork.Simulation
         public float ConstructionProgress;        // 0–1, 1 = fully built
         public bool IsOperational;
         public int MaxWorkers;
+        public byte FootprintSize;                // 1 = 1x1, 2 = 2x2, etc.
     }
 }

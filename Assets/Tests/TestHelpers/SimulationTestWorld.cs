@@ -133,7 +133,7 @@ namespace Groundwork.TestHelpers
         }
 
         public Entity CreateBuilding(FixedString32Bytes buildingType, int2 position,
-            bool operational = true, int maxWorkers = 3)
+            bool operational = true, int maxWorkers = 3, byte footprintSize = 1)
         {
             var entityTypes = new ComponentType[]
             {
@@ -145,6 +145,7 @@ namespace Groundwork.TestHelpers
             {
                 BuildingType = buildingType, ConstructionProgress = 1f,
                 IsOperational = operational, MaxWorkers = maxWorkers,
+                FootprintSize = footprintSize,
             });
             EntityManager.SetComponentData(entity, new MapPosition
                 { TileCoordinate = position, Rotation = 0 });

@@ -43,6 +43,7 @@ namespace Groundwork.Simulation
             public int outputCapacity;
             public string archetype;
             public int gatheringRadius;
+            public int footprintSize;
             public string[] recipes;
         }
 
@@ -109,6 +110,7 @@ namespace Groundwork.Simulation
                         OutputCapacity = b.outputCapacity,
                         Archetype = ParseArchetype(b.archetype),
                         GatheringRadius = b.gatheringRadius,
+                        FootprintSize = (byte)(b.footprintSize > 0 ? b.footprintSize : 1),
                     });
                     var recipes = ecb.AddBuffer<BuildingRecipe>(entity);
                     if (b.recipes != null)

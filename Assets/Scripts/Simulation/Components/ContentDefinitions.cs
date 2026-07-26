@@ -38,5 +38,6 @@ namespace Groundwork.Simulation
         public int OutputCapacity;  // max total items in output inventory
         public ProductionArchetype Archetype;
         public int GatheringRadius; // for Gathering archetype only, tiles from building center
+        public byte FootprintSize;  // 1 = 1x1, 2 = 2x2, etc.
     }
 }
